@@ -208,9 +208,9 @@ window.PAGES = [
   },
   {
     subject: '수학',
-    title: '개수 만들기',
+    title: '같은 개수 찾기',
     icon: '🍎',
-    meta: '숫자만큼 골라요',
+    meta: '숫자만큼 찾아요',
     href: 'numbers.html?act=group',
     bestKey: 'daniland.best.numbers.group'
   },

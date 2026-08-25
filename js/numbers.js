@@ -5,7 +5,7 @@
  *
  * 놀이 4가지 (문제는 매번 새로 만들어집니다)
  *   count : 세어 보기     - 그림이 몇 개인지 숫자를 고릅니다
- *   group : 개수 만들기   - 숫자를 보고 그만큼 있는 묶음을 고릅니다
+ *   group : 같은 개수 찾기 - 숫자를 보고 그만큼 있는 묶음을 고릅니다
  *   plus  : 더하기        - 🍎🍎 ➕ 🍎 = ?
  *   more  : 더 많은 것    - 두 묶음 중 많은 쪽을 고릅니다
  *
@@ -23,7 +23,7 @@
 
   var ACTS = [
     { id: 'count', name: '세어 보기',   icon: '🔢', desc: '그림이 몇 개인지 세어요' },
-    { id: 'group', name: '개수 만들기', icon: '🍎', desc: '숫자만큼 있는 것을 찾아요' },
+    { id: 'group', name: '같은 개수 찾기', icon: '🍎', desc: '숫자만큼 있는 그림을 찾아요' },
     { id: 'plus',  name: '더하기',      icon: '➕', desc: '두 묶음을 합치면 몇 개일까요' },
     { id: 'more',  name: '더 많은 것',  icon: '⚖️', desc: '어느 쪽이 더 많은지 골라요' }
   ];
@@ -209,14 +209,14 @@
     renderNumberCards(n);
   }
 
-  // 🍎 개수 만들기 — 숫자를 보여주고 그만큼 있는 묶음을 고릅니다.
+  // 🍎 같은 개수 찾기 — 숫자를 보여주고 그만큼 있는 묶음을 고릅니다.
   function makeGroup() {
     var emoji = pick(EMOJIS);
     var n = UI.randInt(1, state.max);
 
     state.answer = n;
     state.prompt = KO_COUNT[n - 1] + ' 개를 찾아요.';
-    el.questLabel.textContent = '숫자만큼 있는 것을 찾아요 (' + (state.round + 1) + '/' + ROUNDS + ')';
+    el.questLabel.textContent = '숫자만큼 있는 그림을 찾아요 (' + (state.round + 1) + '/' + ROUNDS + ')';
 
     var num = document.createElement('div');
     num.className = 'big-num';
