@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#ff8fab">
+  <title>숫자 공부 · 다니랜드 🔢</title>
+  <link rel="icon" href="dani.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <button class="icon-btn" id="homeBtn" title="처음으로">🏠</button>
+      <div class="progress"><div class="progress-bar" id="bar"></div></div>
+      <div class="score" id="score">⭐ 0</div>
+    </div>
+
+    <div class="quest">
+      <div class="label" id="questLabel">몇 개일까요?</div>
+      <div id="stage"></div>
+    </div>
+
+    <div class="cards" id="cards"></div>
+
+    <div class="tools">
+      <button class="chip" id="voiceBtn">🎤 목소리</button>
+    </div>
+  </div>
+
+  <!-- 시작 화면 -->
+  <div class="overlay" id="startOverlay">
+    <img src="dani.png" alt="다니">
+    <h2 id="startTitle">🔢 세어 보기</h2>
+
+    <p class="hint">숫자는 어디까지 할까요?</p>
+    <div class="level-row" id="levelRow"></div>
+
+    <p class="hint">다른 놀이도 해볼까요?</p>
+    <div class="mode-row compact" id="actRow"></div>
+
+    <button class="big-btn" id="startBtn">시작하기 ▶</button>
+    <button class="big-btn ghost" id="startHome">← 뒤로</button>
+  </div>
+
+  <!-- 결과 화면 -->
+  <div class="overlay" id="endOverlay" hidden>
+    <img src="dani.png" alt="다니">
+    <h2 id="endTitle">참 잘했어요!</h2>
+    <div class="stars" id="endStars"></div>
+    <p id="endText"></p>
+    <button class="big-btn" id="againBtn">한 번 더 🔁</button>
+    <button class="big-btn ghost" id="endModes">다른 놀이 ↺</button>
+    <button class="big-btn ghost" id="endHome">← 뒤로</button>
+  </div>
+
+  <script src="js/ui.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/catalog.js"></script>
+  <script src="js/tts.js"></script>
+  <script src="js/sfx.js"></script>
+  <script src="js/voicepicker.js"></script>
+  <script src="js/numbers.js"></script>
+</body>
+</html>

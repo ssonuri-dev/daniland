@@ -1,0 +1,969 @@
+/* =========================================================================
+ * 다니랜드 공통 스타일
+ * ========================================================================= */
+
+:root {
+  --pink: #ff8fab;
+  --pink-soft: #ffd9e2;
+  --blue: #5eb1ff;
+  --blue-soft: #d6ecff;
+  --yellow: #ffcf5c;
+  --green: #6dd47e;
+  --purple: #b79bff;
+  --ink: #40323a;
+  --ink-soft: #8a7a83;
+  --card: #ffffff;
+  --shadow: 0 6px 0 rgba(64, 50, 58, 0.10), 0 10px 24px rgba(64, 50, 58, 0.10);
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', sans-serif;
+  color: var(--ink);
+  background: linear-gradient(160deg, #fff6f9 0%, #f3f7ff 55%, #f6fff8 100%);
+  background-attachment: fixed;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+}
+
+.wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px 16px 48px;
+}
+
+/* ---------- 홈 화면 ---------- */
+
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 18px 0 6px;
+  text-align: center;
+}
+
+.hero img {
+  width: 92px;
+  height: 92px;
+  object-fit: contain;
+  animation: bob 2.6s ease-in-out infinite;
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50%      { transform: translateY(-8px) rotate(2deg); }
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: 34px;
+  letter-spacing: -1px;
+  color: var(--pink);
+  text-shadow: 0 2px 0 #fff, 0 4px 10px rgba(255, 143, 171, 0.35);
+}
+
+.hero p {
+  margin: 4px 0 0;
+  font-size: 15px;
+  color: var(--ink-soft);
+}
+
+/* ---------- 홈 · 과목 고르기 ---------- */
+
+.subject-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.subject-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 168px;
+  padding: 24px 14px;
+  text-decoration: none;
+  color: inherit;
+  background: var(--card);
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+  transition: transform 0.12s ease;
+}
+
+.subject-card:active { transform: translateY(3px) scale(0.98); }
+
+.subject-card .icon  { font-size: 64px; line-height: 1; }
+.subject-card .name  { font-size: 26px; font-weight: 800; }
+.subject-card .desc  { font-size: 13px; color: var(--ink-soft); text-align: center; }
+.subject-card .count { font-size: 12px; font-weight: 700; color: var(--ink-soft); opacity: 0.7; }
+
+/* ---------- 과목 페이지 ---------- */
+
+.subject-hero { position: relative; }
+
+.subject-hero .icon-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.subject-hero .hero-icon {
+  font-size: 62px;
+  line-height: 1;
+  animation: bob 2.6s ease-in-out infinite;
+}
+
+.lesson-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.lesson-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 20px 12px 16px;
+  text-decoration: none;
+  color: inherit;
+  background: var(--card);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  transition: transform 0.12s ease;
+}
+
+.lesson-card:active { transform: translateY(3px) scale(0.98); }
+
+.lesson-card .icon { font-size: 46px; line-height: 1; }
+.lesson-card .name { font-size: 19px; font-weight: 700; }
+.lesson-card .meta { font-size: 13px; color: var(--ink-soft); }
+.lesson-card .best { font-size: 13px; font-weight: 700; color: var(--yellow); }
+
+.foot {
+  margin-top: 36px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+/* ---------- 게임 화면 ---------- */
+
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0 14px;
+}
+
+/* <button> 으로도 <a> 로도 쓰입니다 (과목 페이지의 🏠 는 링크) */
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 46px;
+  height: 46px;
+  font-size: 22px;
+  text-decoration: none;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.icon-btn:active { transform: translateY(3px); }
+
+.progress {
+  flex: 1;
+  height: 16px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: inset 0 2px 4px rgba(64, 50, 58, 0.10);
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--yellow), var(--pink));
+  transition: width 0.35s ease;
+}
+
+.score {
+  flex: none;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+/* 게임 화면은 한 화면에 들어가야 해서 아래 여백을 줄입니다. */
+.play-page { padding-bottom: 14px; }
+
+.quest {
+  text-align: center;
+  margin: 4px 0 18px;
+}
+
+.quest .label {
+  font-size: 16px;
+  color: var(--ink-soft);
+}
+
+.speak-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 14px 26px;
+  font-size: 21px;
+  font-weight: 800;
+  color: #fff;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--blue), #3d97ec);
+  box-shadow: 0 5px 0 #2f7fcb, 0 10px 20px rgba(61, 151, 236, 0.35);
+}
+
+.speak-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #2f7fcb; }
+.speak-btn.speaking { animation: pulse 0.7s ease-in-out infinite; }
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.06); }
+}
+
+.cards {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.cards.cols-3 { grid-template-columns: repeat(3, 1fr); }
+
+@media (max-width: 420px) {
+  .cards.cols-3 { grid-template-columns: repeat(2, 1fr); }
+}
+
+.choice {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  aspect-ratio: 1 / 1;
+  padding: 10px;
+  background: var(--card);
+  border: 5px solid transparent;
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+  transition: transform 0.12s ease, border-color 0.2s ease, opacity 0.3s ease;
+}
+
+.choice:active { transform: scale(0.96); }
+
+/* 카드 크기(--card)는 js/game.js 가 화면에 맞춰 정하고,
+   그림과 글자 크기는 거기에 맞춰 따라갑니다. */
+.choice .art {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: calc(var(--card, 150px) * 0.46);
+  line-height: 1.05;
+}
+
+/* 이모지가 여러 개인 수업(숫자 세기)은 개수만큼 작게 잡습니다.
+   칸 밖으로 넘치면 카드가 아래로 늘어나 줄이 들쭉날쭉해져요. */
+.choice .art.n-2  { font-size: calc(var(--card, 150px) * 0.26); }
+.choice .art.n-4  { font-size: calc(var(--card, 150px) * 0.21); }
+.choice .art.n-6  { font-size: calc(var(--card, 150px) * 0.17); }
+.choice .art.n-9  { font-size: calc(var(--card, 150px) * 0.15); }
+
+/* 수업 화면 카드는 js/game.js 가 정한 크기를 그대로 지켜야 합니다.
+   (numbers.html 은 카드가 스스로 크기를 정하므로 여기서 제외합니다) */
+.play-page .choice {
+  min-height: 0;
+  overflow: hidden;
+  padding: min(10px, 6%);   /* 카드가 작을 때는 여백도 같이 줄어야 그림이 안 잘립니다 */
+}
+
+/* 긴 단어(police station)는 칸에 맞춰 글자를 줄입니다.
+   --len 은 js/game.js 가 넣어 주는 글자 수이고, 짧은 단어는 지금 크기 그대로입니다. */
+.choice .word {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: min(calc(var(--card, 150px) * 0.12),
+                 calc(var(--card, 150px) * 1.35 / var(--len, 8)));
+  font-weight: 700;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.choice.correct {
+  border-color: var(--green);
+  animation: pop 0.45s ease;
+}
+
+.choice.wrong {
+  border-color: var(--pink);
+  animation: shake 0.4s ease;
+}
+
+.choice.dim { opacity: 0.35; }
+
+.choice .mark {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 30px;
+}
+
+@keyframes pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-9px); }
+  40%      { transform: translateX(9px); }
+  60%      { transform: translateX(-6px); }
+  80%      { transform: translateX(6px); }
+}
+
+.tools {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.chip {
+  padding: 9px 18px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  background: #fff;
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+}
+
+.chip.on { color: #fff; background: var(--purple); }
+
+/* ---------- 덮개 화면 (시작 / 결과) ---------- */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  text-align: center;
+  background: rgba(255, 250, 252, 0.94);
+  backdrop-filter: blur(4px);
+}
+
+.overlay[hidden] { display: none; }
+
+.overlay img {
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+}
+
+.overlay h2 {
+  margin: 4px 0;
+  font-size: 30px;
+  color: var(--pink);
+}
+
+.overlay p {
+  margin: 0 0 12px;
+  font-size: 17px;
+  color: var(--ink-soft);
+}
+
+.big-btn {
+  min-width: 210px;
+  margin-top: 8px;
+  padding: 16px 28px;
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #ffa2ba, var(--pink));
+  box-shadow: 0 5px 0 #e8708d, 0 10px 20px rgba(255, 143, 171, 0.4);
+}
+
+.big-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #e8708d; }
+
+.big-btn.ghost {
+  color: var(--ink-soft);
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.level-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.level-btn {
+  padding: 12px 22px;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--ink);
+  background: #fff;
+  border: 4px solid transparent;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+
+.level-btn.on { border-color: var(--pink); color: var(--pink); }
+
+.stars {
+  font-size: 40px;
+  letter-spacing: 2px;
+  line-height: 1.3;
+}
+
+/* ---------- 폭죽 ---------- */
+
+.confetti {
+  position: fixed;
+  z-index: 30;
+  pointer-events: none;
+  font-size: 26px;
+  animation: fly 1s ease-out forwards;
+}
+
+@keyframes fly {
+  0%   { opacity: 1; transform: translate(0, 0) scale(0.6) rotate(0deg); }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1.3) rotate(var(--rot)); }
+}
+
+/* ---------- 놀이 방식 고르기 ---------- */
+
+.hint {
+  margin: 12px 0 2px;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+.mode-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.mode-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 98px;
+  padding: 12px 14px;
+  font-weight: 800;
+  color: var(--ink);
+  background: #fff;
+  border: 4px solid transparent;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+
+.mode-btn .mi { font-size: 28px; line-height: 1; }
+.mode-btn .mn { font-size: 14px; }
+.mode-btn.on { border-color: var(--blue); color: var(--blue); }
+
+/* 이미 고른 것을 바꾸기만 하는 줄 — 한 단계 작게 */
+.mode-row.compact { gap: 8px; }
+
+.compact .mode-btn {
+  min-width: 72px;
+  padding: 9px 10px;
+  border-width: 3px;
+}
+
+.compact .mode-btn .mi { font-size: 22px; }
+.compact .mode-btn .mn { font-size: 12px; }
+
+/* ---------- 글자 찾기 ---------- */
+
+.big-art {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  margin: 2px 0 6px;
+  font-size: 96px;
+  line-height: 1.05;
+}
+
+.big-art.n-2 { font-size: 78px; }
+.big-art.n-4 { font-size: 60px; }
+.big-art.n-6 { font-size: 48px; }
+.big-art.n-9 { font-size: 40px; }
+
+.speak-btn.small { padding: 10px 20px; font-size: 17px; }
+
+.choice.word-card { aspect-ratio: 2 / 1; }
+
+.choice.word-card .text {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: calc(var(--card, 280px) * 0.11);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ---------- 짝 맞추기 ---------- */
+
+.cards.cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+@media (max-width: 480px) {
+  .cards.cols-4 { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* 카드 크기(--card)는 js/game.js 가 화면에 맞춰 정하고,
+   글자 크기는 거기에 맞춰 따라갑니다. */
+.mem-board { align-content: start; }
+
+.choice.mem { padding: 4px; }
+
+/* 뒤집어도 카드 크기가 그대로여야 합니다.
+   min-height:0 이 없으면 앞면 내용이 클 때 칸이 아래로 늘어납니다. */
+.choice.mem {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.choice.mem .front,
+.choice.mem .art {
+  min-height: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.choice.mem:not(.flipped) {
+  background: linear-gradient(160deg, #ffc0d0, var(--pink));
+}
+
+.choice.mem .back {
+  font-size: calc(var(--card, 96px) * 0.42);
+  color: #fff;
+}
+
+.choice.mem .front {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.choice.mem.flipped .back { display: none; }
+.choice.mem.flipped .front { display: flex; animation: pop 0.35s ease; }
+/* 그림 크기는 이모지 개수를 따라갑니다. (🍭 열 개짜리도 정사각형 안에 들어오게)
+   짝 맞추기 카드는 글자 자리도 함께 남겨야 해서 다른 놀이보다 한 단계씩 작습니다. */
+.choice.mem .art      { font-size: calc(var(--card, 96px) * 0.42); }
+.choice.mem .art.n-2  { font-size: calc(var(--card, 96px) * 0.22); }
+.choice.mem .art.n-4  { font-size: calc(var(--card, 96px) * 0.17); }
+.choice.mem .art.n-6  { font-size: calc(var(--card, 96px) * 0.15); }
+.choice.mem .art.n-9  { font-size: calc(var(--card, 96px) * 0.13); }
+.choice.mem .word {
+  font-size: min(calc(var(--card, 96px) * 0.15),
+                 calc(var(--card, 96px) * 1.40 / var(--len, 8)));
+  overflow: hidden;
+  max-width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.choice.mem.done { opacity: 0.7; }
+
+/* ---------- 목소리 고르기 패널 ---------- */
+
+.panel {
+  width: 100%;
+  max-width: 420px;
+  max-height: 86vh;
+  overflow-y: auto;
+  padding: 20px;
+  text-align: center;
+  background: #fff;
+  border-radius: 26px;
+  box-shadow: var(--shadow);
+}
+
+.panel h3 { margin: 0 0 4px; font-size: 22px; color: var(--pink); }
+
+.rate-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 0 2px;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.rate-row input { flex: 1; accent-color: var(--pink); }
+
+.rate-val { margin-bottom: 6px; font-size: 13px; color: var(--ink-soft); }
+
+.voice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 10px 0;
+  text-align: left;
+}
+
+.voice-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  background: #f7f4f6;
+  border: 3px solid transparent;
+  border-radius: 16px;
+}
+
+.voice-row .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.voice-row .tag { flex: none; font-size: 12px; font-weight: 800; color: var(--ink-soft); }
+.voice-row.on { color: var(--pink); background: #fff0f4; border-color: var(--pink); }
+.voice-row.on .tag { color: var(--pink); }
+
+/* ---------- 숫자 공부 ---------- */
+
+.big-num {
+  font-size: 104px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--pink);
+  text-shadow: 0 3px 0 #fff, 0 6px 14px rgba(255, 143, 171, 0.35);
+}
+
+.group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  max-width: 460px;
+  margin: 0 auto;
+}
+
+.group span { font-size: 46px; line-height: 1.1; }
+.group.small span { font-size: 30px; }
+.choice .group span { font-size: 26px; }
+
+.eq-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.eq-op { font-size: 34px; font-weight: 800; color: var(--ink-soft); }
+
+.eq-box {
+  padding: 8px 12px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+
+.eq-box .group { max-width: 150px; }
+
+.choice.num-card .num { font-size: 64px; font-weight: 800; }
+
+@media (max-width: 420px) {
+  .big-num { font-size: 80px; }
+  .group span { font-size: 34px; }
+  .choice.num-card .num { font-size: 50px; }
+}
+
+/* ---------- 그림 그리기 ---------- */
+
+.draw-page {
+  max-width: 1200px;
+  padding-bottom: 16px;
+}
+
+/* 화면이 낮으면(노트북 등) 아래 도구들을 조금 납작하게 만들어
+   캔버스와 도장 서랍이 쓸 높이를 벌어 줍니다. */
+@media (max-height: 850px) {
+  .draw-page .palette { gap: 6px; margin: 8px auto 2px; }
+  .draw-page .swatch { width: 30px; height: 30px; }
+  .draw-page .pen-row { gap: 6px; margin-top: 8px; }
+  .draw-page .pen-btn { min-width: 58px; padding: 5px; font-size: 11px; }
+  .draw-page .pen-btn .pi { font-size: 18px; }
+  .draw-page .toolbar { gap: 6px; margin-top: 8px; }
+  .draw-page .tool { min-height: 40px; padding: 8px 13px; font-size: 15px; }
+  .draw-page .topbar { padding: 4px 0 8px; }
+}
+
+.draw-title {
+  flex: 1;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--pink);
+}
+
+/* 캔버스와 도장 서랍은 높이가 서로 끌려다니면 안 됩니다.
+   (예전에 서랍이 길어지면서 캔버스 상자만 늘어나 아래쪽이 안 그려졌어요)
+   그래서 위로 정렬하고, 실제 높이는 js/draw.js 가 화면에 맞춰 정해 줍니다. */
+.draw-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.pad {
+  flex: 1;
+  min-width: 0;
+  font-size: 0;          /* 캔버스 아래 빈 줄이 생기지 않게 */
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+/* 도장 서랍 — 오른쪽에 세로로 붙습니다. 3열 고정이라 폭이 넘칠 일이 없어요. */
+.stamp-panel {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 178px;         /* 3열 × (46 + 6) + 좌우 여백 — js/draw.js 의 계산과 맞춰 두었습니다 */
+  padding: 8px 10px;
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  overflow: hidden;     /* 계산이 어긋나도 흰 배경 밖으로는 절대 안 나가게 */
+}
+
+.stamp-body { min-height: 0; overflow: hidden; }
+
+.stamp-toggle {
+  flex: none;
+  align-self: center;
+  width: 40px;
+  height: 36px;
+  font-size: 20px;
+  background: #f7f4f6;
+  border-radius: 12px;
+}
+
+.stamp-toggle:active { transform: scale(0.92); }
+
+.stamp-panel.collapsed { width: 58px; }
+.stamp-panel.collapsed .stamp-body { display: none; }
+
+.stamp-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ink-soft);
+}
+
+.stamp-nav[hidden] { display: none; }
+
+.stamp-nav button {
+  width: 30px;
+  height: 26px;
+  font-size: 12px;
+  color: var(--ink);
+  background: #f7f4f6;
+  border-radius: 9px;
+}
+
+.stamp-nav button:active { transform: scale(0.92); }
+
+.stamp-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 46px;   /* 줄 높이가 늘어나지 않게 고정 */
+  gap: 6px;
+}
+
+/* 좁은 화면(세로로 든 폰·태블릿)에서는 서랍이 캔버스 아래로 내려갑니다. */
+@media (max-width: 700px) {
+  .draw-main { flex-direction: column; }
+  .stamp-panel { width: 100%; }
+  .stamp-panel.collapsed { width: 100%; }
+  .stamp-grid { grid-template-columns: repeat(auto-fill, minmax(42px, 1fr)); }
+}
+
+#canvas {
+  display: block;
+  width: 100%;
+  touch-action: none;   /* 그리는 동안 화면이 밀리지 않게 */
+  cursor: crosshair;
+}
+
+.palette {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 7px;
+  margin: 12px auto 4px;
+  max-width: 640px;
+}
+
+.swatch {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  box-shadow: var(--shadow);
+  transition: transform 0.12s ease;
+}
+
+.swatch.on { transform: scale(1.18); border-color: var(--ink); }
+
+/* 내가 만든 색 — 누르면 색 고르는 창이 열립니다. */
+.swatch.custom {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #ff8fab, #ffd60a, #6dd47e, #5eb1ff, #b79bff);
+}
+
+.swatch.custom.picked span { display: none; }
+
+.swatch.custom input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+@media (max-width: 420px) {
+  .swatch { width: 32px; height: 32px; }
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.tool {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 46px;
+  padding: 10px 16px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.tool:active { transform: translateY(3px); }
+.tool.on { color: #fff; background: var(--purple); }
+
+.tool .dot { display: block; background: currentColor; border-radius: 50%; }
+.size-btn { min-width: 54px; padding: 10px; }
+
+.icon-btn:disabled { opacity: 0.35; box-shadow: none; }
+
+.pen-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.pen-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 68px;
+  padding: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  background: #fff;
+  border: 4px solid transparent;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.pen-btn .pi { font-size: 22px; line-height: 1; }
+.pen-btn.on { color: var(--purple); border-color: var(--purple); }
+
+.stamp-btn {
+  width: 100%;
+  min-width: 0;      /* 칸이 좁아지면 버튼도 같이 줄어들게 (기본값이면 안 줄어들어 삐져나갑니다) */
+  height: 46px;
+  overflow: hidden;
+  font-size: 27px;
+  line-height: 1;
+  background: #f7f4f6;
+  border: 3px solid transparent;
+  border-radius: 12px;
+}
+
+.stamp-btn:active { transform: scale(0.92); }
+.stamp-btn.on { background: #f3ecff; border-color: var(--purple); }
+
+.notice {
+  margin: 16px auto 0;
+  max-width: 520px;
+  padding: 12px 16px;
+  font-size: 14px;
+  border-radius: 16px;
+  background: #fff5d6;
+  color: #8a6a1f;
+}

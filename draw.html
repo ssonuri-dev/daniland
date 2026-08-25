@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#ff8fab">
+  <title>그림 그리기 · 다니랜드 🎨</title>
+  <link rel="icon" href="dani.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="wrap draw-page">
+    <div class="topbar">
+      <button class="icon-btn" id="homeBtn" title="처음으로">🏠</button>
+      <div class="draw-title">🎨 그림 그리기</div>
+      <button class="icon-btn" id="undoBtn" title="되돌리기">↩️</button>
+      <button class="icon-btn" id="redoBtn" title="다시 하기">↪️</button>
+      <button class="icon-btn" id="saveBtn" title="그림 저장하기">💾</button>
+      <button class="icon-btn" id="clearBtn" title="다 지우기">🗑️</button>
+    </div>
+
+    <div class="draw-main" id="drawMain">
+      <div class="pad" id="pad">
+        <canvas id="canvas"></canvas>
+      </div>
+
+      <aside class="stamp-panel" id="stampPanel">
+        <button class="stamp-toggle" id="stampToggle" title="도장 서랍 접기/펴기">🐾</button>
+
+        <div class="stamp-body" id="stampBody">
+          <div class="stamp-nav" id="stampNav">
+            <button id="stampPrev" title="앞 페이지">◀</button>
+            <span id="stampPage">1 / 1</span>
+            <button id="stampNext" title="다음 페이지">▶</button>
+          </div>
+          <div class="stamp-grid" id="stampRow"></div>
+        </div>
+      </aside>
+    </div>
+
+    <div id="controls">
+      <div class="palette" id="palette"></div>
+      <div class="pen-row" id="penRow"></div>
+      <div class="toolbar" id="sizeRow"></div>
+    </div>
+  </div>
+
+  <script src="js/draw.js"></script>
+</body>
+</html>
