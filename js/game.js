@@ -83,6 +83,7 @@
     startBtn: document.getElementById('startBtn'),
     startHome: document.getElementById('startHome'),
     modeRow: document.getElementById('modeRow'),
+    modeHint: document.getElementById('modeHint'),
     levelRow: document.getElementById('levelRow'),
     levelHint: document.getElementById('levelHint'),
 
@@ -218,7 +219,9 @@
   function buildModeRow() {
     el.modeRow.innerHTML = '';
     var usable = lessonModes();
-    el.modeRow.hidden = (usable.length < 2);   // 놀이가 하나뿐이면 고를 것이 없습니다
+    // 놀이가 하나뿐이면 고를 것이 없으므로 줄과 안내글을 함께 감춥니다.
+    el.modeRow.hidden = (usable.length < 2);
+    el.modeHint.hidden = el.modeRow.hidden;
 
     usable.forEach(function (m) {
       var b = document.createElement('button');

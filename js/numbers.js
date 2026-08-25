@@ -9,7 +9,9 @@
  *   plus  : 더하기        - 🍎🍎 ➕ 🍎 = ?
  *   more  : 더 많은 것    - 두 묶음 중 많은 쪽을 고릅니다
  *
- * 홈에서 네 가지가 각각 카드로 나오므로, 보통은 act 가 주소에 담겨 옵니다.
+ * 놀이는 수학 과목 페이지에서 카드로 고릅니다. 그래서 어떤 놀이를 할지는
+ * 주소(act)로 정해져 오고, 이 페이지에서는 다시 고르지 않습니다.
+ * 다른 놀이를 하려면 '← 다른 놀이 고르기' 로 과목 페이지에 돌아갑니다.
  * ========================================================================= */
 
 (function () {
@@ -20,10 +22,10 @@
   var PRAISE = ['참 잘했어요!', '멋져요!', '최고예요!', '대단해요!', '와, 다 맞혔어요!'];
 
   var ACTS = [
-    { id: 'count', name: '세어 보기',   icon: '🔢' },
-    { id: 'group', name: '개수 만들기', icon: '🍎' },
-    { id: 'plus',  name: '더하기',      icon: '➕' },
-    { id: 'more',  name: '더 많은 것',  icon: '⚖️' }
+    { id: 'count', name: '세어 보기',   icon: '🔢', desc: '그림이 몇 개인지 세어요' },
+    { id: 'group', name: '개수 만들기', icon: '🍎', desc: '숫자만큼 있는 것을 찾아요' },
+    { id: 'plus',  name: '더하기',      icon: '➕', desc: '두 묶음을 합치면 몇 개일까요' },
+    { id: 'more',  name: '더 많은 것',  icon: '⚖️', desc: '어느 쪽이 더 많은지 골라요' }
   ];
 
   var LEVELS = [
@@ -44,7 +46,7 @@
     startTitle: document.getElementById('startTitle'),
     startBtn: document.getElementById('startBtn'),
     startHome: document.getElementById('startHome'),
-    actRow: document.getElementById('actRow'),
+    startDesc: document.getElementById('startDesc'),
     levelRow: document.getElementById('levelRow'),
 
     endOverlay: document.getElementById('endOverlay'),
@@ -57,7 +59,7 @@
   };
 
   var state = {
-    act: UI.getParam('act') || UI.loadValue('daniland.numAct') || 'count',
+    act: UI.getParam('act') || 'count',
     max: parseInt(UI.loadValue('daniland.numMax'), 10) || 5,
     round: 0,
     stars: 0,
@@ -71,7 +73,6 @@
 
   if (!window.TTS || !TTS.supported) el.voiceBtn.hidden = true;
 
-  buildActRow();
   buildLevelRow();
   showAct();
 
@@ -87,20 +88,17 @@
     startGame();
   });
 
-  el.endModes.addEventListener('click', function () {
-    el.endOverlay.hidden = true;
-    el.startOverlay.hidden = false;
-    resetBoard();
-  });
+  // '다른 놀이' 는 네 가지가 카드로 놓여 있는 수학 페이지로 돌아갑니다.
+  bindGo(el.endModes, backHref());
 
   el.voiceBtn.addEventListener('click', function () {
     VoicePicker.open({ lang: LANG, sample: function () { return state.prompt || '하나 둘 셋'; } });
   });
 
-  // 🏠 는 언제나 홈으로, '← 뒤로' 는 이 놀이가 들어 있는 과목 페이지로 갑니다.
+  // 🏠 는 언제나 홈으로, '다른 놀이 고르기' 는 이 놀이가 들어 있는 과목 페이지로 갑니다.
   bindGo(el.homeBtn, 'index.html');
+  bindGo(el.endHome, 'index.html');
   bindGo(el.startHome, backHref());
-  bindGo(el.endHome, backHref());
 
   function bindGo(btn, href) {
     if (!btn) return;
@@ -137,30 +135,13 @@
     return null;
   }
 
-  // 고른 놀이를 시작 화면 제목과 브라우저 탭에 보여 줍니다.
+  // 고른 놀이를 시작 화면과 브라우저 탭에 보여 줍니다.
   function showAct() {
     var a = findAct(state.act);
     if (!a) return;
     el.startTitle.textContent = a.icon + ' ' + a.name;
+    el.startDesc.textContent = a.desc;
     document.title = a.name + ' · 다니랜드 🔢';
-  }
-
-  function buildActRow() {
-    el.actRow.innerHTML = '';
-    ACTS.forEach(function (a) {
-      var b = document.createElement('button');
-      b.className = 'mode-btn' + (a.id === state.act ? ' on' : '');
-      b.innerHTML = '<span class="mi">' + a.icon + '</span><span class="mn">' + a.name + '</span>';
-      b.addEventListener('click', function () {
-        state.act = a.id;
-        UI.saveValue('daniland.numAct', a.id);
-        Array.prototype.forEach.call(el.actRow.children, function (x) {
-          x.classList.toggle('on', x === b);
-        });
-        showAct();
-      });
-      el.actRow.appendChild(b);
-    });
   }
 
   function buildLevelRow() {

@@ -503,18 +503,6 @@ button {
 .mode-btn .mn { font-size: 14px; }
 .mode-btn.on { border-color: var(--blue); color: var(--blue); }
 
-/* 이미 고른 것을 바꾸기만 하는 줄 — 한 단계 작게 */
-.mode-row.compact { gap: 8px; }
-
-.compact .mode-btn {
-  min-width: 72px;
-  padding: 9px 10px;
-  border-width: 3px;
-}
-
-.compact .mode-btn .mi { font-size: 22px; }
-.compact .mode-btn .mn { font-size: 12px; }
-
 /* ---------- 글자 찾기 ---------- */
 
 .big-art {
