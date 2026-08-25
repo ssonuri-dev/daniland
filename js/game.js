@@ -455,7 +455,16 @@
     var items = lesson.items || [];
     var want = Math.min(state.level.order || 5, items.length);
 
-    state.seq = items.slice(0, want);   // js/data.js 에 적힌 차례가 정답입니다
+    // 차례는 js/data.js 에 적힌 순서가 정답입니다. 다만 늘 첫 번째 말부터
+    // 시작하면 지루하므로, 시작하는 자리를 매번 바꿉니다.
+    //   cycle: true  — 요일·달처럼 돌고 도는 차례. 끝을 지나면 처음으로 이어집니다
+    //   (없으면)     — 이어지는 한 토막만 잘라 씁니다 (1,2,3… 처럼 되돌아가지 않는 말)
+    var from = lesson.cycle
+      ? UI.randInt(0, items.length - 1)
+      : UI.randInt(0, Math.max(0, items.length - want));
+
+    state.seq = [];
+    for (var i = 0; i < want; i++) state.seq.push(items[(from + i) % items.length]);
     state.step = 0;
     state.stepClean = true;
     state.mistakes = 0;
