@@ -9,8 +9,13 @@
  *  title   : 카드에 보일 제목
  *  icon    : 카드 아이콘 이모지
  *  lang    : 읽어줄 언어 ('en-US' 영어 / 'ko-KR' 한국어)
+ *  modes   : (없어도 됩니다) 이 수업에서 할 수 있는 놀이만 골라 적습니다.
+ *            'listen' 듣고 찾기 · 'word' 글자 찾기 · 'memory' 짝 맞추기 (모두 그림이 필요)
+ *            'sound'  듣고 단어 찾기 · 'order' 순서 맞추기 (그림 없이 소리와 글자로)
+ *            안 적으면 그림이 있는 수업은 앞의 세 가지, 그림이 없으면 뒤의 것을 씁니다.
  *  items   : 문제 목록
  *      emoji : 화면에 보여줄 그림 (이모지). 여러 개 반복해도 됩니다.
+ *              요일처럼 그림으로 나타내기 어려운 말은 비워 둡니다.
  *      word  : 소리로 읽어줄 말 (lang 언어로 발음됩니다)
  *      ko    : 정답을 맞췄을 때 보여줄 우리말 뜻
  * ========================================================================= */
@@ -129,6 +134,28 @@ window.LESSONS = [
       { emoji: '🚒',   word: 'fire station',   ko: '소방서' },
       { emoji: '🏞️',   word: 'park',           ko: '공원' },
       { emoji: '🏥',   word: 'hospital',       ko: '병원' }
+    ]
+  },
+
+  {
+    id: 'en-days',
+    subject: '영어',
+    title: '요일',
+    icon: '📅',
+    lang: 'en-US',
+
+    // 요일은 그림으로 보여줄 수 없어서, 소리와 글자로만 하는 놀이를 씁니다.
+    modes: ['sound', 'order'],
+
+    // 순서 맞추기는 여기 적힌 차례대로 놓게 됩니다.
+    items: [
+      { word: 'Monday',    ko: '월요일' },
+      { word: 'Tuesday',   ko: '화요일' },
+      { word: 'Wednesday', ko: '수요일' },
+      { word: 'Thursday',  ko: '목요일' },
+      { word: 'Friday',    ko: '금요일' },
+      { word: 'Saturday',  ko: '토요일' },
+      { word: 'Sunday',    ko: '일요일' }
     ]
   },
 

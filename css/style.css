@@ -547,6 +547,53 @@ button {
   text-overflow: ellipsis;
 }
 
+/* ---------- 순서 맞추기 ---------- */
+
+/* 지금까지 놓은 차례. 아직 안 놓은 자리는 빈 칸으로 보여 줍니다. */
+.seq {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 6px 0 8px;
+}
+
+.seq span {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.seq span.blank {
+  min-width: 46px;
+  height: 34px;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: none;
+  border: 3px dashed #e7dde2;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+/* 지금 찾아야 할 자리 */
+.seq span.blank.now {
+  border-color: var(--pink);
+  color: var(--pink);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+/* 이미 놓은 카드는 흐리게 — 남은 카드가 눈에 잘 띄게 합니다 */
+.order-board .choice.done { opacity: 0.45; }
+
+@media (max-width: 480px) {
+  .seq span { padding: 4px 10px; font-size: 14px; }
+  .seq span.blank { min-width: 36px; height: 28px; }
+}
+
 /* ---------- 짝 맞추기 ---------- */
 
 .cards.cols-4 { grid-template-columns: repeat(4, 1fr); }

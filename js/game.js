@@ -3,10 +3,14 @@
  *
  * 주소 예) play.html?lesson=en-fruits&mode=listen
  *
- * 놀이 방식 3가지 (모두 같은 수업 데이터를 씁니다)
- *   listen : 듣고 찾기   - 소리를 듣고 맞는 그림을 누릅니다
- *   word   : 글자 찾기   - 그림을 보고 맞는 글자를 누릅니다
- *   memory : 짝 맞추기   - 같은 그림 두 장을 찾습니다
+ * 놀이 방식 5가지 (모두 같은 수업 데이터를 씁니다)
+ *   listen : 듣고 찾기       - 소리를 듣고 맞는 그림을 누릅니다
+ *   word   : 글자 찾기       - 그림을 보고 맞는 글자를 누릅니다
+ *   memory : 짝 맞추기       - 같은 그림 두 장을 찾습니다
+ *   sound  : 듣고 단어 찾기  - 그림 없이, 소리를 듣고 맞는 단어를 누릅니다
+ *   order  : 순서 맞추기     - 요일처럼 차례가 있는 말을 순서대로 놓습니다
+ *
+ * 수업마다 할 수 있는 놀이가 다릅니다. js/data.js 의 modes 를 보고 정합니다.
  * ========================================================================= */
 
 (function () {
@@ -39,6 +43,26 @@
         { value: 3, text: '쉬워요<br>3짝' },
         { value: 5, text: '보통<br>5짝' },
         { value: 8, text: '어려워요<br>8짝' }
+      ]
+    },
+
+    // 아래 둘은 그림이 없는 수업(요일 등)을 위한 놀이입니다.
+    {
+      id: 'sound', name: '듣고 단어 찾기', icon: '🔊',
+      levelLabel: '몇 개 중에서 고를까요?',
+      levels: [
+        { value: 2, text: '쉬워요<br>2개' },
+        { value: 3, text: '보통<br>3개' },
+        { value: 4, text: '어려워요<br>4개' }
+      ]
+    },
+    {
+      id: 'order', name: '순서 맞추기', icon: '📅',
+      levelLabel: '몇 개를 차례대로 놓을까요?',
+      levels: [
+        { value: 3, text: '쉬워요<br>3개' },
+        { value: 5, text: '보통<br>5개' },
+        { value: 7, text: '어려워요<br>7개' }
       ]
     }
   ];
@@ -75,7 +99,7 @@
 
   var state = {
     mode: 'listen',
-    level: { listen: 4, word: 3, memory: 5 },
+    level: { listen: 4, word: 3, memory: 5, sound: 3, order: 5 },
     showLabel: loadFlag('daniland.showLabel'),
 
     // 듣고 찾기 / 글자 찾기
@@ -83,6 +107,9 @@
 
     // 짝 맞추기
     deck: [], flipped: [], matched: 0, pairs: 0, mistakes: 0,
+
+    // 순서 맞추기
+    seq: [], step: 0, stepClean: true,
 
     stars: 0,
     locked: false,
@@ -163,9 +190,24 @@
 
   /* ---------- 시작 화면 구성 ---------- */
 
+  // 이 수업에서 할 수 있는 놀이들
+  // js/data.js 에 modes 를 적었으면 그대로, 안 적었으면 그림 유무를 보고 정합니다.
+  function lessonModes() {
+    var want = lesson.modes;
+
+    if (!want || !want.length) {
+      var hasArt = (lesson.items || []).some(function (it) { return !!it.emoji; });
+      want = hasArt ? ['listen', 'word', 'memory'] : ['sound', 'order'];
+    }
+
+    var out = MODES.filter(function (m) { return want.indexOf(m.id) >= 0; });
+    return out.length ? out : MODES.slice(0, 3);
+  }
+
   function pickMode(id) {
-    for (var i = 0; i < MODES.length; i++) if (MODES[i].id === id) return id;
-    return 'listen';
+    var usable = lessonModes();
+    for (var i = 0; i < usable.length; i++) if (usable[i].id === id) return id;
+    return usable[0].id;
   }
 
   function modeDef(id) {
@@ -175,7 +217,10 @@
 
   function buildModeRow() {
     el.modeRow.innerHTML = '';
-    MODES.forEach(function (m) {
+    var usable = lessonModes();
+    el.modeRow.hidden = (usable.length < 2);   // 놀이가 하나뿐이면 고를 것이 없습니다
+
+    usable.forEach(function (m) {
       var b = document.createElement('button');
       b.className = 'mode-btn' + (m.id === state.mode ? ' on' : '');
       b.innerHTML = '<span class="mi">' + m.icon + '</span><span class="mn">' + m.name + '</span>';
@@ -219,6 +264,7 @@
     el.cards.className = 'cards';
     el.cards.style.gridTemplateColumns = '';
     el.cards.style.justifyContent = '';
+    el.cards.style.gap = '';
     el.cards.style.removeProperty('--card');
     state.locked = false;
   }
@@ -232,6 +278,7 @@
     el.labelToggle.hidden = (state.mode !== 'listen');
 
     if (state.mode === 'memory') startMemory();
+    else if (state.mode === 'order') startOrder();
     else startQuiz();
   }
 
@@ -245,6 +292,11 @@
     state.round = 0;
     buildQuizStage();
     nextRound();
+  }
+
+  // 글자 카드(가로로 넓적한 카드)로 고르는 놀이인지
+  function isWordCards() {
+    return state.mode === 'word' || state.mode === 'sound';
   }
 
   function buildQuizStage() {
@@ -283,12 +335,15 @@
 
     renderChoices(buildChoices(state.target));
     updateBar(state.round, state.queue.length);
-    el.questLabel.textContent = (state.mode === 'word'
-      ? '그림에 맞는 글자를 눌러요  '
-      : '잘 듣고 그림을 눌러요  ')
-      + '(' + (state.round + 1) + '/' + state.queue.length + ')';
+    el.questLabel.textContent = questTitle() + '  (' + (state.round + 1) + '/' + state.queue.length + ')';
 
     setTimeout(speakTarget, 350);
+  }
+
+  function questTitle() {
+    if (state.mode === 'word') return '그림에 맞는 글자를 눌러요';
+    if (state.mode === 'sound') return '잘 듣고 단어를 눌러요';
+    return '잘 듣고 그림을 눌러요';
   }
 
   // 정답 1개 + 나머지 보기들
@@ -305,10 +360,10 @@
 
     choices.forEach(function (item) {
       var card = document.createElement('button');
-      card.className = 'choice' + (state.mode === 'word' ? ' word-card' : '');
+      card.className = 'choice' + (isWordCards() ? ' word-card' : '');
       card.dataset.word = item.word;
 
-      if (state.mode === 'word') {
+      if (isWordCards()) {
         var t = document.createElement('div');
         t.className = 'text';
         t.textContent = item.word;
@@ -346,7 +401,7 @@
       addMark(card, '⭕');
       confettiAt(card);
 
-      if (state.mode === 'word') {
+      if (isWordCards()) {
         // 맞힌 글자를 한 번 더 읽어 줍니다.
         setTimeout(function () { speakTarget(); }, 250);
       } else {
@@ -384,6 +439,137 @@
     var total = state.queue.length;
     updateBar(total, total);
     showResult(state.stars, total, total + '개 중에 ' + state.stars + '개를 한 번에 맞혔어요!');
+  }
+
+  /* =======================================================================
+   * 순서 맞추기
+   *
+   * 요일처럼 차례가 있는 말을 순서대로 눌러 한 줄로 완성합니다.
+   * 어떤 카드를 눌러도 그 단어를 읽어 주기 때문에, 눌러 보며 익힐 수 있습니다.
+   * ===================================================================== */
+
+  function startOrder() {
+    var items = lesson.items || [];
+    var want = Math.min(state.level.order || 5, items.length);
+
+    state.seq = items.slice(0, want);   // js/data.js 에 적힌 차례가 정답입니다
+    state.step = 0;
+    state.stepClean = true;
+    state.mistakes = 0;
+    state.locked = false;
+
+    buildOrderStage();
+    el.questLabel.textContent = "차례대로 놓아요  (0/" + want + ")";
+    updateBar(0, want);
+
+    el.cards.innerHTML = "";
+    el.cards.className = "cards order-board";
+
+    shuffle(state.seq.slice()).forEach(function (item) {
+      var card = document.createElement("button");
+      card.className = "choice word-card";
+      card.dataset.word = item.word;
+
+      var t = document.createElement("div");
+      t.className = "text";
+      t.textContent = item.word;
+      setWordLength(t, item.word);
+      card.appendChild(t);
+
+      card.addEventListener("click", function () { chooseOrder(card, item); });
+      el.cards.appendChild(card);
+    });
+
+    fitBoard();
+    setTimeout(speakNext, 400);   // 첫 순서를 들려주고 시작합니다
+  }
+
+  function buildOrderStage() {
+    el.stage.innerHTML = "";
+
+    var line = document.createElement("div");
+    line.className = "seq";
+    line.id = "seqLine";
+    el.stage.appendChild(line);
+
+    var btn = document.createElement("button");
+    btn.className = "speak-btn small";
+    btn.id = "speakBtn";
+    btn.textContent = "🔊 다음은?";
+    btn.addEventListener("click", speakNext);
+    el.stage.appendChild(btn);
+
+    renderSeq();
+  }
+
+  // 지금까지 놓은 차례를 보여 줍니다. (아직 안 놓은 자리는 밑줄)
+  function renderSeq() {
+    var line = document.getElementById("seqLine");
+    if (!line) return;
+    line.innerHTML = "";
+
+    state.seq.forEach(function (item, i) {
+      var box = document.createElement("span");
+      if (i < state.step) {
+        box.textContent = item.word;
+      } else {
+        box.className = "blank" + (i === state.step ? " now" : "");
+        box.textContent = (i === state.step) ? "?" : "";
+      }
+      line.appendChild(box);
+    });
+  }
+
+  function chooseOrder(card, item) {
+    if (state.locked || card.classList.contains("done")) return;
+
+    // 어떤 카드든 누르면 읽어 줍니다. (눌러 보며 단어를 익히라고)
+    speakWord(item.word, card);
+
+    if (item === state.seq[state.step]) {
+      if (window.SFX) SFX.correct();
+      card.classList.add("correct", "done");
+      addMark(card, "⭕");
+
+      if (state.stepClean) { state.stars += 1; updateScore(); }
+      state.step += 1;
+      state.stepClean = true;
+
+      renderSeq();
+      updateBar(state.step, state.seq.length);
+      el.questLabel.textContent =
+        "차례대로 놓아요  (" + state.step + "/" + state.seq.length + ")";
+
+      if (state.step >= state.seq.length) {
+        state.locked = true;
+        confettiAt(card);
+        setTimeout(finishOrder, 1100);
+      }
+
+    } else {
+      state.stepClean = false;
+      state.mistakes += 1;
+      if (window.SFX) SFX.wrong();
+      card.classList.add("wrong");
+      setTimeout(function () { card.classList.remove("wrong"); }, 400);
+
+      // 눌러 본 단어를 읽어 준 다음, 지금 찾아야 할 순서를 다시 들려줍니다.
+      clearTimeout(state.repeatTimer);
+      state.repeatTimer = setTimeout(speakNext, 1400);
+    }
+  }
+
+  // 지금 놓아야 할 차례를 읽어 줍니다.
+  function speakNext() {
+    var item = state.seq[state.step];
+    if (item) speakWord(item.word, document.getElementById("speakBtn"));
+  }
+
+  function finishOrder() {
+    var total = state.seq.length;
+    var msg = total + "개를 순서대로 다 놓았어요!" +
+      (state.mistakes ? " (다시 고르기 " + state.mistakes + "번)" : " 한 번도 안 틀렸어요!");
+    showResult(state.stars, total, msg);
   }
 
   /* =======================================================================
@@ -453,7 +639,7 @@
     var count = el.cards.children.length;
     if (!count) return;
 
-    var ratio = (state.mode === 'word') ? 2 : 1;   // 글자 카드는 가로로 넓적합니다
+    var ratio = isWordCards() ? 2 : 1;   // 글자 카드는 가로로 넓적합니다
     var availW = el.cards.clientWidth;
     if (!availW) return;
 
@@ -486,6 +672,7 @@
     var card = Math.min(CARD_MAX * ratio, Math.max(CARD_MIN, Math.floor(best.w)));
     el.cards.style.gridTemplateColumns = 'repeat(' + best.cols + ', ' + card + 'px)';
     el.cards.style.justifyContent = 'center';
+    el.cards.style.gap = GAP + 'px';   // 위 계산과 실제 간격이 같아야 스크롤이 안 생깁니다
     el.cards.style.setProperty('--card', card + 'px');
   }
 
@@ -584,6 +771,17 @@
   }
 
   /* ---------- 소리 ---------- */
+
+  // 단어 하나를 읽어 줍니다. (버튼을 주면 말하는 동안 표시가 켜집니다)
+  function speakWord(word, btn) {
+    if (!word || !window.TTS || !TTS.supported) return;
+    if (btn) btn.classList.add("speaking");
+
+    TTS.speak(word, lesson.lang || "en-US", {
+      onend: function () { if (btn) btn.classList.remove("speaking"); }
+    });
+    setTimeout(function () { if (btn) btn.classList.remove("speaking"); }, 2500);
+  }
 
   function speakTarget() {
     if (!state.target || !window.TTS || !TTS.supported) return;

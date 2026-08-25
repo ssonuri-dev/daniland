@@ -7,7 +7,7 @@
 
 (function () {
   // 놀이 방식별로 기록이 남습니다. 그중 가장 잘한 기록을 카드에 보여 줍니다.
-  var MODE_IDS = ['listen', 'word', 'memory'];
+  var MODE_IDS = ['listen', 'word', 'memory', 'sound', 'order'];
 
   function lessonBest(id) {
     var best = null;
