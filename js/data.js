@@ -255,5 +255,13 @@ window.PAGES = [
     icon: '🎨',
     meta: '자유롭게 그려요',
     href: 'draw.html'
+  },
+
+  {
+    subject: '놀이',
+    title: '실로폰',
+    icon: '🎹',
+    meta: '도레미를 쳐요',
+    href: 'xylo.html'
   }
 ];
