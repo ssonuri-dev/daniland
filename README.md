@@ -158,7 +158,7 @@ daniland/
 
 ```
 index.html                 🔤 영어   🔢 수학   🇰🇷 한글   🎨 놀이
-   └ subject.html?name=영어      과일 · 동물 · 색깔 · 숫자 세기 · 직업과 일터 · 요일
+   └ subject.html?name=영어      과일 · 동물 · 색깔 · 숫자 세기 · 직업과 일터 · 날씨 · 요일
         └ play.html?lesson=en-fruits     놀이를 고르고 난이도를 고름
    └ subject.html?name=수학      세어 보기 · 같은 개수 찾기 · 더하기 · 더 많은 것
         └ numbers.html?act=plus          누른 카드가 곧 놀이 (숫자 범위만 고름)

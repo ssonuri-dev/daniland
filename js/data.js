@@ -141,6 +141,24 @@ window.LESSONS = [
   },
 
   {
+    id: 'en-weather',
+    subject: '영어',
+    title: '날씨',
+    icon: '⛅',
+    lang: 'en-US',
+    items: [
+      { emoji: '☀️',  word: 'sunny',   ko: '맑음' },
+      { emoji: '🌧️',  word: 'rainy',   ko: '비' },
+      { emoji: '☁️',  word: 'cloudy',  ko: '흐림' },
+      { emoji: '❄️',  word: 'snowy',   ko: '눈' },
+      { emoji: '🌬️',  word: 'windy',   ko: '바람' },
+      { emoji: '🌈',  word: 'rainbow', ko: '무지개' },
+      { emoji: '🥵',  word: 'hot',     ko: '더워요' },
+      { emoji: '🥶',  word: 'cold',    ko: '추워요' }
+    ]
+  },
+
+  {
     id: 'en-days',
     subject: '영어',
     title: '요일',
