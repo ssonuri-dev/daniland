@@ -34,11 +34,44 @@
     osc.stop(t0 + duration + 0.05);
   }
 
+  // 짧은 잡음 한 방 — '팡' 하고 터지는 소리는 음정이 아니라 잡음이라야 납니다.
+  function burst(duration, volume) {
+    var ac = audio();
+    if (!ac) return;
+
+    var t0 = ac.currentTime;
+    var frames = Math.floor(ac.sampleRate * duration);
+    var buffer = ac.createBuffer(1, frames, ac.sampleRate);
+    var data = buffer.getChannelData(0);
+
+    // 뒤로 갈수록 잦아드는 잡음
+    for (var i = 0; i < frames; i++) {
+      data[i] = (Math.random() * 2 - 1) * (1 - i / frames);
+    }
+
+    var src = ac.createBufferSource();
+    var gain = ac.createGain();
+    src.buffer = buffer;
+
+    gain.gain.setValueAtTime(volume, t0);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+
+    src.connect(gain);
+    gain.connect(ac.destination);
+    src.start(t0);
+  }
+
   window.SFX = {
     unlock: function () { audio(); },
 
     tap: function () {
       tone(520, 0, 0.08, 'triangle', 0.10);
+    },
+
+    // 풍선 터뜨리기
+    pop: function () {
+      burst(0.09, 0.25);
+      tone(880, 0, 0.05, 'triangle', 0.09);
     },
 
     correct: function () {

@@ -263,5 +263,14 @@ window.PAGES = [
     icon: '🎹',
     meta: '도레미를 쳐요',
     href: 'xylo.html'
+  },
+
+  {
+    subject: '놀이',
+    title: '풍선 터뜨리기',
+    icon: '🎈',
+    meta: '올라오는 풍선을 눌러요',
+    href: 'balloon.html',
+    bestKey: 'daniland.best.balloon'
   }
 ];

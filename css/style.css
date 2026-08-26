@@ -1077,3 +1077,87 @@ button {
   .xylo-bar { padding-bottom: 10px; border-radius: 11px; }
   .xylo-bar .note { width: 28px; height: 28px; font-size: 13px; }
 }
+
+/* ---------- 풍선 터뜨리기 ---------- */
+
+.balloon-page { padding-bottom: 14px; }
+
+/* 놀이판 높이는 js/balloon.js 가 화면에 맞춰 정합니다. */
+.balloon-field {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, #e8f3ff 0%, #ffffff 70%);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  touch-action: none;
+}
+
+/* 세 겹으로 나눈 이유 — transform 을 서로 뺏지 않으려고요.
+   .balloon 은 위로 떠오르고, .sway 는 좌우로 흔들리고,
+   .body 는 터질 때 부풀며 사라집니다. 한 요소에 몰면 셋이 충돌합니다. */
+.balloon {
+  position: absolute;
+  bottom: -150px;
+  width: 76px;
+  animation-name: balloon-rise;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes balloon-rise {
+  to { transform: translateY(calc(var(--rise, 800px) * -1)); }
+}
+
+.sway { animation: balloon-sway 2.6s ease-in-out infinite; }
+
+@keyframes balloon-sway {
+  0%, 100% { transform: translateX(-5px) rotate(-3deg); }
+  50%      { transform: translateX(5px)  rotate(3deg); }
+}
+
+.balloon .body {
+  position: relative;
+  width: 76px;
+  height: 92px;
+  border-radius: 50% 50% 46% 46%;
+  box-shadow: inset -9px -11px 18px rgba(0, 0, 0, 0.10),
+              inset 9px 9px 16px rgba(255, 255, 255, 0.45);
+  transition: transform 0.28s ease, opacity 0.28s ease;
+}
+
+/* 풍선 아래 매듭 */
+.balloon .body::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 89px;
+  width: 11px;
+  height: 9px;
+  transform: translateX(-50%);
+  background: inherit;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
+.balloon .string {
+  position: absolute;
+  left: 50%;
+  top: 97px;
+  width: 2px;
+  height: 44px;
+  transform: translateX(-50%);
+  background: rgba(64, 50, 58, 0.25);
+  border-radius: 2px;
+}
+
+/* 터지는 순간 — 부풀면서 사라지고, 그 자리에 멈춥니다. */
+.balloon.popped { animation-play-state: paused; pointer-events: none; }
+.balloon.popped .sway { animation-play-state: paused; }
+.balloon.popped .body { transform: scale(1.7); opacity: 0; }
+.balloon.popped .string { opacity: 0; transition: opacity 0.2s ease; }
+
+@media (max-width: 520px) {
+  .balloon, .balloon .body { width: 62px; }
+  .balloon .body { height: 76px; }
+  .balloon .body::after { top: 73px; }
+  .balloon .string { top: 84px; height: 34px; }
+}
