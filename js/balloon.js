@@ -16,8 +16,8 @@
   var COUNT_STEP = 3;
 
   function levelCount(n) { return FIRST_COUNT + COUNT_STEP * (n - 1); }  // 그 단계의 풍선 수
-  function levelRise(n) { return Math.max(2.6, 6.0 - 0.45 * (n - 1)); }  // 다 올라가는 데 걸리는 초
-  function levelGap(n) { return Math.max(550, 1400 - 100 * (n - 1)); }   // 다음 풍선까지 ms
+  function levelRise(n) { return Math.max(2.0, 6.0 - 0.75 * (n - 1)); }  // 다 올라가는 데 걸리는 초
+  function levelGap(n) { return Math.max(450, 1400 - 160 * (n - 1)); }   // 다음 풍선까지 ms
 
   var PRAISE = ['참 잘했어요!', '멋져요!', '최고예요!', '대단해요!'];
 
