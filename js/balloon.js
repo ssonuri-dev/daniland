@@ -3,8 +3,9 @@
  *
  * 아래에서 올라오는 풍선을 눌러 터뜨립니다.
  *
- * 난이도를 미리 고르지 않습니다 — 한 단계를 끝내면 다음 단계가 열리고,
- * 단계가 올라갈수록 풍선이 많아지고 더 빨리 올라옵니다.
+ * 한 단계를 끝내면 다음 단계가 열리고, 단계가 올라갈수록 풍선이 많아지고 더 빨리 올라옵니다.
+ * 시작 화면에서는 '지금까지 간 최고 단계' 까지 중에 시작할 단계를 고를 수 있습니다
+ * (늘 1단계부터 하면 앞부분이 지루하다고 해서 넣었습니다).
  * 놓친 풍선 하나에 하트 한 개가 사라지고, 하트 5개가 다 없어지면 게임 끝입니다.
  * ========================================================================= */
 
@@ -29,6 +30,7 @@
   var BALLOON_W = 76;
   // 예전 판(10개 한 판)의 기록과 뜻이 달라 이름을 새로 씁니다.
   var BEST_KEY = 'daniland.best.balloon.level';
+  var START_KEY = 'daniland.balloonStart';
 
   var el = {
     field: document.getElementById('field'),
@@ -42,6 +44,8 @@
     startOverlay: document.getElementById('startOverlay'),
     startBtn: document.getElementById('startBtn'),
     startHome: document.getElementById('startHome'),
+    startPick: document.getElementById('startPick'),
+    levelRow: document.getElementById('levelRow'),
 
     endOverlay: document.getElementById('endOverlay'),
     endTitle: document.getElementById('endTitle'),
@@ -52,6 +56,7 @@
   };
 
   var state = {
+    startLevel: parseInt(UI.loadValue(START_KEY), 10) || 1,  // 시작 화면에서 고른 단계
     level: 1,
     count: 0,     // 이 단계의 풍선 수
     spawned: 0,   // 이 단계에서 지금까지 띄운 풍선 수
@@ -64,6 +69,7 @@
   var timer = null;       // 다음 풍선 띄우기
   var bannerTimer = null; // 단계 안내를 띄워 두는 시간
 
+  buildStartRow();
   fit();
 
   el.startBtn.addEventListener('click', function () {
@@ -87,6 +93,54 @@
     btn.addEventListener('click', function () { window.location.href = href; });
   }
 
+  /* ---------- 시작 단계 고르기 ----------
+   * 지금까지 간 최고 단계까지만 고를 수 있습니다 (1단계 · 중간 · 최고, 최대 세 개).
+   * -------------------------------------------------------------------- */
+
+  function startChoices() {
+    var best = UI.readBest(BEST_KEY);
+    var top = best ? best.stars : 1;
+    if (top < 1) top = 1;
+
+    var out = [];
+    [1, Math.round((1 + top) / 2), top].forEach(function (n) {
+      if (out.indexOf(n) < 0) out.push(n);
+    });
+    return out;
+  }
+
+  function buildStartRow() {
+    var choices = startChoices();
+    var top = choices[choices.length - 1];
+
+    // 처음 하는 아이는 고를 것이 1단계뿐이라 아예 묻지 않습니다.
+    var single = choices.length < 2;
+    el.startPick.hidden = single;
+    el.levelRow.hidden = single;
+
+    if (choices.indexOf(state.startLevel) < 0) state.startLevel = 1;
+
+    el.levelRow.innerHTML = '';
+
+    choices.forEach(function (n) {
+      var b = document.createElement('button');
+      b.className = 'level-btn' + (n === state.startLevel ? ' on' : '');
+      b.textContent = n + '단계' + (n === top && n > 1 ? ' ⭐' : '');
+
+      b.addEventListener('click', function () {
+        state.startLevel = n;
+        UI.saveValue(START_KEY, String(n));
+        if (window.SFX) SFX.tap();
+
+        Array.prototype.forEach.call(el.levelRow.children, function (x) {
+          x.classList.toggle('on', x === b);
+        });
+      });
+
+      el.levelRow.appendChild(b);
+    });
+  }
+
   /* ---------- 한 판 ---------- */
 
   function startRun() {
@@ -94,13 +148,13 @@
     clearTimeout(bannerTimer);
     hideBanner();
 
-    state.level = 1;
+    state.level = state.startLevel;
     state.popped = 0;
     state.lives = LIVES;
 
     updateScore();
     updateLives();
-    startLevel(1);
+    startLevel(state.level);
   }
 
   function startLevel(n) {
@@ -238,9 +292,12 @@
     var isBest = !prev || state.level > prev.stars;
     UI.saveBest(BEST_KEY, state.level, state.level);
 
+    buildStartRow();  // 기록이 올랐으면 고를 수 있는 시작 단계도 늘어납니다
+
     el.endStars.textContent = '🎈 ' + state.level + '단계';
     el.endTitle.textContent = isBest ? '새 최고 기록! 🏆' : PRAISE[UI.randInt(0, PRAISE.length - 1)];
-    el.endText.textContent = state.level + '단계까지 갔어요. 풍선 ' + state.popped + '개를 터뜨렸어요!';
+    el.endText.textContent = (state.startLevel > 1 ? state.startLevel + '단계에서 시작해서 ' : '')
+      + state.level + '단계까지 갔어요. 풍선 ' + state.popped + '개를 터뜨렸어요!';
     el.endOverlay.hidden = false;
   }
 

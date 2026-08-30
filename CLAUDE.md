@@ -112,7 +112,7 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.<lessonId>.<mode>` | 수업별·놀이별 최고 별 |
 | `daniland.best.numbers.<act>` | 수학 놀이별 최고 별 |
 | `daniland.best.balloon.level` | 풍선 터뜨리기에서 도달한 최고 단계 |
-| `daniland.mode` `daniland.numMax` `daniland.showLabel` | 마지막에 고른 설정 |
+| `daniland.mode` `daniland.numMax` `daniland.showLabel` `daniland.balloonStart` | 마지막에 고른 설정 |
 | `daniland.rate` `daniland.voice.<lang>` | 목소리·속도 |
 | `daniland.drawer` | 그림 그리기 도장 서랍 접힘 상태 |
 

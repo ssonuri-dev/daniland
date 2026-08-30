@@ -448,6 +448,9 @@ button {
 
 .level-btn.on { border-color: var(--pink); color: var(--pink); }
 
+/* display:flex 가 hidden 을 이기므로 따로 적어 줍니다 */
+.level-row[hidden] { display: none; }
+
 .stars {
   font-size: 40px;
   letter-spacing: 2px;
