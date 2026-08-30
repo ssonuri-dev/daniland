@@ -39,7 +39,10 @@
     add(a, 'icon', card.icon);
     add(a, 'name', card.title);
     if (card.meta) add(a, 'meta', card.meta);
-    if (card.best) add(a, 'best', '⭐ 최고 ' + card.best.stars + '/' + card.best.total);
+    if (card.best) {
+      // 단위가 있으면 '⭐ 최고 5단계', 없으면 '⭐ 최고 8/10'
+      add(a, 'best', '⭐ 최고 ' + card.best.stars + (card.bestUnit || ('/' + card.best.total)));
+    }
 
     return a;
   }

@@ -43,7 +43,8 @@
         title: page.title,
         meta: page.meta || '',
         href: page.href,
-        best: page.bestKey ? UI.readBest(page.bestKey) : null
+        best: page.bestKey ? UI.readBest(page.bestKey) : null,
+        bestUnit: page.bestUnit || ''
       });
     });
 

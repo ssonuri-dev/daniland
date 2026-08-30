@@ -1082,6 +1082,65 @@ button {
 
 .balloon-page { padding-bottom: 14px; }
 
+/* 몇 단계인지 · 하트가 몇 개 남았는지 (놀이판 바로 위 한 줄) */
+.balloon-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 2px 10px;
+}
+
+.level-chip {
+  padding: 6px 16px;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--pink);
+  background: #fff;
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+}
+
+.lives { font-size: 22px; letter-spacing: 2px; }
+
+/* 잃은 하트는 지우지 않고 흐리게 남깁니다 (몇 개 남았는지 한눈에) */
+.lives .gone { filter: grayscale(1); opacity: 0.3; }
+
+.lives.hit { animation: lives-shake 0.45s ease; }
+
+@keyframes lives-shake {
+  0%, 100% { transform: translateX(0); }
+  25%      { transform: translateX(-6px); }
+  50%      { transform: translateX(6px); }
+  75%      { transform: translateX(-3px); }
+}
+
+/* 다음 단계로 넘어갈 때 잠깐 뜨는 안내 */
+.banner {
+  position: fixed;
+  left: 50%;
+  top: 42%;
+  z-index: 15;
+  padding: 14px 30px;
+  font-size: 34px;
+  font-weight: 800;
+  color: var(--pink);
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  pointer-events: none;
+  animation: banner-pop 0.35s ease;
+}
+
+.banner[hidden] { display: none; }
+
+@keyframes banner-pop {
+  from { transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
+  to   { transform: translate(-50%, -50%) scale(1);   opacity: 1; }
+}
+
 /* 놀이판 높이는 js/balloon.js 가 화면에 맞춰 정합니다. */
 .balloon-field {
   position: relative;
@@ -1148,6 +1207,12 @@ button {
   background: rgba(64, 50, 58, 0.25);
   border-radius: 2px;
 }
+
+/* 게임이 끝나면 남은 풍선은 그 자리에 멈춥니다. */
+.balloon-field.stopped .balloon,
+.balloon-field.stopped .sway { animation-play-state: paused; }
+
+.balloon-field.stopped .balloon { pointer-events: none; }
 
 /* 터지는 순간 — 부풀면서 사라지고, 그 자리에 멈춥니다. */
 .balloon.popped { animation-play-state: paused; pointer-events: none; }

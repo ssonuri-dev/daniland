@@ -2,37 +2,46 @@
  * 다니랜드 - 풍선 터뜨리기
  *
  * 아래에서 올라오는 풍선을 눌러 터뜨립니다.
- * 놓친 풍선은 그냥 하늘로 올라가 사라집니다 — 틀렸다고 혼내지 않습니다.
  *
- * 한 판에 풍선 10개 (게임 화면·수학 놀이와 같은 수).
+ * 난이도를 미리 고르지 않습니다 — 한 단계를 끝내면 다음 단계가 열리고,
+ * 단계가 올라갈수록 풍선이 많아지고 더 빨리 올라옵니다.
+ * 놓친 풍선 하나에 하트 한 개가 사라지고, 하트 5개가 다 없어지면 게임 끝입니다.
  * ========================================================================= */
 
 (function () {
-  var TOTAL = 10;
-  var PRAISE = ['참 잘했어요!', '멋져요!', '최고예요!', '대단해요!', '와, 다 터뜨렸어요!'];
+  var LIVES = 5;
+
+  // 단계마다 풍선이 3개씩 늘고, 더 빨리 · 더 촘촘하게 올라옵니다.
+  var FIRST_COUNT = 12;
+  var COUNT_STEP = 3;
+
+  function levelCount(n) { return FIRST_COUNT + COUNT_STEP * (n - 1); }  // 그 단계의 풍선 수
+  function levelRise(n) { return Math.max(3.5, 8.0 - 0.5 * (n - 1)); }   // 다 올라가는 데 걸리는 초
+  function levelGap(n) { return Math.max(600, 1700 - 110 * (n - 1)); }   // 다음 풍선까지 ms
+
+  var PRAISE = ['참 잘했어요!', '멋져요!', '최고예요!', '대단해요!'];
 
   var COLORS = [
     '#ff3b30', '#ff9500', '#ffd60a', '#34c759',
     '#00c7be', '#0a84ff', '#af52de', '#ff5fa2'
   ];
 
-  var LEVELS = [
-    { value: 'slow', text: '천천히<br>🐢', rise: 8.0, gap: 1700 },
-    { value: 'fast', text: '보통<br>🐇',   rise: 5.5, gap: 1100 }
-  ];
-
   var BALLOON_W = 76;
+  // 예전 판(10개 한 판)의 기록과 뜻이 달라 이름을 새로 씁니다.
+  var BEST_KEY = 'daniland.best.balloon.level';
 
   var el = {
     field: document.getElementById('field'),
     bar: document.getElementById('bar'),
     score: document.getElementById('score'),
+    levelChip: document.getElementById('levelChip'),
+    lives: document.getElementById('lives'),
+    banner: document.getElementById('banner'),
     homeBtn: document.getElementById('homeBtn'),
 
     startOverlay: document.getElementById('startOverlay'),
     startBtn: document.getElementById('startBtn'),
     startHome: document.getElementById('startHome'),
-    levelRow: document.getElementById('levelRow'),
 
     endOverlay: document.getElementById('endOverlay'),
     endTitle: document.getElementById('endTitle'),
@@ -43,27 +52,29 @@
   };
 
   var state = {
-    speed: UI.loadValue('daniland.balloonSpeed') || 'slow',
-    spawned: 0,   // 지금까지 띄운 풍선 수
-    done: 0,      // 터졌거나 날아가 버린 풍선 수
-    stars: 0,
+    level: 1,
+    count: 0,     // 이 단계의 풍선 수
+    spawned: 0,   // 이 단계에서 지금까지 띄운 풍선 수
+    settled: 0,   // 이 단계에서 터졌거나 날아가 버린 풍선 수
+    popped: 0,    // 한 판 통틀어 터뜨린 풍선 수 (⭐)
+    lives: LIVES,
     running: false
   };
 
-  var timer = null;
+  var timer = null;       // 다음 풍선 띄우기
+  var bannerTimer = null; // 단계 안내를 띄워 두는 시간
 
-  buildLevelRow();
   fit();
 
   el.startBtn.addEventListener('click', function () {
     if (window.SFX) SFX.unlock();
     el.startOverlay.hidden = true;
-    startGame();
+    startRun();
   });
 
   el.againBtn.addEventListener('click', function () {
     el.endOverlay.hidden = true;
-    startGame();
+    startRun();
   });
 
   // 🏠 는 언제나 홈으로, '뒤로' 는 이 놀이가 들어 있는 과목 페이지로 갑니다.
@@ -76,62 +87,50 @@
     btn.addEventListener('click', function () { window.location.href = href; });
   }
 
-  function level() {
-    for (var i = 0; i < LEVELS.length; i++) {
-      if (LEVELS[i].value === state.speed) return LEVELS[i];
-    }
-    return LEVELS[0];
-  }
-
-  function buildLevelRow() {
-    el.levelRow.innerHTML = '';
-
-    LEVELS.forEach(function (lv) {
-      var b = document.createElement('button');
-      b.className = 'level-btn' + (lv.value === state.speed ? ' on' : '');
-      b.innerHTML = lv.text;
-      b.addEventListener('click', function () {
-        state.speed = lv.value;
-        UI.saveValue('daniland.balloonSpeed', lv.value);
-        Array.prototype.forEach.call(el.levelRow.children, function (x) {
-          x.classList.toggle('on', x === b);
-        });
-      });
-      el.levelRow.appendChild(b);
-    });
-  }
-
   /* ---------- 한 판 ---------- */
 
-  function startGame() {
+  function startRun() {
     clearTimeout(timer);
-    el.field.innerHTML = '';
+    clearTimeout(bannerTimer);
+    hideBanner();
 
+    state.level = 1;
+    state.popped = 0;
+    state.lives = LIVES;
+
+    updateScore();
+    updateLives();
+    startLevel(1);
+  }
+
+  function startLevel(n) {
+    el.field.innerHTML = '';
+    el.field.classList.remove('stopped');
+
+    state.count = levelCount(n);
     state.spawned = 0;
-    state.done = 0;
-    state.stars = 0;
+    state.settled = 0;
     state.running = true;
 
+    el.levelChip.textContent = n + '단계';
     el.bar.style.width = '0%';
-    updateScore();
     fit();
 
     spawnNext();
   }
 
   function spawnNext() {
-    if (!state.running || state.spawned >= TOTAL) return;
+    if (!state.running || state.spawned >= state.count) return;
 
     state.spawned += 1;
     makeBalloon();
 
-    if (state.spawned < TOTAL) {
-      timer = setTimeout(spawnNext, level().gap);
+    if (state.spawned < state.count) {
+      timer = setTimeout(spawnNext, levelGap(state.level));
     }
   }
 
   function makeBalloon() {
-    var lv = level();
     var width = el.field.clientWidth;
 
     var balloon = document.createElement('div');
@@ -139,7 +138,7 @@
     balloon.style.left = UI.randInt(8, Math.max(8, width - BALLOON_W - 8)) + 'px';
     // 화면 아래에서 시작해 위로 완전히 빠져나갈 만큼 올라갑니다.
     balloon.style.setProperty('--rise', (el.field.clientHeight + 300) + 'px');
-    balloon.style.animationDuration = lv.rise + 's';
+    balloon.style.animationDuration = levelRise(state.level) + 's';
 
     var sway = document.createElement('div');
     sway.className = 'sway';
@@ -174,12 +173,12 @@
   }
 
   function popBalloon(balloon) {
-    if (settle(balloon)) return;
+    if (!state.running || settle(balloon)) return;
 
     if (window.SFX) SFX.pop();
     UI.confettiAt(balloon);
 
-    state.stars += 1;
+    state.popped += 1;
     updateScore();
 
     balloon.classList.add('popped');
@@ -188,36 +187,90 @@
     step();
   }
 
+  // 놓친 풍선 — 하트가 하나 사라지고, 다 없어지면 게임 끝입니다.
   function escapeBalloon(balloon) {
     if (settle(balloon)) return;
     balloon.remove();
+    if (!state.running) return;
+
+    state.lives -= 1;
+    updateLives();
+    if (window.SFX) SFX.wrong();
+
+    if (state.lives <= 0) { gameOver(); return; }
     step();
   }
 
+  // 풍선 하나가 정리될 때마다 — 이 단계가 다 끝나면 다음 단계로.
   function step() {
-    state.done += 1;
-    el.bar.style.width = Math.round((state.done / TOTAL) * 100) + '%';
-    if (state.done >= TOTAL) finish();
+    state.settled += 1;
+    el.bar.style.width = Math.round((state.settled / state.count) * 100) + '%';
+    if (state.settled >= state.count) levelUp();
   }
 
-  function finish() {
+  function levelUp() {
     state.running = false;
     clearTimeout(timer);
 
     el.bar.style.width = '100%';
-    UI.saveBest('daniland.best.balloon', state.stars, TOTAL);
-
-    el.endStars.textContent = UI.starLine(state.stars, TOTAL);
-    el.endTitle.textContent = (state.stars === TOTAL)
-      ? PRAISE[UI.randInt(0, PRAISE.length - 1)]
-      : '잘했어요!';
-    el.endText.textContent = TOTAL + '개 중에 ' + state.stars + '개를 터뜨렸어요!';
-    el.endOverlay.hidden = false;
+    state.level += 1;
 
     if (window.SFX) SFX.finish();
+    showBanner('🎉 ' + state.level + '단계!');
+
+    bannerTimer = setTimeout(function () {
+      hideBanner();
+      startLevel(state.level);
+    }, 1300);
   }
 
-  function updateScore() { el.score.textContent = '⭐ ' + state.stars; }
+  function gameOver() {
+    state.running = false;
+    clearTimeout(timer);
+    clearTimeout(bannerTimer);
+    hideBanner();
+
+    // 아직 떠 있는 풍선은 그 자리에 멈춰 둡니다.
+    el.field.classList.add('stopped');
+
+    // 최고 기록은 '몇 단계까지 갔는가' 로 남깁니다.
+    var prev = UI.readBest(BEST_KEY);
+    var isBest = !prev || state.level > prev.stars;
+    UI.saveBest(BEST_KEY, state.level, state.level);
+
+    el.endStars.textContent = '🎈 ' + state.level + '단계';
+    el.endTitle.textContent = isBest ? '새 최고 기록! 🏆' : PRAISE[UI.randInt(0, PRAISE.length - 1)];
+    el.endText.textContent = state.level + '단계까지 갔어요. 풍선 ' + state.popped + '개를 터뜨렸어요!';
+    el.endOverlay.hidden = false;
+  }
+
+  function updateScore() { el.score.textContent = '⭐ ' + state.popped; }
+
+  function updateLives() {
+    el.lives.innerHTML = '';
+
+    for (var i = 0; i < LIVES; i++) {
+      var heart = document.createElement('span');
+      heart.textContent = '❤️';
+      if (i >= state.lives) heart.className = 'gone';
+      el.lives.appendChild(heart);
+    }
+
+    // 하트가 줄어든 것이 눈에 띄도록 한 번 흔들어 줍니다.
+    el.lives.classList.remove('hit');
+    void el.lives.offsetWidth;
+    if (state.lives < LIVES) el.lives.classList.add('hit');
+  }
+
+  function showBanner(text) {
+    el.banner.textContent = text;
+    el.banner.hidden = false;
+  }
+
+  function hideBanner() {
+    el.banner.hidden = true;
+    el.banner.textContent = '';
+  }
 
   /* ---------- 화면에 맞추기 ----------
    * 놀이판이 스크롤 없이 한 화면에 들어오게 합니다.

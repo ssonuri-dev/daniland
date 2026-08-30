@@ -213,6 +213,7 @@ window.LESSONS = [
  *  meta    : 카드 아래 한 줄 설명
  *  href    : 눌렀을 때 갈 주소
  *  bestKey : 최고 기록을 저장해 둔 이름 (없으면 ⭐ 를 안 보여줍니다)
+ *  bestUnit: 최고 기록을 '3/5' 가 아니라 '3단계' 처럼 보여 주고 싶을 때의 단위
  * ========================================================================= */
 
 window.PAGES = [
@@ -271,6 +272,7 @@ window.PAGES = [
     icon: '🎈',
     meta: '올라오는 풍선을 눌러요',
     href: 'balloon.html',
-    bestKey: 'daniland.best.balloon'
+    bestKey: 'daniland.best.balloon.level',
+    bestUnit: '단계'
   }
 ];
