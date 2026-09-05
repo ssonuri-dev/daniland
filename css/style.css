@@ -457,6 +457,90 @@ button {
   line-height: 1.3;
 }
 
+/* ---------- 들어올 때 비밀번호 ----------
+ * js/gate.js 가 이 화면을 만들어 <body> 맨 위에 붙입니다.
+ * 뒤의 내용이 비치면 안 되므로 배경을 불투명하게 둡니다.
+ * -------------------------------------------------------------------- */
+
+.gate {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 24px;
+  text-align: center;
+  background: linear-gradient(160deg, #fff6f9 0%, #f3f7ff 55%, #f6fff8 100%);
+  transition: opacity 0.3s ease;
+}
+
+.gate img {
+  width: 110px;
+  height: 110px;
+  object-fit: contain;
+}
+
+.gate h2 {
+  margin: 4px 0;
+  font-size: 30px;
+  color: var(--pink);
+}
+
+.gate.open { opacity: 0; pointer-events: none; }
+
+.gate.wrong { animation: gate-shake 0.45s ease; }
+
+@keyframes gate-shake {
+  0%, 100% { transform: translateX(0); }
+  25%      { transform: translateX(-10px); }
+  50%      { transform: translateX(10px); }
+  75%      { transform: translateX(-5px); }
+}
+
+/* 몇 자리를 눌렀는지 보여 주는 점 */
+.gate-dots {
+  display: flex;
+  gap: 14px;
+  margin: 10px 0 18px;
+}
+
+.gate-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: inset 0 2px 4px rgba(64, 50, 58, 0.12);
+}
+
+.gate-dot.on { background: var(--pink); box-shadow: none; }
+
+.gate-pad {
+  display: grid;
+  grid-template-columns: repeat(3, 78px);
+  gap: 12px;
+}
+
+.gate-key {
+  height: 78px;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--ink);
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: var(--shadow);
+}
+
+.gate-key:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(64, 50, 58, 0.12); }
+
+@media (max-height: 640px) {
+  .gate img { width: 76px; height: 76px; }
+  .gate-pad { grid-template-columns: repeat(3, 66px); gap: 10px; }
+  .gate-key { height: 66px; font-size: 24px; }
+}
+
 /* ---------- 폭죽 ---------- */
 
 .confetti {

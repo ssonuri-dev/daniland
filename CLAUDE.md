@@ -61,6 +61,10 @@ ES5 IIFE 로 감싸 `window` 에 전역을 붙이는 방식입니다. `import`/`
 | `SFX` | `js/sfx.js` | WebAudio 로 만든 효과음 (오디오 파일 없음) |
 | `VoicePicker` | `js/voicepicker.js` | 목소리·속도 고르는 패널 (게임 화면 공용) |
 
+`js/gate.js` 는 이 표에 없습니다 — 전역을 만들지 않고 `<body>` 맨 위에서 혼자 도는
+비밀번호 가림막이라 로드 순서와 상관없습니다. **새 HTML 페이지를 만들면 `<body>` 첫 줄에 이것부터
+넣으세요.** 진짜 인증이 아니라 문패라는 점도 그 파일 주석에 적혀 있습니다.
+
 ### 데이터가 화면을 만든다
 
 `js/data.js` 의 `LESSONS` 에 객체 하나를 넣으면 홈 카드·과목 카드·게임 화면이 자동으로 생깁니다.
@@ -115,6 +119,7 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.mode` `daniland.numMax` `daniland.showLabel` `daniland.balloonStart` | 마지막에 고른 설정 |
 | `daniland.rate` `daniland.voice.<lang>` | 목소리·속도 |
 | `daniland.drawer` | 그림 그리기 도장 서랍 접힘 상태 |
+| `daniland.pass` | 비밀번호를 맞힌 기기 표시 (`js/gate.js`) |
 
 ⚠️ **놀이(mode)를 새로 추가하면 `catalog.js` 의 `MODE_IDS` 배열에도 추가**해야 합니다.
 안 그러면 새 놀이 기록이 카드의 ⭐ 최고 기록 계산에서 조용히 빠집니다.
