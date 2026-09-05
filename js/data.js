@@ -218,6 +218,15 @@ window.LESSONS = [
 
 window.PAGES = [
   {
+    subject: '영어',
+    title: '마을 지도',
+    icon: '🗺️',
+    meta: '마을 시설 이름을 익혀요',
+    href: 'town.html',
+    bestKey: 'daniland.best.town'
+  },
+
+  {
     subject: '수학',
     title: '세어 보기',
     icon: '🔢',

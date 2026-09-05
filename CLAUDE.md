@@ -81,6 +81,7 @@ index.html            과목 카드            home.js
  └ subject.html?name=영어   수업·놀이 카드   subject.js
       ├ play.html?lesson=en-fruits          game.js     (수업 데이터 기반, 놀이 5종)
       ├ numbers.html?act=plus               numbers.js  (문제를 매번 생성, 놀이 4종)
+      ├ town.html                           town.js     (지도 그림 town.jpg 위, 놀이 3종)
       └ draw.html                           draw.js     (독립 — 다른 js 를 전혀 안 씀)
 ```
 
@@ -100,6 +101,8 @@ index.html            과목 카드            home.js
   `{ emoji, word, ko }` — 낱말 하나입니다. 문장이나 주고받는 대화는 여기에 담기지 않습니다.
   앞으로 붙일 **영어 대화 수업**이 그 경우라, `LESSONS` 를 확장하는 대신 `numbers.html` ·
   `draw.html` 처럼 페이지를 따로 만들고 `PAGES` 에 카드로 얹기로 정해 두었습니다.
+  **마을 시설 이름(`town.html`)이 그 첫 사례입니다** — 위치가 뜻을 갖는 어휘라 낱말 카드 대신
+  지도 그림 한 장 위에 건물 단추를 얹었습니다. 좌표는 `js/town.js` 의 `PLACES` 에 백분율로 있습니다.
 
 ### 화면에 맞추는 배치는 JS 가 한다
 
@@ -115,8 +118,10 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 |---|---|
 | `daniland.best.<lessonId>.<mode>` | 수업별·놀이별 최고 별 |
 | `daniland.best.numbers.<act>` | 수학 놀이별 최고 별 |
+| `daniland.best.town.<act>` | 마을 지도 놀이별 최고 별 (시작 화면 단추에 표시) |
+| `daniland.best.town` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.balloon.level` | 풍선 터뜨리기에서 도달한 최고 단계 |
-| `daniland.mode` `daniland.numMax` `daniland.showLabel` `daniland.balloonStart` | 마지막에 고른 설정 |
+| `daniland.mode` `daniland.numMax` `daniland.showLabel` `daniland.balloonStart` `daniland.townAct` | 마지막에 고른 설정 |
 | `daniland.rate` `daniland.voice.<lang>` | 목소리·속도 |
 | `daniland.drawer` | 그림 그리기 도장 서랍 접힘 상태 |
 | `daniland.pass` | 비밀번호를 맞힌 기기 표시 (`js/gate.js`) |
