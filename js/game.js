@@ -177,7 +177,7 @@
   });
 
   el.voiceBtn.addEventListener('click', function () {
-    VoicePicker.open({ lang: lesson.lang || 'en-US', sample: sampleWord });
+    VoicePicker.open({ lang: cardLang(), sample: sampleWord });
   });
 
   // PC에서는 1~8 숫자키로도 고를 수 있어요.
@@ -302,11 +302,13 @@
     return state.mode === 'word' || state.mode === 'sound';
   }
 
-  /* 글자 찾기에서 영어 대신 우리말 카드를 쓰는 수업인지 (data.js 의 wordKo).
+  /* 글자 카드에 영어 대신 우리말을 쓰는 수업인지 (data.js 의 wordKo).
    * 국기처럼 '그림을 보고 우리말 이름을 읽는' 연습에 씁니다.
-   * 듣고 찾기·짝 맞추기는 그대로 lesson.lang 을 씁니다 — 글자 찾기에만 걸립니다. */
+   * 글자 찾기와 짝 맞추기에 걸리고, 듣고 찾기는 그대로 lesson.lang(영어)을 씁니다
+   * — 영어를 듣고 국기를 찾는 연습은 남겨 둡니다. */
   function koCards() {
-    return state.mode === 'word' && lesson.wordKo === true;
+    if (lesson.wordKo !== true) return false;
+    return state.mode === 'word' || state.mode === 'memory';
   }
 
   function cardText(item) {
@@ -641,8 +643,8 @@
 
       var word = document.createElement('div');
       word.className = 'word';
-      word.textContent = item.word;
-      setWordLength(word, item.word);
+      word.textContent = cardText(item);
+      setWordLength(word, cardText(item));
 
       front.appendChild(art);
       front.appendChild(word);
@@ -748,7 +750,7 @@
         confettiAt(b.card);
 
         // 짝을 맞췄을 때만 단어를 읽어 줍니다.
-        if (window.TTS && TTS.supported) TTS.speak(a.item.word, lesson.lang || 'en-US');
+        if (window.TTS && TTS.supported) TTS.speak(cardText(a.item), cardLang());
 
         state.matched += 1;
         state.stars = state.matched;   // 진행 중에는 찾은 짝 수를 보여 줍니다.
@@ -828,7 +830,7 @@
   function sampleWord() {
     if (state.target) return cardText(state.target);
     var items = lesson.items || [];
-    return items.length ? items[0].word : 'hello';
+    return items.length ? cardText(items[0]) : 'hello';
   }
 
   /* ---------- 화면 갱신 ---------- */
