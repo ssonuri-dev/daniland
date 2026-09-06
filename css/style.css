@@ -26,6 +26,10 @@ html, body {
 
 body {
   font-family: 'Nanum Gothic', 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', sans-serif;
+  /* 나눔고딕은 자간이 넓고 줄이 붙는 편이라 조금 조여 주고 줄은 벌립니다.
+     낱말 카드(.choice .word)처럼 제 자간을 가진 곳은 그 값이 그대로 이깁니다. */
+  letter-spacing: -0.02em;
+  line-height: 1.5;
   color: var(--ink);
   background: linear-gradient(160deg, #fff6f9 0%, #f3f7ff 55%, #f6fff8 100%);
   background-attachment: fixed;
