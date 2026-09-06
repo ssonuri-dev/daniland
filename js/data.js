@@ -250,6 +250,15 @@ window.PAGES = [
   },
 
   {
+    subject: '세계',
+    title: '세계 지도',
+    icon: '🗺️',
+    meta: '나라 이름과 그곳에 있는 것',
+    href: 'world.html',
+    bestKey: 'daniland.best.world'
+  },
+
+  {
     subject: '수학',
     title: '세어 보기',
     icon: '🔢',

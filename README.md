@@ -139,11 +139,13 @@ daniland/
 ├─ play.html         게임 화면 (모든 수업 · 모든 놀이가 이 화면을 함께 씁니다)
 ├─ numbers.html      수학 놀이
 ├─ town.html         마을 지도 (영어)
+├─ world.html        세계 지도 (세계)
 ├─ draw.html         그림 그리기
 ├─ xylo.html         실로폰
 ├─ balloon.html      풍선 터뜨리기
 ├─ dani.png          마스코트 다니
 ├─ town.jpg          마을 지도 그림 (town.html 배경)
+├─ world.jpg         세계 지도 그림 (world.html 배경)
 ├─ css/style.css     전체 디자인
 ├─ js/
 │  ├─ data.js        ★ 수업 데이터 — 평소에 만질 파일은 여기뿐입니다
@@ -153,6 +155,7 @@ daniland/
 │  ├─ game.js        게임 진행 (듣고 찾기 / 글자 찾기 / 짝 맞추기)
 │  ├─ numbers.js     수학 놀이 (문제를 매번 새로 만듭니다)
 │  ├─ town.js        마을 지도 (지도 그림 위에 건물 단추를 얹습니다)
+│  ├─ world.js       세계 지도 (같은 얼개 — 다니가 비행기로 날아갑니다)
 │  ├─ draw.js        그림 그리기
 │  ├─ xylo.js        실로폰 (소리를 그 자리에서 만들어 냅니다)
 │  ├─ balloon.js     풍선 터뜨리기
@@ -173,8 +176,9 @@ index.html            🔤 영어   🔢 수학   🇰🇷 한글   🌍 세계 
         └ town.html                      마을 지도 (놀이는 시작 화면에서 고름)
    └ subject.html?name=수학      세어 보기 · 같은 개수 찾기 · 더하기 · 더 많은 것
         └ numbers.html?act=plus          누른 카드가 곧 놀이 (숫자 범위만 고름)
-   └ subject.html?name=세계      국기
+   └ subject.html?name=세계      국기 · 세계 지도
         └ play.html?lesson=world-flags   놀이를 고르고 난이도를 고름
+        └ world.html                     세계 지도 (놀이는 시작 화면에서 고름)
 ```
 
 ---

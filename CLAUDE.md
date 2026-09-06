@@ -82,6 +82,7 @@ index.html            과목 카드            home.js
       ├ play.html?lesson=en-fruits          game.js     (수업 데이터 기반, 놀이 5종)
       ├ numbers.html?act=plus               numbers.js  (문제를 매번 생성, 놀이 4종)
       ├ town.html                           town.js     (지도 그림 town.jpg 위, 놀이 3종)
+      ├ world.html                          world.js    (지도 그림 world.jpg 위, 놀이 3종)
       └ draw.html                           draw.js     (독립 — 다른 js 를 전혀 안 씀)
 ```
 
@@ -103,6 +104,9 @@ index.html            과목 카드            home.js
   `draw.html` 처럼 페이지를 따로 만들고 `PAGES` 에 카드로 얹기로 정해 두었습니다.
   **마을 시설 이름(`town.html`)이 그 첫 사례입니다** — 위치가 뜻을 갖는 어휘라 낱말 카드 대신
   지도 그림 한 장 위에 건물 단추를 얹었습니다. 좌표는 `js/town.js` 의 `PLACES` 에 백분율로 있습니다.
+  **나라 이름(`world.html`)이 두 번째**로, 같은 얼개를 그대로 씁니다 (`js/world.js` 의 `COUNTRIES`).
+  다른 점은 길이 없어 다니가 곧장 날아간다는 것뿐입니다. 지도 그림을 새로 바꾸면
+  `box` 와 `x`/`y` 만 다시 재면 되고, **`box` 끼리 겹치면 위에 그려진 단추가 아래 것을 가립니다.**
 
 ### 화면에 맞추는 배치는 JS 가 한다
 
@@ -120,8 +124,10 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.numbers.<act>` | 수학 놀이별 최고 별 |
 | `daniland.best.town.<act>` | 마을 지도 놀이별 최고 별 (시작 화면 단추에 표시) |
 | `daniland.best.town` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
+| `daniland.best.world.<act>` | 세계 지도 놀이별 최고 별 |
+| `daniland.best.world` | 그중 제일 잘한 기록 |
 | `daniland.best.balloon.level` | 풍선 터뜨리기에서 도달한 최고 단계 |
-| `daniland.mode` `daniland.numMax` `daniland.showLabel` `daniland.balloonStart` `daniland.townAct` | 마지막에 고른 설정 |
+| `daniland.mode` `daniland.numMax` `daniland.showLabel` `daniland.balloonStart` `daniland.townAct` `daniland.worldAct` | 마지막에 고른 설정 |
 | `daniland.rate` `daniland.voice.<lang>` | 목소리·속도 |
 | `daniland.drawer` | 그림 그리기 도장 서랍 접힘 상태 |
 | `daniland.pass` | 비밀번호를 맞힌 기기 표시 (`js/gate.js`) |

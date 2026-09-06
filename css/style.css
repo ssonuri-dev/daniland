@@ -1315,15 +1315,18 @@ button {
 }
 
 /* ---------- 마을 지도 ----------
- * 지도는 그림(town.jpg) 한 장이고, 건물마다 투명한 단추(.town-spot)를 얹어 놓았습니다.
+ * 마을 지도(town.html)와 세계 지도(world.html)가 같은 규칙을 씁니다.
+ * 지도는 그림 한 장이고, 그 위에 투명한 단추(.town-spot / .world-spot)를 얹어 놓았습니다.
  * 자리는 모두 백분율이라 지도가 커지고 작아져도 그대로 따라갑니다.
- * 지도 크기(정사각형)는 js/town.js 의 fitMap() 이 화면에 맞춰 정합니다.
+ * 지도 크기(정사각형)는 각 페이지의 fitMap() 이 화면에 맞춰 정합니다.
  * ------------------------------------------------------------------------ */
 
-.town-page { padding-bottom: 14px; }
+.town-page,
+.world-page { padding-bottom: 14px; }
 
 /* 무엇을 찾아야 하는지 — 지도를 크게 두려고 한 줄로만 씁니다 */
-.town-quest {
+.town-quest,
+.world-quest {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1332,31 +1335,44 @@ button {
   margin: 0 0 8px;
 }
 
-.town-item { font-size: 40px; line-height: 1; }
-.town-item[hidden] { display: none; }
+.town-item,
+.world-item { font-size: 40px; line-height: 1; }
+.town-item[hidden],
+.world-item[hidden] { display: none; }
 
-.town-label {
+.town-label,
+.world-label {
   font-size: 18px;
   font-weight: 700;
   color: var(--ink);
 }
 
-.town-quest .speak-btn { margin-top: 0; }
-.town-quest .speak-btn[hidden] { display: none; }
+.town-quest .speak-btn,
+.world-quest .speak-btn { margin-top: 0; }
+.town-quest .speak-btn[hidden],
+.world-quest .speak-btn[hidden] { display: none; }
 
-.town-map {
+.town-map,
+.world-map {
   position: relative;
   margin: 0 auto;
-  background: url('../town.jpg') center / cover no-repeat #cdeb8b;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
   border-radius: 24px;
   box-shadow: var(--shadow);
   overflow: hidden;
   touch-action: manipulation;
 }
 
-.town-spots { position: absolute; inset: 0; }
+.town-map  { background-color: #cdeb8b; background-image: url('../town.jpg'); }
+.world-map { background-color: #29a8ec; background-image: url('../world.jpg'); }
 
-.town-spot {
+.town-spots,
+.world-spots { position: absolute; inset: 0; }
+
+.town-spot,
+.world-spot {
   position: absolute;
   padding: 0;
   background: transparent;
@@ -1364,21 +1380,25 @@ button {
   transition: background 0.25s ease;
 }
 
-.town-spot.correct {
+.town-spot.correct,
+.world-spot.correct {
   background: rgba(109, 212, 126, 0.30);
   box-shadow: inset 0 0 0 5px var(--green);
   animation: pop 0.45s ease;
 }
 
-.town-spot.wrong {
+.town-spot.wrong,
+.world-spot.wrong {
   box-shadow: inset 0 0 0 5px var(--pink);
   animation: shake 0.4s ease;
 }
 
 /* 틀린 곳은 지우지 않고 흐리게 남깁니다 */
-.town-spot.dim { background: rgba(64, 50, 58, 0.45); }
+.town-spot.dim,
+.world-spot.dim { background: rgba(64, 50, 58, 0.45); }
 
-.town-spot .mark {
+.town-spot .mark,
+.world-spot .mark {
   position: absolute;
   top: 4px;
   right: 8px;
@@ -1402,6 +1422,42 @@ button {
 @keyframes town-bob {
   0%, 100% { transform: translate(-50%, -78%); }
   50%      { transform: translate(-50%, -84%); }
+}
+
+/* 세계 지도의 다니 — 걷지 않고 비행기를 타고 날아갑니다.
+ * 비행기(이모지)는 em 이라 지도 글자 크기를 따라갑니다 (world.js 의 fitMap() 이 정합니다). */
+.world-dani {
+  position: absolute;
+  width: 15%;
+  transform: translate(-50%, -55%);
+  transition-property: left, top;
+  transition-timing-function: ease-in-out;
+  transition-duration: 400ms;
+  pointer-events: none;
+}
+
+.world-dani img {
+  display: block;
+  width: 100%;
+  filter: drop-shadow(0 4px 6px rgba(64, 50, 58, 0.35));
+}
+
+.world-dani .plane {
+  position: absolute;
+  left: -34%;
+  top: 42%;
+  font-size: 1.1em;
+  line-height: 1;
+}
+
+/* 왼쪽으로 날아갈 때는 비행기를 뒤집습니다 */
+.world-dani.back .plane { transform: scaleX(-1); }
+
+.world-dani.flying img { animation: world-bob 0.6s ease-in-out infinite; }
+
+@keyframes world-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8%); }
 }
 
 /* 시작 화면에서 놀이 단추 아래에 붙는 최고 기록 */
