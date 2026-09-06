@@ -35,6 +35,7 @@ window.SUBJECTS = [
   { name: '영어', icon: '🔤', desc: '듣고 찾고 짝 맞춰요' },
   { name: '수학', icon: '🔢', desc: '세고 더해요' },
   { name: '한글', icon: '🇰🇷', desc: '글자를 익혀요' },
+  { name: '세계', icon: '🌍', desc: '나라를 만나요' },
   { name: '놀이', icon: '🎨', desc: '자유롭게 놀아요' }
 ];
 
@@ -198,6 +199,28 @@ window.LESSONS = [
       { emoji: '🍑', word: '복숭아',   ko: '복숭아' },
       { emoji: '🍍', word: '파인애플', ko: '파인애플' },
       { emoji: '🍐', word: '배',       ko: '배' }
+    ]
+  },
+
+  {
+    id: 'world-flags',
+    subject: '세계',
+    title: '국기',
+    icon: '🚩',
+    lang: 'en-US',
+    items: [
+      { emoji: '🇰🇷', word: 'Korea',     ko: '대한민국' },
+      { emoji: '🇯🇵', word: 'Japan',     ko: '일본' },
+      { emoji: '🇨🇳', word: 'China',     ko: '중국' },
+      { emoji: '🇮🇳', word: 'India',     ko: '인도' },
+      { emoji: '🇪🇬', word: 'Egypt',     ko: '이집트' },
+      { emoji: '🇰🇪', word: 'Kenya',     ko: '케냐' },
+      { emoji: '🇫🇷', word: 'France',    ko: '프랑스' },
+      { emoji: '🇬🇧', word: 'Britain',   ko: '영국' },
+      { emoji: '🇮🇹', word: 'Italy',     ko: '이탈리아' },
+      { emoji: '🇺🇸', word: 'America',   ko: '미국' },
+      { emoji: '🇧🇷', word: 'Brazil',    ko: '브라질' },
+      { emoji: '🇦🇺', word: 'Australia', ko: '호주' }
     ]
   }
 ];
