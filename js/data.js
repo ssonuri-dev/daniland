@@ -60,7 +60,13 @@ window.LESSONS = [
       { emoji: '🍑', word: 'peach',      ko: '복숭아' },
       { emoji: '🍍', word: 'pineapple',  ko: '파인애플' },
       { emoji: '🍐', word: 'pear',       ko: '배' },
-      { emoji: '🥝', word: 'kiwi',       ko: '키위' }
+      { emoji: '🥝', word: 'kiwi',       ko: '키위' },
+      { emoji: '🍒', word: 'cherry',     ko: '체리' },
+      { emoji: '🥭', word: 'mango',      ko: '망고' },
+      { emoji: '🍋', word: 'lemon',      ko: '레몬' },
+      { emoji: '🫐', word: 'blueberry',  ko: '블루베리' },
+      { emoji: '🍈', word: 'melon',      ko: '멜론' },
+      { emoji: '🥥', word: 'coconut',    ko: '코코넛' }
     ]
   },
 
@@ -201,7 +207,15 @@ window.LESSONS = [
       { emoji: '🍉', word: '수박',     ko: '수박' },
       { emoji: '🍑', word: '복숭아',   ko: '복숭아' },
       { emoji: '🍍', word: '파인애플', ko: '파인애플' },
-      { emoji: '🍐', word: '배',       ko: '배' }
+      { emoji: '🍐', word: '배',       ko: '배' },
+      { emoji: '🍊', word: '오렌지',   ko: '오렌지' },
+      { emoji: '🥝', word: '키위',     ko: '키위' },
+      { emoji: '🍒', word: '체리',     ko: '체리' },
+      { emoji: '🥭', word: '망고',     ko: '망고' },
+      { emoji: '🍋', word: '레몬',     ko: '레몬' },
+      { emoji: '🫐', word: '블루베리', ko: '블루베리' },
+      { emoji: '🍈', word: '멜론',     ko: '멜론' },
+      { emoji: '🥥', word: '코코넛',   ko: '코코넛' }
     ]
   },
 
