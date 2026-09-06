@@ -35,7 +35,15 @@
       row: 1, box: [0.5, 1.5, 23.5, 28], x: 12, y: 26,
       items: [
         { emoji: '💊', say: 'I am sick. I need some medicine.' },
-        { emoji: '🩹', say: 'I hurt my knee.' }
+        { emoji: '🩹', say: 'I hurt my knee.' },
+        { emoji: '🤒', say: 'I have a fever.' },
+        { emoji: '🦷', say: 'My tooth hurts.' },
+        { emoji: '🚑', say: 'We need an ambulance.' },
+        { emoji: '🧑‍⚕️', say: 'I want to see the doctor.' },
+        { emoji: '🤧', say: 'I have a bad cold.' },
+        { emoji: '💉', say: 'It is time for my shot.' },
+        { emoji: '🩺', say: 'The baby needs a check-up.' },
+        { emoji: '🤕', say: 'I bumped my head.' }
       ]
     },
     {
@@ -43,7 +51,15 @@
       row: 1, box: [27.5, 1.5, 24.5, 28], x: 40, y: 26,
       items: [
         { emoji: '🎒', say: 'It is time to study.' },
-        { emoji: '👩‍🏫', say: 'I want to see my teacher.' }
+        { emoji: '👩‍🏫', say: 'I want to see my teacher.' },
+        { emoji: '✏️', say: 'I forgot my pencil.' },
+        { emoji: '📚', say: 'I want to read a new book.' },
+        { emoji: '🔔', say: 'The bell is ringing.' },
+        { emoji: '🖍️', say: 'I want to draw with crayons.' },
+        { emoji: '🧮', say: 'I want to learn numbers.' },
+        { emoji: '🧑‍🎓', say: 'I want to learn English.' },
+        { emoji: '🎨', say: 'We have art class today.' },
+        { emoji: '🍱', say: 'I want to eat lunch with my class.' }
       ]
     },
     {
@@ -51,7 +67,15 @@
       row: 1, box: [53.5, 1.5, 20.5, 28], x: 63.5, y: 26,
       items: [
         { emoji: '🔥', say: 'There is a fire!' },
-        { emoji: '🧑‍🚒', say: 'We need a fire fighter.' }
+        { emoji: '🧑‍🚒', say: 'We need a fire fighter.' },
+        { emoji: '🚒', say: 'I want to see the fire truck.' },
+        { emoji: '🧯', say: 'We need a fire extinguisher.' },
+        { emoji: '💧', say: 'They spray water on the fire.' },
+        { emoji: '🪜', say: 'They have a very big ladder.' },
+        { emoji: '🐈', say: 'A cat is stuck in a tree.' },
+        { emoji: '⛑️', say: 'I want to try the red helmet.' },
+        { emoji: '📞', say: 'We call 119 when there is a fire.' },
+        { emoji: '🚨', say: 'The siren is very loud.' }
       ]
     },
     {
@@ -59,7 +83,15 @@
       row: 1, box: [77.5, 1.5, 22, 28], x: 88.5, y: 26,
       items: [
         { emoji: '👮', say: 'We need a police officer.' },
-        { emoji: '🐶', say: 'I lost my puppy.' }
+        { emoji: '🐶', say: 'I lost my puppy.' },
+        { emoji: '🚓', say: 'I want to see the police car.' },
+        { emoji: '👜', say: 'I lost my bag.' },
+        { emoji: '🛴', say: 'Someone took my scooter.' },
+        { emoji: '🆘', say: 'I need help right now.' },
+        { emoji: '😰', say: 'I am lost. Where is my mom?' },
+        { emoji: '👛', say: 'I found a wallet on the street.' },
+        { emoji: '🚦', say: 'That car did not stop at the light.' },
+        { emoji: '🐕‍🦺', say: 'I want to meet the police dog.' }
       ]
     },
 
@@ -69,7 +101,14 @@
       items: [
         { emoji: '🍞', say: 'I want some bread.' },
         { emoji: '🎂', say: 'I want a birthday cake.' },
-        { emoji: '🥐', say: 'I want a croissant.' }
+        { emoji: '🥐', say: 'I want a croissant.' },
+        { emoji: '🧁', say: 'I want a cupcake.' },
+        { emoji: '🍪', say: 'I want some cookies.' },
+        { emoji: '🥖', say: 'We need a long baguette.' },
+        { emoji: '🍩', say: 'I want a doughnut.' },
+        { emoji: '🥯', say: 'I want a bagel.' },
+        { emoji: '🥧', say: 'I want a warm apple pie.' },
+        { emoji: '👨‍🍳', say: 'The baker is making bread.' }
       ]
     },
     {
@@ -78,7 +117,14 @@
       items: [
         { emoji: '⚽', say: 'I want to play soccer.' },
         { emoji: '🦆', say: 'I want to see the ducks.' },
-        { emoji: '🛝', say: 'I want to play on the slide.' }
+        { emoji: '🛝', say: 'I want to play on the slide.' },
+        { emoji: '🌳', say: 'I want to sit under a big tree.' },
+        { emoji: '🪁', say: 'I want to fly my kite.' },
+        { emoji: '🚲', say: 'I want to ride my bike.' },
+        { emoji: '🧺', say: 'We want to have a picnic.' },
+        { emoji: '🌸', say: 'The flowers are so pretty.' },
+        { emoji: '🏃', say: 'I want to run and run.' },
+        { emoji: '🦋', say: 'I want to see the butterflies.' }
       ]
     },
     {
@@ -87,7 +133,14 @@
       items: [
         { emoji: '🍎', say: 'I want to buy some apples.' },
         { emoji: '🥕', say: 'We need carrots.' },
-        { emoji: '🥛', say: 'We need some milk.' }
+        { emoji: '🥛', say: 'We need some milk.' },
+        { emoji: '🍌', say: 'I want bananas.' },
+        { emoji: '🥚', say: 'We need eggs.' },
+        { emoji: '🧀', say: 'I want some cheese.' },
+        { emoji: '🍇', say: 'I want grapes.' },
+        { emoji: '🥔', say: 'We need potatoes.' },
+        { emoji: '🛒', say: 'Mom needs a shopping cart.' },
+        { emoji: '🍉', say: 'I want a big watermelon.' }
       ]
     },
 
@@ -97,7 +150,14 @@
       items: [
         { emoji: '🧸', say: 'I want a teddy bear.' },
         { emoji: '🚗', say: 'I want a toy car.' },
-        { emoji: '🧩', say: 'I want a puzzle.' }
+        { emoji: '🧩', say: 'I want a puzzle.' },
+        { emoji: '🪀', say: 'I want a yo-yo.' },
+        { emoji: '🎈', say: 'I want a big balloon.' },
+        { emoji: '🤖', say: 'I want a robot.' },
+        { emoji: '🪆', say: 'I want a doll.' },
+        { emoji: '🏀', say: 'I want a basketball.' },
+        { emoji: '🧱', say: 'I want building blocks.' },
+        { emoji: '🚂', say: 'I want a toy train.' }
       ]
     },
     {
@@ -105,7 +165,15 @@
       row: 3, box: [26.5, 70, 48, 29.5], x: 50.5, y: 95,
       items: [
         { emoji: '😴', say: 'I am sleepy.' },
-        { emoji: '🛏️', say: 'It is time for bed.' }
+        { emoji: '🛏️', say: 'It is time for bed.' },
+        { emoji: '🍽️', say: 'It is dinner time.' },
+        { emoji: '🛁', say: 'I want to take a bath.' },
+        { emoji: '📺', say: 'I want to watch TV.' },
+        { emoji: '👵', say: 'Grandma is waiting for me.' },
+        { emoji: '🚽', say: 'I need to use the bathroom.' },
+        { emoji: '🌙', say: 'It is dark. Let us go home.' },
+        { emoji: '🎮', say: 'I want to play at home.' },
+        { emoji: '🏡', say: 'I want to go home now.' }
       ]
     },
     {
@@ -114,7 +182,14 @@
       items: [
         { emoji: '👕', say: 'I need a new shirt.' },
         { emoji: '👗', say: 'I want a pretty dress.' },
-        { emoji: '🧢', say: 'I need a cap.' }
+        { emoji: '🧢', say: 'I need a cap.' },
+        { emoji: '👟', say: 'I need new shoes.' },
+        { emoji: '🧥', say: 'It is cold. I need a coat.' },
+        { emoji: '🧤', say: 'I need warm gloves.' },
+        { emoji: '🧣', say: 'I want a long scarf.' },
+        { emoji: '👖', say: 'My pants are too small.' },
+        { emoji: '🧦', say: 'I need new socks.' },
+        { emoji: '👒', say: 'I want a summer hat.' }
       ]
     }
   ];
@@ -139,7 +214,7 @@
     questLabel: document.getElementById('questLabel'),
     speakBtn: document.getElementById('speakBtn'),
     voiceBtn: document.getElementById('voiceBtn'),
-    homeBtn: document.getElementById('homeBtn'),
+    backBtn: document.getElementById('backBtn'),
 
     startOverlay: document.getElementById('startOverlay'),
     modeRow: document.getElementById('modeRow'),
@@ -167,6 +242,7 @@
     prompt: '',
     firstTry: true,
     locked: false,
+    deck: [],                          // 이번 판에 아직 안 나온 곳들
     at: home,                          // 다니가 지금 서 있는 곳
     pos: { x: home.x, y: home.y },
     visited: {}                        // 구경하기에서 눌러 본 곳
@@ -199,8 +275,8 @@
     VoicePicker.open({ lang: LANG, sample: function () { return state.prompt || 'Where is the bakery?'; } });
   });
 
-  // 🏠 는 언제나 홈으로, '다른 놀이 고르기' 는 이 놀이가 들어 있는 과목 페이지로 갑니다.
-  bindGo(el.homeBtn, 'index.html');
+  // 맨 위 ← 는 방금 지나온 과목 페이지로, 결과 화면의 🏠 만 홈으로 갑니다.
+  bindGo(el.backBtn, backHref());
   bindGo(el.endHome, 'index.html');
   bindGo(el.startHome, backHref());
   bindGo(el.endModes, backHref());
@@ -431,6 +507,7 @@
     state.locked = false;
     state.target = null;
     state.item = null;
+    state.deck = [];
 
     if (state.act === 'look') {
       el.bar.style.width = '0%';
@@ -454,7 +531,7 @@
 
     var next = pickTarget();
     state.target = next;
-    state.item = (state.act === 'errand') ? pick(next.items) : null;
+    state.item = (state.act === 'errand') ? pickItem(next) : null;
 
     if (state.act === 'errand') {
       state.prompt = state.item.say + ' Where do we go?';
@@ -472,15 +549,25 @@
     setTimeout(speakPrompt, 400);
   }
 
-  // 같은 곳이 연달아 나오지 않게 합니다.
+  /* 열 곳을 섞어 놓고 한 장씩 꺼내 씁니다 — 한 판(10문제)에 모든 곳이 꼭 한 번씩 나옵니다.
+   * 매번 무작위로 고르면 같은 곳이 두세 번 나오고 아예 안 나오는 곳이 생깁니다. */
   function pickTarget() {
-    var p = pick(PLACES);
-    while (state.target && p.id === state.target.id) p = pick(PLACES);
-    return p;
+    if (!state.deck.length) {
+      state.deck = UI.shuffle(PLACES.slice());
+
+      // 판이 넘어갈 때 같은 곳이 연달아 나오지 않게 한 장 밀어 둡니다.
+      if (state.target && state.deck[0].id === state.target.id) {
+        state.deck.push(state.deck.shift());
+      }
+    }
+    return state.deck.shift();
   }
 
-  function pick(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
+  /* 심부름 문장도 장소마다 섞어 놓고 차례로 씁니다.
+   * 세 문장을 다 쓰기 전에는 같은 문장이 다시 나오지 않습니다. */
+  function pickItem(place) {
+    if (!place.bag || !place.bag.length) place.bag = UI.shuffle(place.items.slice());
+    return place.bag.shift();
   }
 
   /* ---------- 눌렀을 때 ---------- */

@@ -39,7 +39,7 @@
     levelChip: document.getElementById('levelChip'),
     lives: document.getElementById('lives'),
     banner: document.getElementById('banner'),
-    homeBtn: document.getElementById('homeBtn'),
+    backBtn: document.getElementById('backBtn'),
 
     startOverlay: document.getElementById('startOverlay'),
     startBtn: document.getElementById('startBtn'),
@@ -83,8 +83,8 @@
     startRun();
   });
 
-  // 🏠 는 언제나 홈으로, '뒤로' 는 이 놀이가 들어 있는 과목 페이지로 갑니다.
-  bindGo(el.homeBtn, 'index.html');
+  // 맨 위 ← 도, '뒤로' 도 이 놀이가 들어 있는 과목 페이지로 갑니다.
+  bindGo(el.backBtn, 'subject.html?name=' + encodeURIComponent('놀이'));
   bindGo(el.startHome, 'subject.html?name=' + encodeURIComponent('놀이'));
   bindGo(el.endHome, 'subject.html?name=' + encodeURIComponent('놀이'));
 

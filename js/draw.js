@@ -381,8 +381,8 @@
     a.click();
   });
 
-  document.getElementById('homeBtn').addEventListener('click', function () {
-    window.location.href = 'index.html';
+  document.getElementById('backBtn').addEventListener('click', function () {
+    window.location.href = 'subject.html?name=' + encodeURIComponent('놀이');
   });
 
   /* ---------- 그리기 ---------- */

@@ -76,7 +76,7 @@
     labelToggle: document.getElementById('labelToggle'),
     voiceBtn: document.getElementById('voiceBtn'),
     notice: document.getElementById('notice'),
-    homeBtn: document.getElementById('homeBtn'),
+    backBtn: document.getElementById('backBtn'),
 
     startOverlay: document.getElementById('startOverlay'),
     startTitle: document.getElementById('startTitle'),
@@ -847,11 +847,11 @@
     return null;
   }
 
-  // 🏠 는 언제나 홈으로, '← 뒤로' 는 방금 지나온 과목 페이지로 갑니다.
+  // ← 는 방금 지나온 과목 페이지로 돌아갑니다 (거기서 한 번 더 누르면 홈).
   function bindHome() {
     var back = (lesson && window.Catalog) ? Catalog.href(lesson.subject) : 'index.html';
 
-    go(el.homeBtn, 'index.html');
+    go(el.backBtn, back);
     go(el.startHome, back);
     go(el.endHome, back);
 

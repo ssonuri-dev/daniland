@@ -40,7 +40,7 @@
     score: document.getElementById('score'),
     questLabel: document.getElementById('questLabel'),
     voiceBtn: document.getElementById('voiceBtn'),
-    homeBtn: document.getElementById('homeBtn'),
+    backBtn: document.getElementById('backBtn'),
 
     startOverlay: document.getElementById('startOverlay'),
     startTitle: document.getElementById('startTitle'),
@@ -95,8 +95,8 @@
     VoicePicker.open({ lang: LANG, sample: function () { return state.prompt || '하나 둘 셋'; } });
   });
 
-  // 🏠 는 언제나 홈으로, '다른 놀이 고르기' 는 이 놀이가 들어 있는 과목 페이지로 갑니다.
-  bindGo(el.homeBtn, 'index.html');
+  // 맨 위 ← 와 '다른 놀이 고르기' 는 이 놀이가 들어 있는 과목 페이지로, 🏠 만 홈으로 갑니다.
+  bindGo(el.backBtn, backHref());
   bindGo(el.endHome, 'index.html');
   bindGo(el.startHome, backHref());
 
