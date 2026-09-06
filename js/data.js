@@ -387,7 +387,7 @@ window.LESSONS = [
     id: 'ko-school',
     subject: '한글',
     title: '유치원 물건',
-    icon: '✏️',
+    icon: '🎒',
     lang: 'ko-KR',
     items: [
       { emoji: '✏️', word: '연필',   ko: '연필' },
@@ -679,6 +679,15 @@ window.PAGES = [
     meta: '획순대로 따라 써요',
     href: 'write.html',
     bestKey: 'daniland.best.write'
+  },
+
+  {
+    subject: '한글',
+    title: '글자 만들기',
+    icon: '🧩',
+    meta: '자음과 모음을 붙여요',
+    href: 'make.html',
+    bestKey: 'daniland.best.make'
   },
 
   {

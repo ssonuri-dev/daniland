@@ -21,7 +21,7 @@
   var ROUNDS = 8;          // 한 판에 쓸 글자(낱말) 수
   var LANG = 'ko-KR';
   var CELL_MIN = 120;      // 칸이 이보다 작아지면 손가락으로 못 씁니다
-  var CELL_MAX = 320;
+  var CELL_MAX = 420;
   var BORDER = 4;          // css 의 .write-cell 테두리 두께
   var PRAISE = ['참 잘했어요!', '멋져요!', '최고예요!', '대단해요!', '와, 다 썼어요!'];
 
