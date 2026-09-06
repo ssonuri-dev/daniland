@@ -1499,3 +1499,63 @@ button {
   font-size: 11px;
   color: var(--yellow);
 }
+
+/* ---------- 글자 쓰기 (write.html) ---------- */
+
+.write-page { padding-bottom: 14px; }
+
+.write-row {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+/* 칸 크기(가로·세로)는 js/write.js 의 fitCells() 가 화면에 맞춰 정합니다.
+   여기서 width/height 를 덮어쓰면 그 계산이 깨집니다 (테두리 4px 도 계산에 들어 있어요). */
+.write-cell {
+  position: relative;
+  background: #fff;
+  border: 4px solid var(--pink-soft);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: border-color 160ms;
+}
+
+.write-cell.on    { border-color: var(--blue); }
+.write-cell.done  { border-color: var(--green); }
+.write-cell.shake { animation: shake 0.4s; }
+
+.write-cell canvas {
+  display: block;
+  touch-action: none;    /* 손가락으로 그을 때 화면이 따라 움직이지 않게 */
+}
+
+.write-art {
+  margin-top: 2px;
+  font-size: 54px;
+  line-height: 1.1;
+}
+
+.write-hint {
+  min-height: 22px;
+  margin-top: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+/* 도구 단추가 다섯 개라 줄로 흘려 놓습니다 */
+.write-page .tools {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* 🔊 를 누르는 동안 단추가 뛰게 (.speak-btn 과 같은 효과) */
+.chip.speaking { animation: pulse 0.7s ease-in-out infinite; }

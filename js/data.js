@@ -673,6 +673,15 @@ window.PAGES = [
   },
 
   {
+    subject: '한글',
+    title: '글자 쓰기',
+    icon: '✏️',
+    meta: '획순대로 따라 써요',
+    href: 'write.html',
+    bestKey: 'daniland.best.write'
+  },
+
+  {
     subject: '수학',
     title: '세어 보기',
     icon: '🔢',

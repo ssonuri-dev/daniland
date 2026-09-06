@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#ff8fab">
+  <title>글자 쓰기 · 다니랜드 ✏️</title>
+  <link rel="icon" href="dani.png">
+  <!-- 구글 웹폰트: 제목은 Jua, 본문은 나눔고딕 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Gothic:wght@400;700;800&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 들어올 때 비밀번호 (문패입니다 — js/gate.js 주석 참고) -->
+  <script src="js/gate.js"></script>
+
+  <div class="wrap write-page">
+    <div class="topbar">
+      <button class="icon-btn" id="backBtn" title="뒤로">←</button>
+      <div class="progress"><div class="progress-bar" id="bar"></div></div>
+      <div class="score" id="score">⭐ 0</div>
+    </div>
+
+    <div class="quest">
+      <div class="label" id="questLabel">글자를 따라 써 보세요</div>
+      <div id="stage"></div>
+    </div>
+
+    <div class="write-row" id="cells"></div>
+
+    <div class="write-hint" id="hint"></div>
+
+    <div class="tools">
+      <button class="chip" id="showBtn">✍️ 어떻게 쓸까</button>
+      <button class="chip" id="soundBtn">🔊 소리</button>
+      <button class="chip" id="clearBtn">🗑️ 다시</button>
+      <button class="chip" id="skipBtn" hidden>▶ 넘어가기</button>
+      <button class="chip" id="voiceBtn">🎤 목소리</button>
+    </div>
+  </div>
+
+  <!-- 시작 화면 -->
+  <div class="overlay" id="startOverlay">
+    <img src="dani.png" alt="다니">
+    <h2>✏️ 글자 쓰기</h2>
+
+    <p class="hint">무엇을 써 볼까요?</p>
+    <div class="mode-row" id="setRow"></div>
+
+    <p class="hint" id="setHint"></p>
+
+    <button class="big-btn" id="startBtn">시작하기 ▶</button>
+    <button class="big-btn ghost" id="startHome">← 뒤로</button>
+  </div>
+
+  <!-- 결과 화면 -->
+  <div class="overlay" id="endOverlay" hidden>
+    <img src="dani.png" alt="다니">
+    <h2 id="endTitle">참 잘했어요!</h2>
+    <div class="stars" id="endStars"></div>
+    <p id="endText"></p>
+    <button class="big-btn" id="againBtn">한 번 더 🔁</button>
+    <button class="big-btn ghost" id="endSets">다른 글자 ↺</button>
+    <button class="big-btn ghost" id="endHome">← 뒤로</button>
+  </div>
+
+  <script src="js/ui.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/catalog.js"></script>
+  <script src="js/tts.js"></script>
+  <script src="js/sfx.js"></script>
+  <script src="js/voicepicker.js"></script>
+  <script src="js/write.js"></script>
+</body>
+</html>
