@@ -1426,10 +1426,11 @@ button {
 
 /* 세계 지도의 다니 — 걷지 않고 비행기를 타고 날아갑니다.
  * 비행기(이모지)는 em 이라 지도 글자 크기를 따라갑니다 (world.js 의 fitMap() 이 정합니다). */
+/* 도착한 나라가 다니에 가리지 않도록, 나라 위쪽에 조금 떠 있게 놓습니다 */
 .world-dani {
   position: absolute;
-  width: 15%;
-  transform: translate(-50%, -55%);
+  width: 12%;
+  transform: translate(-50%, -78%);
   transition-property: left, top;
   transition-timing-function: ease-in-out;
   transition-duration: 400ms;

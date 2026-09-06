@@ -385,7 +385,11 @@
     var toolsH = toolsEl ? toolsEl.offsetHeight + px(getComputedStyle(toolsEl).marginTop) : 0;
 
     var availH = screenH - top - toolsH - bottomPad - 6;
-    var availW = el.map.parentNode.clientWidth;
+
+    // clientWidth 는 좌우 여백을 포함하므로 그대로 쓰면 지도가 여백만큼 삐져나갑니다.
+    var box = el.map.parentNode;
+    var boxStyle = getComputedStyle(box);
+    var availW = box.clientWidth - px(boxStyle.paddingLeft) - px(boxStyle.paddingRight);
     var size = Math.max(240, Math.min(availW, availH));
 
     el.map.style.width = size + 'px';

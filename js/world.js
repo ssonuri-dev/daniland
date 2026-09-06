@@ -6,7 +6,7 @@
  * 마을 지도(town.js)와 같은 얼개인데, 길이 없으니 곧장 날아가면 됩니다.
  *
  * 놀이 3가지 (시작 화면에서 고릅니다)
- *   look   : 구경하기     - 아무 나라나 누르면 이름을 읽어 줍니다 (점수 없음)
+ *   look   : 구경하기     - 아무 나라나 누르면 이름·대륙·수도를 알려 줍니다 (점수 없음)
  *   listen : 찾아가기     - "Let's fly to Japan!" 을 듣고 그 나라를 찾습니다
  *   find   : 무엇이 있을까 - 그림을 보고 어느 나라인지 고릅니다
  *
@@ -21,16 +21,18 @@
 
   /* -------------------------------------------------------------------------
    * 나라 열두 곳
-   *   box  : 누를 수 있는 칸 [왼쪽, 위, 너비, 높이]  (지도에서 그 나라가 칠해진 자리)
-   *   x, y : 비행기가 내리는 자리
-   *   items: '무엇이 있을까' 에 나오는 그림과 영어 문장
+   *   box      : 누를 수 있는 칸 [왼쪽, 위, 너비, 높이]  (지도에서 그 나라가 칠해진 자리)
+   *   x, y     : 비행기가 내리는 자리
+   *   capital  : 수도 · continent : 대륙 (나라를 맞히면 화면과 소리로 같이 알려 줍니다)
+   *   items    : '무엇이 있을까' 에 나오는 그림과 영어 문장
    *
    * box 는 서로 겹치면 안 됩니다 — 겹치면 위에 그려진 단추가 아래 것을 가립니다.
    * ---------------------------------------------------------------------- */
   var COUNTRIES = [
     {
-      id: 'america', word: 'America', ko: '미국', icon: '🇺🇸',
-      box: [3, 37, 25, 14], x: 15, y: 44,
+      id: 'america', word: 'the United States', ko: '미국', icon: '🇺🇸',
+      capital: 'Washington, D.C.', capitalKo: '워싱턴', continent: 'North America', continentKo: '북아메리카',
+      box: [2, 34, 26, 17], x: 15, y: 44,
       items: [
         { emoji: '🗽', say: 'The Statue of Liberty is here.' },
         { emoji: '🍔', say: 'People eat big hamburgers here.' },
@@ -38,8 +40,9 @@
       ]
     },
     {
-      id: 'britain', word: 'Britain', ko: '영국', icon: '🇬🇧',
-      box: [30.5, 17, 13, 13], x: 37, y: 23.5,
+      id: 'britain', word: 'the United Kingdom', ko: '영국', icon: '🇬🇧',
+      capital: 'London', capitalKo: '런던', continent: 'Europe', continentKo: '유럽',
+      box: [29, 15, 14.5, 15], x: 37, y: 23.5,
       items: [
         { emoji: '🚌', say: 'Big red buses drive here.' },
         { emoji: '👑', say: 'A king lives here.' },
@@ -48,7 +51,8 @@
     },
     {
       id: 'france', word: 'France', ko: '프랑스', icon: '🇫🇷',
-      box: [32, 31, 12, 12], x: 38, y: 37,
+      capital: 'Paris', capitalKo: '파리', continent: 'Europe', continentKo: '유럽',
+      box: [30.5, 31, 13.5, 13], x: 38, y: 37,
       items: [
         { emoji: '🥐', say: 'People eat croissants here.' },
         { emoji: '🧀', say: 'People eat lots of cheese here.' },
@@ -57,7 +61,8 @@
     },
     {
       id: 'italy', word: 'Italy', ko: '이탈리아', icon: '🇮🇹',
-      box: [45, 31, 10.5, 15], x: 50, y: 38.5,
+      capital: 'Rome', capitalKo: '로마', continent: 'Europe', continentKo: '유럽',
+      box: [45, 31, 11.5, 17], x: 50, y: 38.5,
       items: [
         { emoji: '🍕', say: 'Pizza comes from here.' },
         { emoji: '🍝', say: 'Pasta comes from here.' },
@@ -66,7 +71,8 @@
     },
     {
       id: 'egypt', word: 'Egypt', ko: '이집트', icon: '🇪🇬',
-      box: [39.5, 49.5, 15, 10.5], x: 47, y: 55,
+      capital: 'Cairo', capitalKo: '카이로', continent: 'Africa', continentKo: '아프리카',
+      box: [38, 49, 18, 11], x: 47, y: 55,
       items: [
         { emoji: '🐫', say: 'A camel walks here.' },
         { emoji: '🏜️', say: 'There is a big desert here.' },
@@ -75,7 +81,8 @@
     },
     {
       id: 'kenya', word: 'Kenya', ko: '케냐', icon: '🇰🇪',
-      box: [49, 60.5, 12, 12], x: 55, y: 66.5,
+      capital: 'Nairobi', capitalKo: '나이로비', continent: 'Africa', continentKo: '아프리카',
+      box: [47, 60.5, 14, 13], x: 55, y: 66.5,
       items: [
         { emoji: '🦁', say: 'A lion lives here.' },
         { emoji: '🦒', say: 'A giraffe lives here.' },
@@ -84,7 +91,8 @@
     },
     {
       id: 'brazil', word: 'Brazil', ko: '브라질', icon: '🇧🇷',
-      box: [17, 60, 15.5, 14], x: 24, y: 67,
+      capital: 'Brasilia', capitalKo: '브라질리아', continent: 'South America', continentKo: '남아메리카',
+      box: [15, 58, 17, 17], x: 24, y: 67,
       items: [
         { emoji: '⚽', say: 'People love soccer here.' },
         { emoji: '🦜', say: 'A toucan sits in the trees here.' },
@@ -93,7 +101,8 @@
     },
     {
       id: 'china', word: 'China', ko: '중국', icon: '🇨🇳',
-      box: [58, 27.5, 21, 16], x: 68.5, y: 36,
+      capital: 'Beijing', capitalKo: '베이징', continent: 'Asia', continentKo: '아시아',
+      box: [57.5, 26, 21.5, 17], x: 68.5, y: 36,
       items: [
         { emoji: '🐼', say: 'A panda lives here.' },
         { emoji: '🧱', say: 'The Great Wall is here.' },
@@ -102,7 +111,8 @@
     },
     {
       id: 'india', word: 'India', ko: '인도', icon: '🇮🇳',
-      box: [57, 44, 18, 16], x: 66, y: 51,
+      capital: 'New Delhi', capitalKo: '뉴델리', continent: 'Asia', continentKo: '아시아',
+      box: [56.5, 44, 19, 16], x: 66, y: 51,
       items: [
         { emoji: '🐘', say: 'An elephant walks here.' },
         { emoji: '🐅', say: 'A tiger lives here.' },
@@ -110,8 +120,9 @@
       ]
     },
     {
-      id: 'korea', word: 'Korea', ko: '대한민국', icon: '🇰🇷',
-      box: [80, 35, 8, 13], x: 84, y: 41.5,
+      id: 'korea', word: 'South Korea', ko: '대한민국', icon: '🇰🇷',
+      capital: 'Seoul', capitalKo: '서울', continent: 'Asia', continentKo: '아시아',
+      box: [79.2, 32, 9.2, 18], x: 84, y: 41.5,
       items: [
         { emoji: '🥋', say: 'Taekwondo comes from here.' },
         { emoji: '🌶️', say: 'Spicy kimchi comes from here.' },
@@ -120,7 +131,8 @@
     },
     {
       id: 'japan', word: 'Japan', ko: '일본', icon: '🇯🇵',
-      box: [88.5, 29.5, 11, 24], x: 93, y: 41,
+      capital: 'Tokyo', capitalKo: '도쿄', continent: 'Asia', continentKo: '아시아',
+      box: [88.5, 28, 11.5, 27], x: 93, y: 41,
       items: [
         { emoji: '🗻', say: 'Mount Fuji is here.' },
         { emoji: '🌸', say: 'Cherry blossoms bloom here.' },
@@ -129,7 +141,8 @@
     },
     {
       id: 'australia', word: 'Australia', ko: '호주', icon: '🇦🇺',
-      box: [68.5, 71, 21, 18], x: 78, y: 80,
+      capital: 'Canberra', capitalKo: '캔버라', continent: 'Oceania', continentKo: '오세아니아',
+      box: [66, 70, 24, 20], x: 78, y: 80,
       items: [
         { emoji: '🦘', say: 'A kangaroo hops here.' },
         { emoji: '🐨', say: 'A koala sleeps in the trees here.' },
@@ -139,7 +152,7 @@
   ];
 
   var ACTS = [
-    { id: 'look',   name: '구경하기',     icon: '🔎', desc: '나라를 누르면 이름을 알려줘요' },
+    { id: 'look',   name: '구경하기',     icon: '🔎', desc: '나라를 누르면 대륙과 수도까지 알려줘요' },
     { id: 'listen', name: '찾아가기',     icon: '👂', desc: '들려주는 나라로 날아가요' },
     { id: 'find',   name: '무엇이 있을까', icon: '🐼', desc: '그림을 보고 어느 나라인지 찾아요' }
   ];
@@ -246,6 +259,16 @@
     return 'index.html';
   }
 
+  /* 나라 하나를 소개하는 한 줄과 한 마디.
+   * 이름만 알려 주고 끝내지 않고 대륙과 수도까지 같이 붙입니다. */
+  function label(c) {
+    return c.word + ' · ' + c.ko + ' · ' + c.continentKo + ' · 수도 ' + c.capitalKo;
+  }
+
+  function intro(c) {
+    return 'This is ' + c.word + '. It is in ' + c.continent + '. The capital is ' + c.capital + '.';
+  }
+
   function findCountry(id) {
     for (var i = 0; i < COUNTRIES.length; i++) if (COUNTRIES[i].id === id) return COUNTRIES[i];
     return null;
@@ -331,7 +354,11 @@
     var toolsH = toolsEl ? toolsEl.offsetHeight + px(getComputedStyle(toolsEl).marginTop) : 0;
 
     var availH = screenH - top - toolsH - bottomPad - 6;
-    var availW = el.map.parentNode.clientWidth;
+
+    // clientWidth 는 좌우 여백을 포함하므로 그대로 쓰면 지도가 여백만큼 삐져나갑니다.
+    var box = el.map.parentNode;
+    var boxStyle = getComputedStyle(box);
+    var availW = box.clientWidth - px(boxStyle.paddingLeft) - px(boxStyle.paddingRight);
     var size = Math.max(240, Math.min(availW, availH));
 
     el.map.style.width = size + 'px';
@@ -483,15 +510,17 @@
 
       el.questItem.hidden = false;
       el.questItem.textContent = country.icon;
-      el.questLabel.textContent = country.word + ' · ' + country.ko;
+      el.questLabel.textContent = label(country);
 
       var fly = flyTime(country);
-      flyTo(country, function () { speak('Welcome to ' + country.word + '!'); });
+      flyTo(country, function () {
+        speak('Welcome to ' + country.word + '! The capital is ' + country.capital + '.');
+      });
 
       setTimeout(function () {
         state.round += 1;
         nextRound();
-      }, fly + 1800);
+      }, fly + 2600);
 
     } else {
       state.firstTry = false;
@@ -514,10 +543,10 @@
 
     el.questItem.hidden = false;
     el.questItem.textContent = country.icon;
-    el.questLabel.textContent = country.word + ' · ' + country.ko;
+    el.questLabel.textContent = label(country);
 
     flyTo(country, function () {
-      speak('This is ' + country.word + '.');
+      speak(intro(country));
       state.locked = false;
     });
 

@@ -209,18 +209,18 @@ window.LESSONS = [
     icon: '🚩',
     lang: 'en-US',
     items: [
-      { emoji: '🇰🇷', word: 'Korea',     ko: '대한민국' },
-      { emoji: '🇯🇵', word: 'Japan',     ko: '일본' },
-      { emoji: '🇨🇳', word: 'China',     ko: '중국' },
-      { emoji: '🇮🇳', word: 'India',     ko: '인도' },
-      { emoji: '🇪🇬', word: 'Egypt',     ko: '이집트' },
-      { emoji: '🇰🇪', word: 'Kenya',     ko: '케냐' },
-      { emoji: '🇫🇷', word: 'France',    ko: '프랑스' },
-      { emoji: '🇬🇧', word: 'Britain',   ko: '영국' },
-      { emoji: '🇮🇹', word: 'Italy',     ko: '이탈리아' },
-      { emoji: '🇺🇸', word: 'America',   ko: '미국' },
-      { emoji: '🇧🇷', word: 'Brazil',    ko: '브라질' },
-      { emoji: '🇦🇺', word: 'Australia', ko: '호주' }
+      { emoji: '🇰🇷', word: 'South Korea',        ko: '대한민국' },
+      { emoji: '🇯🇵', word: 'Japan',               ko: '일본' },
+      { emoji: '🇨🇳', word: 'China',               ko: '중국' },
+      { emoji: '🇮🇳', word: 'India',               ko: '인도' },
+      { emoji: '🇪🇬', word: 'Egypt',               ko: '이집트' },
+      { emoji: '🇰🇪', word: 'Kenya',               ko: '케냐' },
+      { emoji: '🇫🇷', word: 'France',              ko: '프랑스' },
+      { emoji: '🇬🇧', word: 'the United Kingdom', ko: '영국' },
+      { emoji: '🇮🇹', word: 'Italy',               ko: '이탈리아' },
+      { emoji: '🇺🇸', word: 'the United States',  ko: '미국' },
+      { emoji: '🇧🇷', word: 'Brazil',              ko: '브라질' },
+      { emoji: '🇦🇺', word: 'Australia',           ko: '호주' }
     ]
   }
 ];
