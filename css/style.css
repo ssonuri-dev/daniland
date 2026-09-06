@@ -53,8 +53,12 @@ h1, h2, h3, h4,
   font-weight: 400;
 }
 
+/* 브라우저 기본값이 버튼의 line-height 를 normal 로 못 박아 두기 때문에
+   글꼴처럼 줄간격도 직접 물려줘야 합니다. 안 그러면 두 줄짜리 단추
+   ("쉬워요 / 3짝" 같은 것)만 유독 줄이 붙어 보입니다. */
 button {
   font-family: inherit;
+  line-height: inherit;
   cursor: pointer;
   border: none;
 }
