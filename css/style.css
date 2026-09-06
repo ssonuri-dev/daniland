@@ -25,12 +25,28 @@ html, body {
 }
 
 body {
-  font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', sans-serif;
+  font-family: 'Nanum Gothic', 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', sans-serif;
   color: var(--ink);
   background: linear-gradient(160deg, #fff6f9 0%, #f3f7ff 55%, #f6fff8 100%);
   background-attachment: fixed;
   -webkit-user-select: none;
   user-select: none;
+}
+
+/* 제목은 Jua, 나머지는 나눔고딕 (구글 웹폰트 — 각 HTML <head> 의 link 참고).
+   Jua 는 굵기가 400 하나뿐이라 가짜 굵게가 걸리지 않도록 400 으로 고정합니다.
+   제목용 선택자를 새로 만들면 여기 목록에도 같이 넣어 주세요. */
+h1, h2, h3, h4,
+.hero h1,
+.subject-card .name,
+.lesson-card .name,
+.overlay h2,
+.gate h2,
+.panel h3,
+.draw-title,
+.xylo-title {
+  font-family: 'Jua', 'Nanum Gothic', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  font-weight: 400;
 }
 
 button {
@@ -110,7 +126,7 @@ button {
 .subject-card:active { transform: translateY(3px) scale(0.98); }
 
 .subject-card .icon  { font-size: 64px; line-height: 1; }
-.subject-card .name  { font-size: 26px; font-weight: 800; }
+.subject-card .name  { font-size: 26px; }
 .subject-card .desc  { font-size: 13px; color: var(--ink-soft); text-align: center; }
 .subject-card .count { font-size: 12px; font-weight: 700; color: var(--ink-soft); opacity: 0.7; }
 
@@ -154,7 +170,7 @@ button {
 .lesson-card:active { transform: translateY(3px) scale(0.98); }
 
 .lesson-card .icon { font-size: 46px; line-height: 1; }
-.lesson-card .name { font-size: 19px; font-weight: 700; }
+.lesson-card .name { font-size: 19px; }
 .lesson-card .meta { font-size: 13px; color: var(--ink-soft); }
 .lesson-card .best { font-size: 13px; font-weight: 700; color: var(--yellow); }
 
@@ -868,7 +884,6 @@ button {
   flex: 1;
   text-align: center;
   font-size: 20px;
-  font-weight: 800;
   color: var(--pink);
 }
 
@@ -1106,7 +1121,6 @@ button {
   flex: 1;
   text-align: center;
   font-size: 20px;
-  font-weight: 800;
   color: var(--pink);
 }
 
