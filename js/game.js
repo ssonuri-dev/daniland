@@ -302,6 +302,21 @@
     return state.mode === 'word' || state.mode === 'sound';
   }
 
+  /* 글자 찾기에서 영어 대신 우리말 카드를 쓰는 수업인지 (data.js 의 wordKo).
+   * 국기처럼 '그림을 보고 우리말 이름을 읽는' 연습에 씁니다.
+   * 듣고 찾기·짝 맞추기는 그대로 lesson.lang 을 씁니다 — 글자 찾기에만 걸립니다. */
+  function koCards() {
+    return state.mode === 'word' && lesson.wordKo === true;
+  }
+
+  function cardText(item) {
+    return koCards() ? (item.ko || item.word) : item.word;
+  }
+
+  function cardLang() {
+    return koCards() ? 'ko-KR' : (lesson.lang || 'en-US');
+  }
+
   function buildQuizStage() {
     el.stage.innerHTML = '';
 
@@ -364,12 +379,13 @@
     choices.forEach(function (item) {
       var card = document.createElement('button');
       card.className = 'choice' + (isWordCards() ? ' word-card' : '');
-      card.dataset.word = item.word;
+      card.dataset.word = cardText(item);
 
       if (isWordCards()) {
         var t = document.createElement('div');
         t.className = 'text';
-        t.textContent = item.word;
+        t.textContent = cardText(item);
+        setWordLength(t, cardText(item));
         card.appendChild(t);
       } else {
         var art = document.createElement('div');
@@ -408,8 +424,10 @@
         // 맞힌 글자를 한 번 더 읽어 줍니다.
         setTimeout(function () { speakTarget(); }, 250);
       } else {
-        card.querySelector('.word').textContent =
-          item.word + (item.ko && item.ko !== item.word ? ' · ' + item.ko : '');
+        var label = item.word + (item.ko && item.ko !== item.word ? ' · ' + item.ko : '');
+        var wordEl = card.querySelector('.word');
+        wordEl.textContent = label;
+        setWordLength(wordEl, label);   // 길어진 만큼 글자를 다시 줄입니다
       }
 
       if (state.firstTry) { state.stars += 1; updateScore(); }
@@ -800,7 +818,7 @@
     var btn = document.getElementById('speakBtn');
     if (btn) btn.classList.add('speaking');
 
-    TTS.speak(state.target.word, lesson.lang || 'en-US', {
+    TTS.speak(cardText(state.target), cardLang(), {
       onend: function () { if (btn) btn.classList.remove('speaking'); }
     });
     // 혹시 끝 신호가 오지 않는 브라우저를 위한 안전장치
@@ -808,7 +826,7 @@
   }
 
   function sampleWord() {
-    if (state.target) return state.target.word;
+    if (state.target) return cardText(state.target);
     var items = lesson.items || [];
     return items.length ? items[0].word : 'hello';
   }
@@ -835,8 +853,23 @@
 
   // 글자 수를 카드에 알려 줍니다.
   // css/style.css 가 이 값으로 긴 단어(police station)의 글자를 줄여 잘리지 않게 합니다.
+  /* 글자 크기를 줄일 때 쓰는 '길이'.
+   * 한글·한자·가나는 알파벳보다 두 배 넓으므로 두 칸으로 셉니다.
+   * 그래야 'strawberry' 와 '보스니아 헤르체고비나' 가 같은 칸에 맞습니다. */
   function setWordLength(node, text) {
-    node.style.setProperty('--len', String((text || '').length));
+    var n = 0;
+    var chars = Array.from(String(text || ''));
+
+    for (var i = 0; i < chars.length; i++) {
+      var cp = chars[i].codePointAt(0);
+      var wide = (cp >= 0x1100 && cp <= 0x11FF) ||   // 한글 자모
+                 (cp >= 0x3000 && cp <= 0x30FF) ||   // 문장부호·가나
+                 (cp >= 0x3130 && cp <= 0x318F) ||   // 호환 한글 자모
+                 (cp >= 0x4E00 && cp <= 0x9FFF) ||   // 한자
+                 (cp >= 0xAC00 && cp <= 0xD7A3);     // 한글 음절
+      n += wide ? 2 : 1;
+    }
+    node.style.setProperty('--len', String(n));
   }
   function shuffle(arr) { return UI.shuffle(arr); }
   function getParam(name) { return UI.getParam(name); }

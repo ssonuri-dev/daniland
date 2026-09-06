@@ -612,10 +612,13 @@ button {
 
 .choice.word-card { aspect-ratio: 2 / 1; }
 
+/* 글자 카드도 긴 이름(보스니아 헤르체고비나)에 맞춰 글자를 줄입니다.
+   --len 은 js/game.js 가 넣어 주며, 한글은 두 칸으로 세어 둡니다. */
 .choice.word-card .text {
   max-width: 100%;
   overflow: hidden;
-  font-size: calc(var(--card, 280px) * 0.11);
+  font-size: min(calc(var(--card, 280px) * 0.11),
+                 calc(var(--card, 280px) * 1.7 / var(--len, 8)));
   font-weight: 800;
   letter-spacing: -0.5px;
   white-space: nowrap;
@@ -722,9 +725,11 @@ button {
 .choice.mem .art.n-4  { font-size: calc(var(--card, 96px) * 0.17); }
 .choice.mem .art.n-6  { font-size: calc(var(--card, 96px) * 0.15); }
 .choice.mem .art.n-9  { font-size: calc(var(--card, 96px) * 0.13); }
+/* 나라 이름처럼 아주 긴 낱말은 10px 밑으로 줄이지 않고 말줄임표로 자릅니다.
+   (짝은 그림으로 맞추는 것이라, 안 읽히게 작아지는 것보다 잘리는 편이 낫습니다) */
 .choice.mem .word {
-  font-size: min(calc(var(--card, 96px) * 0.15),
-                 calc(var(--card, 96px) * 1.40 / var(--len, 8)));
+  font-size: max(10px, min(calc(var(--card, 96px) * 0.15),
+                           calc(var(--card, 96px) * 1.40 / var(--len, 8))));
   overflow: hidden;
   max-width: 100%;
   white-space: nowrap;
