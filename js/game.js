@@ -302,13 +302,12 @@
     return state.mode === 'word' || state.mode === 'sound';
   }
 
-  /* 글자 카드에 영어 대신 우리말을 쓰는 수업인지 (data.js 의 wordKo).
-   * 국기처럼 '그림을 보고 우리말 이름을 읽는' 연습에 씁니다.
-   * 글자 찾기와 짝 맞추기에 걸리고, 듣고 찾기는 그대로 lesson.lang(영어)을 씁니다
-   * — 영어를 듣고 국기를 찾는 연습은 남겨 둡니다. */
+  /* word 자리에 영어(word) 대신 우리말(ko)을 쓰는 수업인지 (data.js 의 wordKo).
+   * 국기 수업이 이것을 씁니다 — 나라 이름을 우리말로 익히는 게 목적이라
+   * 놀이 세 가지 모두 우리말로 보여 주고 우리말로 읽어 줍니다.
+   * items 의 영어 이름(word)은 데이터에 남아 있고 화면에만 안 나옵니다. */
   function koCards() {
-    if (lesson.wordKo !== true) return false;
-    return state.mode === 'word' || state.mode === 'memory';
+    return lesson.wordKo === true;
   }
 
   function cardText(item) {
@@ -396,8 +395,8 @@
 
         var word = document.createElement('div');
         word.className = 'word';
-        word.textContent = state.showLabel ? item.word : '';
-        setWordLength(word, item.word);
+        word.textContent = state.showLabel ? cardText(item) : '';
+        setWordLength(word, cardText(item));
 
         card.appendChild(art);
         card.appendChild(word);
@@ -426,7 +425,9 @@
         // 맞힌 글자를 한 번 더 읽어 줍니다.
         setTimeout(function () { speakTarget(); }, 250);
       } else {
-        var label = item.word + (item.ko && item.ko !== item.word ? ' · ' + item.ko : '');
+        var label = koCards()
+          ? cardText(item)
+          : item.word + (item.ko && item.ko !== item.word ? ' · ' + item.ko : '');
         var wordEl = card.querySelector('.word');
         wordEl.textContent = label;
         setWordLength(wordEl, label);   // 길어진 만큼 글자를 다시 줄입니다
