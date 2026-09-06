@@ -220,6 +220,212 @@ window.LESSONS = [
   },
 
   {
+    id: 'ko-vehicles',
+    subject: '한글',
+    title: '탈것',
+    icon: '🚗',
+    lang: 'ko-KR',
+    items: [
+      { emoji: '🚗', word: '자동차',   ko: '자동차' },
+      { emoji: '🚌', word: '버스',     ko: '버스' },
+      { emoji: '🚕', word: '택시',     ko: '택시' },
+      { emoji: '🚂', word: '기차',     ko: '기차' },
+      { emoji: '🚇', word: '지하철',   ko: '지하철' },
+      { emoji: '✈️', word: '비행기',   ko: '비행기' },
+      { emoji: '🚁', word: '헬기',     ko: '헬기' },
+      { emoji: '🚢', word: '배',       ko: '배' },
+      { emoji: '🚲', word: '자전거',   ko: '자전거' },
+      { emoji: '🛴', word: '킥보드',   ko: '킥보드' },
+      { emoji: '🏍️', word: '오토바이', ko: '오토바이' },
+      { emoji: '🚒', word: '소방차',   ko: '소방차' },
+      { emoji: '🚑', word: '구급차',   ko: '구급차' },
+      { emoji: '🚓', word: '경찰차',   ko: '경찰차' },
+      { emoji: '🚜', word: '트랙터',   ko: '트랙터' },
+      { emoji: '🚀', word: '로켓',     ko: '로켓' }
+    ]
+  },
+
+  {
+    id: 'ko-body',
+    subject: '한글',
+    title: '우리 몸',
+    icon: '👀',
+    lang: 'ko-KR',
+    items: [
+      { emoji: '👁️', word: '눈',   ko: '눈' },
+      { emoji: '👃', word: '코',   ko: '코' },
+      { emoji: '👄', word: '입',   ko: '입' },
+      { emoji: '👂', word: '귀',   ko: '귀' },
+      { emoji: '🦷', word: '이',   ko: '이' },
+      { emoji: '👅', word: '혀',   ko: '혀' },
+      { emoji: '✋', word: '손',   ko: '손' },
+      { emoji: '🦶', word: '발',   ko: '발' },
+      { emoji: '💪', word: '팔',   ko: '팔' },
+      { emoji: '🦵', word: '다리', ko: '다리' },
+      { emoji: '🧠', word: '뇌',   ko: '뇌' },
+      { emoji: '🫀', word: '심장', ko: '심장' }
+    ]
+  },
+
+  {
+    id: 'ko-family',
+    subject: '한글',
+    title: '가족',
+    icon: '👨‍👩‍👧',
+    lang: 'ko-KR',
+    items: [
+      { emoji: '👩',      word: '엄마',     ko: '엄마' },
+      { emoji: '👨',      word: '아빠',     ko: '아빠' },
+      { emoji: '👵',      word: '할머니',   ko: '할머니' },
+      { emoji: '👴',      word: '할아버지', ko: '할아버지' },
+      { emoji: '👧',      word: '언니',     ko: '언니' },
+      { emoji: '👦',      word: '오빠',     ko: '오빠' },
+      { emoji: '👶',      word: '아기',     ko: '아기' },
+      { emoji: '👨‍👩‍👧', word: '가족',     ko: '가족' }
+    ]
+  },
+
+  {
+    id: 'ko-food',
+    subject: '한글',
+    title: '음식',
+    icon: '🍚',
+    lang: 'ko-KR',
+    items: [
+      { emoji: '🍚', word: '밥',         ko: '밥' },
+      { emoji: '🍲', word: '국',         ko: '국' },
+      { emoji: '🍞', word: '빵',         ko: '빵' },
+      { emoji: '🍜', word: '라면',       ko: '라면' },
+      { emoji: '🍙', word: '김밥',       ko: '김밥' },
+      { emoji: '🥟', word: '만두',       ko: '만두' },
+      { emoji: '🥚', word: '달걀',       ko: '달걀' },
+      { emoji: '🥛', word: '우유',       ko: '우유' },
+      { emoji: '🍖', word: '고기',       ko: '고기' },
+      { emoji: '🧀', word: '치즈',       ko: '치즈' },
+      { emoji: '🍕', word: '피자',       ko: '피자' },
+      { emoji: '🍰', word: '케이크',     ko: '케이크' },
+      { emoji: '🍦', word: '아이스크림', ko: '아이스크림' },
+      { emoji: '🍬', word: '사탕',       ko: '사탕' },
+      { emoji: '🍪', word: '과자',       ko: '과자' },
+      { emoji: '🧃', word: '주스',       ko: '주스' }
+    ]
+  },
+
+  {
+    id: 'ko-nature',
+    subject: '한글',
+    title: '자연과 하늘',
+    icon: '🌳',
+    lang: 'ko-KR',
+    items: [
+      { emoji: '🌳', word: '나무',   ko: '나무' },
+      { emoji: '🌸', word: '꽃',     ko: '꽃' },
+      { emoji: '🌿', word: '풀',     ko: '풀' },
+      { emoji: '⛰️', word: '산',     ko: '산' },
+      { emoji: '🌊', word: '바다',   ko: '바다' },
+      { emoji: '🪨', word: '돌',     ko: '돌' },
+      { emoji: '💧', word: '물',     ko: '물' },
+      { emoji: '🔥', word: '불',     ko: '불' },
+      { emoji: '☀️', word: '해',     ko: '해' },
+      { emoji: '🌙', word: '달',     ko: '달' },
+      { emoji: '⭐', word: '별',     ko: '별' },
+      { emoji: '☁️', word: '구름',   ko: '구름' },
+      { emoji: '🌧️', word: '비',     ko: '비' },
+      { emoji: '❄️', word: '눈',     ko: '눈' },
+      { emoji: '🌈', word: '무지개', ko: '무지개' },
+      { emoji: '🌬️', word: '바람',   ko: '바람' }
+    ]
+  },
+
+  {
+    id: 'ko-clothes',
+    subject: '한글',
+    title: '옷과 물건',
+    icon: '👕',
+    lang: 'ko-KR',
+    items: [
+      { emoji: '👕', word: '옷',     ko: '옷' },
+      { emoji: '👖', word: '바지',   ko: '바지' },
+      { emoji: '👗', word: '치마',   ko: '치마' },
+      { emoji: '🧦', word: '양말',   ko: '양말' },
+      { emoji: '👟', word: '신발',   ko: '신발' },
+      { emoji: '🧢', word: '모자',   ko: '모자' },
+      { emoji: '🧤', word: '장갑',   ko: '장갑' },
+      { emoji: '🧣', word: '목도리', ko: '목도리' },
+      { emoji: '👓', word: '안경',   ko: '안경' },
+      { emoji: '☂️', word: '우산',   ko: '우산' },
+      { emoji: '🎒', word: '가방',   ko: '가방' },
+      { emoji: '💍', word: '반지',   ko: '반지' }
+    ]
+  },
+
+  {
+    id: 'ko-house',
+    subject: '한글',
+    title: '집 안',
+    icon: '🏠',
+    lang: 'ko-KR',
+    items: [
+      { emoji: '🏠', word: '집',       ko: '집' },
+      { emoji: '🚪', word: '문',       ko: '문' },
+      { emoji: '🪟', word: '창문',     ko: '창문' },
+      { emoji: '🪑', word: '의자',     ko: '의자' },
+      { emoji: '🛏️', word: '침대',     ko: '침대' },
+      { emoji: '🛋️', word: '소파',     ko: '소파' },
+      { emoji: '⏰', word: '시계',     ko: '시계' },
+      { emoji: '📺', word: '텔레비전', ko: '텔레비전' },
+      { emoji: '📞', word: '전화',     ko: '전화' },
+      { emoji: '💡', word: '전등',     ko: '전등' },
+      { emoji: '🪞', word: '거울',     ko: '거울' },
+      { emoji: '🧼', word: '비누',     ko: '비누' },
+      { emoji: '🪥', word: '칫솔',     ko: '칫솔' },
+      { emoji: '🛁', word: '욕조',     ko: '욕조' }
+    ]
+  },
+
+  {
+    id: 'ko-school',
+    subject: '한글',
+    title: '유치원 물건',
+    icon: '✏️',
+    lang: 'ko-KR',
+    items: [
+      { emoji: '✏️', word: '연필',   ko: '연필' },
+      { emoji: '🖍️', word: '크레용', ko: '크레용' },
+      { emoji: '🖌️', word: '붓',     ko: '붓' },
+      { emoji: '🎨', word: '물감',   ko: '물감' },
+      { emoji: '✂️', word: '가위',   ko: '가위' },
+      { emoji: '📏', word: '자',     ko: '자' },
+      { emoji: '📓', word: '공책',   ko: '공책' },
+      { emoji: '📚', word: '책',     ko: '책' },
+      { emoji: '📄', word: '종이',   ko: '종이' },
+      { emoji: '🧴', word: '풀',     ko: '풀' },
+      { emoji: '🎵', word: '노래',   ko: '노래' },
+      { emoji: '⚽', word: '공',     ko: '공' }
+    ]
+  },
+
+  {
+    id: 'ko-feeling',
+    subject: '한글',
+    title: '기분',
+    icon: '😊',
+    lang: 'ko-KR',
+    items: [
+      { emoji: '😀', word: '기뻐요',     ko: '기뻐요' },
+      { emoji: '😢', word: '슬퍼요',     ko: '슬퍼요' },
+      { emoji: '😠', word: '화나요',     ko: '화나요' },
+      { emoji: '😲', word: '놀랐어요',   ko: '놀랐어요' },
+      { emoji: '😨', word: '무서워요',   ko: '무서워요' },
+      { emoji: '😴', word: '졸려요',     ko: '졸려요' },
+      { emoji: '🤒', word: '아파요',     ko: '아파요' },
+      { emoji: '😋', word: '맛있어요',   ko: '맛있어요' },
+      { emoji: '🥰', word: '좋아요',     ko: '좋아요' },
+      { emoji: '😅', word: '부끄러워요', ko: '부끄러워요' }
+    ]
+  },
+
+  {
     id: 'world-flags',
     subject: '세계',
     title: '국기',
