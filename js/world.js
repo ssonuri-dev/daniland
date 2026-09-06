@@ -17,6 +17,7 @@
 (function () {
   var ROUNDS = 10;
   var LANG = 'en-US';
+  var MAP_RATIO = 1536 / 1024;   // world.jpg 의 가로÷세로. 그림을 바꾸면 이 값도 바꿔야 합니다.
   var PRAISE = ['참 잘했어요!', '멋져요!', '최고예요!', '대단해요!', '와, 다 맞혔어요!'];
 
   /* -------------------------------------------------------------------------
@@ -32,7 +33,7 @@
     {
       id: 'america', word: 'the United States', ko: '미국', icon: '🇺🇸',
       capital: 'Washington, D.C.', capitalKo: '워싱턴', continent: 'North America', continentKo: '북아메리카',
-      box: [2, 34, 26, 17], x: 15, y: 44,
+      box: [11.5, 22, 17, 18], x: 20, y: 31,
       items: [
         { emoji: '🗽', say: 'The Statue of Liberty is here.' },
         { emoji: '🍔', say: 'People eat big hamburgers here.' },
@@ -42,7 +43,7 @@
     {
       id: 'britain', word: 'the United Kingdom', ko: '영국', icon: '🇬🇧',
       capital: 'London', capitalKo: '런던', continent: 'Europe', continentKo: '유럽',
-      box: [29, 15, 14.5, 15], x: 37, y: 23.5,
+      box: [39, 18, 8.5, 12], x: 43, y: 24,
       items: [
         { emoji: '🚌', say: 'Big red buses drive here.' },
         { emoji: '👑', say: 'A king lives here.' },
@@ -52,7 +53,7 @@
     {
       id: 'france', word: 'France', ko: '프랑스', icon: '🇫🇷',
       capital: 'Paris', capitalKo: '파리', continent: 'Europe', continentKo: '유럽',
-      box: [30.5, 31, 13.5, 13], x: 38, y: 37,
+      box: [41.5, 30, 7.5, 10], x: 45, y: 35,
       items: [
         { emoji: '🥐', say: 'People eat croissants here.' },
         { emoji: '🧀', say: 'People eat lots of cheese here.' },
@@ -62,7 +63,7 @@
     {
       id: 'italy', word: 'Italy', ko: '이탈리아', icon: '🇮🇹',
       capital: 'Rome', capitalKo: '로마', continent: 'Europe', continentKo: '유럽',
-      box: [45, 31, 11.5, 17], x: 50, y: 38.5,
+      box: [49, 30.5, 7, 11.5], x: 52, y: 36,
       items: [
         { emoji: '🍕', say: 'Pizza comes from here.' },
         { emoji: '🍝', say: 'Pasta comes from here.' },
@@ -72,7 +73,7 @@
     {
       id: 'egypt', word: 'Egypt', ko: '이집트', icon: '🇪🇬',
       capital: 'Cairo', capitalKo: '카이로', continent: 'Africa', continentKo: '아프리카',
-      box: [38, 49, 18, 11], x: 47, y: 55,
+      box: [52, 44, 6.5, 11], x: 55, y: 49,
       items: [
         { emoji: '🐫', say: 'A camel walks here.' },
         { emoji: '🏜️', say: 'There is a big desert here.' },
@@ -82,7 +83,7 @@
     {
       id: 'kenya', word: 'Kenya', ko: '케냐', icon: '🇰🇪',
       capital: 'Nairobi', capitalKo: '나이로비', continent: 'Africa', continentKo: '아프리카',
-      box: [47, 60.5, 14, 13], x: 55, y: 66.5,
+      box: [54.5, 56, 6.5, 13.5], x: 58, y: 62,
       items: [
         { emoji: '🦁', say: 'A lion lives here.' },
         { emoji: '🦒', say: 'A giraffe lives here.' },
@@ -92,7 +93,7 @@
     {
       id: 'brazil', word: 'Brazil', ko: '브라질', icon: '🇧🇷',
       capital: 'Brasilia', capitalKo: '브라질리아', continent: 'South America', continentKo: '남아메리카',
-      box: [15, 58, 17, 17], x: 24, y: 67,
+      box: [26.5, 55.5, 9, 16], x: 31, y: 63,
       items: [
         { emoji: '⚽', say: 'People love soccer here.' },
         { emoji: '🦜', say: 'A toucan sits in the trees here.' },
@@ -102,7 +103,7 @@
     {
       id: 'china', word: 'China', ko: '중국', icon: '🇨🇳',
       capital: 'Beijing', capitalKo: '베이징', continent: 'Asia', continentKo: '아시아',
-      box: [57.5, 26, 21.5, 17], x: 68.5, y: 36,
+      box: [63.5, 28.5, 17, 13.5], x: 72, y: 35,
       items: [
         { emoji: '🐼', say: 'A panda lives here.' },
         { emoji: '🧱', say: 'The Great Wall is here.' },
@@ -112,7 +113,7 @@
     {
       id: 'india', word: 'India', ko: '인도', icon: '🇮🇳',
       capital: 'New Delhi', capitalKo: '뉴델리', continent: 'Asia', continentKo: '아시아',
-      box: [56.5, 44, 19, 16], x: 66, y: 51,
+      box: [63.5, 42.5, 8.5, 14], x: 68, y: 49,
       items: [
         { emoji: '🐘', say: 'An elephant walks here.' },
         { emoji: '🐅', say: 'A tiger lives here.' },
@@ -122,7 +123,7 @@
     {
       id: 'korea', word: 'South Korea', ko: '대한민국', icon: '🇰🇷',
       capital: 'Seoul', capitalKo: '서울', continent: 'Asia', continentKo: '아시아',
-      box: [79.2, 32, 9.2, 18], x: 84, y: 41.5,
+      box: [80.5, 32.5, 4.5, 7.5], x: 82.7, y: 36,
       items: [
         { emoji: '🥋', say: 'Taekwondo comes from here.' },
         { emoji: '🌶️', say: 'Spicy kimchi comes from here.' },
@@ -132,7 +133,7 @@
     {
       id: 'japan', word: 'Japan', ko: '일본', icon: '🇯🇵',
       capital: 'Tokyo', capitalKo: '도쿄', continent: 'Asia', continentKo: '아시아',
-      box: [88.5, 28, 11.5, 27], x: 93, y: 41,
+      box: [85, 32, 7, 14], x: 88.5, y: 39,
       items: [
         { emoji: '🗻', say: 'Mount Fuji is here.' },
         { emoji: '🌸', say: 'Cherry blossoms bloom here.' },
@@ -142,7 +143,7 @@
     {
       id: 'australia', word: 'Australia', ko: '호주', icon: '🇦🇺',
       capital: 'Canberra', capitalKo: '캔버라', continent: 'Oceania', continentKo: '오세아니아',
-      box: [66, 70, 24, 20], x: 78, y: 80,
+      box: [77, 66, 14.5, 16], x: 84, y: 74,
       items: [
         { emoji: '🦘', say: 'A kangaroo hops here.' },
         { emoji: '🐨', say: 'A koala sleeps in the trees here.' },
@@ -342,7 +343,7 @@
     });
   }
 
-  // 지도는 정사각형이라 가로·세로 중 좁은 쪽에 맞춥니다. (스크롤이 생기면 안 됩니다)
+  // 지도를 그림 비율 그대로, 남는 자리 안에 제일 크게 넣습니다. (스크롤이 생기면 안 됩니다)
   // 비행기 크기는 지도 글자 크기를 따라가므로 여기서 같이 정합니다.
   function fitMap() {
     var wrapEl = document.querySelector('.wrap');
@@ -359,11 +360,12 @@
     var box = el.map.parentNode;
     var boxStyle = getComputedStyle(box);
     var availW = box.clientWidth - px(boxStyle.paddingLeft) - px(boxStyle.paddingRight);
-    var size = Math.max(240, Math.min(availW, availH));
+    // 가로에 맞춘 크기와 세로에 맞춘 크기 중 작은 쪽 — 그래야 양쪽 다 안 넘칩니다.
+    var w = Math.max(240, Math.min(availW, availH * MAP_RATIO));
 
-    el.map.style.width = size + 'px';
-    el.map.style.height = size + 'px';
-    el.map.style.fontSize = Math.round(size / 16) + 'px';
+    el.map.style.width = w + 'px';
+    el.map.style.height = Math.round(w / MAP_RATIO) + 'px';
+    el.map.style.fontSize = Math.round(w / 20) + 'px';
   }
 
   function px(v) {
