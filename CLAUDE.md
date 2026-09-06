@@ -93,6 +93,8 @@ index.html            과목 카드            home.js
       ├ numbers.html?act=plus               numbers.js  (문제를 매번 생성, 놀이 4종)
       ├ town.html                           town.js     (지도 그림 town.jpg 위, 놀이 3종)
       ├ world.html                          world.js    (지도 그림 world.jpg 위, 놀이 3종)
+      ├ write.html                          write.js    (글자 따라 쓰기, 묶음 4종)
+      ├ make.html                           make.js     (자음+모음으로 글자 조립)
       └ draw.html                           draw.js     (독립 — 다른 js 를 전혀 안 씀)
 ```
 
@@ -118,6 +120,10 @@ index.html            과목 카드            home.js
   다른 점은 길이 없어 다니가 곧장 날아간다는 것과, 지도가 정사각형이 아니라 3:2 라는 것입니다.
   지도 그림을 새로 바꾸면 `box` 와 `x`/`y`, 그리고 **`MAP_RATIO`(가로÷세로)** 를 다시 맞춰야 합니다.
   **`box` 끼리 겹치면 위에 그려진 단추가 아래 것을 가립니다.**
+  **글자 쓰기(`write.html`)와 글자 만들기(`make.html`)가 세 번째·네 번째 사례**입니다 —
+  '쓰는 것' 과 '자모를 조립하는 것' 은 낱말 카드에 담기지 않아 페이지를 따로 만들었습니다.
+  `make.js` 는 문제를 `LESSONS` 의 **'한글' 과목 수업에서 그대로 읽어 옵니다** — 한글 수업에
+  낱말을 더 넣으면 그 놀이도 같이 늘어나니, 거기에 새 데이터 배열을 만들지 마세요.
 
   ⚠️ **세계 지도는 태블릿 전용입니다 — 이것은 버그가 아니라 정한 것입니다.** (2026-09-06)
   지리적으로 정확한 지도에서 한국은 가로의 4.5% 라서 폰(390px)에서는 16×18px 이 됩니다
@@ -144,8 +150,11 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.town` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.world.<act>` | 세계 지도 놀이별 최고 별 |
 | `daniland.best.world` | 그중 제일 잘한 기록 |
+| `daniland.best.write.<set>` | 글자 쓰기 묶음별(자음·모음·숫자·낱말) 최고 별 |
+| `daniland.best.write` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
+| `daniland.best.make` | 글자 만들기 최고 별 |
 | `daniland.best.balloon.level` | 풍선 터뜨리기에서 도달한 최고 단계 |
-| `daniland.mode` `daniland.numMax` `daniland.showLabel` `daniland.balloonStart` `daniland.townAct` `daniland.worldAct` | 마지막에 고른 설정 |
+| `daniland.mode` `daniland.numMax` `daniland.showLabel` `daniland.balloonStart` `daniland.townAct` `daniland.worldAct` `daniland.writeSet` `daniland.makeLevel` | 마지막에 고른 설정 |
 | `daniland.rate` `daniland.voice.<lang>` | 목소리·속도 |
 | `daniland.drawer` | 그림 그리기 도장 서랍 접힘 상태 |
 | `daniland.pass` | 비밀번호를 맞힌 기기 표시 (`js/gate.js`) |
