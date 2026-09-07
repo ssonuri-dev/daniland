@@ -90,7 +90,8 @@ Jua 는 굵기가 400 하나뿐이라 제목 규칙에서 `font-weight: 400` 으
 index.html            과목 카드            home.js
  └ subject.html?name=영어   수업·놀이 카드   subject.js
       ├ play.html?lesson=en-fruits          game.js     (수업 데이터 기반, 놀이 5종)
-      ├ numbers.html?act=plus               numbers.js  (문제를 매번 생성, 놀이 4종)
+      ├ numbers.html?act=plus               numbers.js  (문제를 매번 생성, 놀이 7종)
+      ├ hundred.html                        hundred.js  (1~100 백 판, 놀이 3종)
       ├ town.html                           town.js     (지도 그림 town.jpg 위, 놀이 3종)
       ├ world.html                          world.js    (지도 그림 world.jpg 위, 놀이 3종)
       ├ write.html                          write.js    (글자 따라 쓰기, 묶음 4종)
@@ -99,10 +100,16 @@ index.html            과목 카드            home.js
 ```
 
 `play.html` 과 `numbers.html` 은 **모든 수업·모든 놀이가 함께 쓰는 한 개의 화면**입니다.
-놀이별로 HTML 을 늘리지 마세요.
+놀이별로 HTML 을 늘리지 마세요. 수학 놀이를 더할 때도 `numbers.js` 의 `ACTS` 에 한 줄,
+`make<이름>()` 하나, `PAGES` 에 카드 하나면 끝나야 정상입니다.
 
 - **놀이 선택 위치가 둘이 다릅니다.** `game.js` 는 시작 오버레이에서 놀이+난이도를 고르고,
   `numbers.js` 는 과목 페이지의 카드(`?act=`)가 곧 놀이라 시작 화면에 숫자 범위만 나옵니다.
+  (`hundred.js` 는 town/world 처럼 시작 화면에서 놀이를 고릅니다.)
+- **`numbers.js` 의 난이도는 놀이마다 다릅니다** — `ACTS[].levels` 에 있습니다. 세는 놀이는
+  `[5,10,20]`, 수 순서는 `[20,50,100]`, 패턴 잇기는 `[]`(단계가 없어 시작 화면에서 숨깁니다).
+  저장 키도 `daniland.numMax.<act>` 로 갈라 두었습니다 — 한 키로 묶으면 수 순서의 100 이
+  세어 보기로 새어 들어갑니다.
 - **놀이 가능 여부는 데이터에서 유도됩니다.** `lesson.modes` 가 있으면 그대로,
   없으면 `items` 에 `emoji` 가 있는지 보고 그림 놀이 3종(`listen`/`word`/`memory`) 또는
   그림 없는 놀이 2종(`sound`/`order`)을 씁니다 (`game.js` 의 `lessonModes()`).
@@ -124,6 +131,8 @@ index.html            과목 카드            home.js
   '쓰는 것' 과 '자모를 조립하는 것' 은 낱말 카드에 담기지 않아 페이지를 따로 만들었습니다.
   `make.js` 는 문제를 `LESSONS` 의 **'한글' 과목 수업에서 그대로 읽어 옵니다** — 한글 수업에
   낱말을 더 넣으면 그 놀이도 같이 늘어나니, 거기에 새 데이터 배열을 만들지 마세요.
+  **백 판(`hundred.html`)이 다섯 번째 사례**입니다 — 1~100 이 열 칸씩 열 줄로 놓인 판 자체가
+  교구라서(줄=십의 자리, 칸=일의 자리) 낱말 카드에도 `numbers.html` 의 보기 넉 장에도 안 담깁니다.
 
   ⚠️ **세계 지도는 태블릿 전용입니다 — 이것은 버그가 아니라 정한 것입니다.** (2026-09-06)
   지리적으로 정확한 지도에서 한국은 가로의 4.5% 라서 폰(390px)에서는 16×18px 이 됩니다
@@ -131,6 +140,13 @@ index.html            과목 카드            home.js
   **좌표를 넓히는 것으로는 못 고칩니다.** 확대·대륙→나라 2단계·국기 핀 같은 화면 설계를
   검토했지만, 지도를 정확하게 두는 쪽을 택하고 폰은 포기했습니다.
   고치겠다고 나라를 크게 그린 부정확한 지도로 되돌리지 마세요.
+
+  ⚠️ **백 판의 칸은 누르는 곳이 아닙니다 — 이것도 정한 것입니다.** (2026-09-07)
+  10열이라 폰(390px)에서 한 칸이 33px 이고, 태블릿에서도 46px 이라 손가락 최소 64px 에 못 미칩니다.
+  그래서 판은 보여 주기만 하고 답은 **판 아래 숫자 카드 넉 장**에서 고릅니다.
+  세계 지도와 달리 이건 잃는 게 없습니다 — '판에서 수를 찾는 것' 대신 '판의 자리를 읽는 것'
+  으로 문제를 세우면 배우는 내용은 그대로입니다(`where` 놀이가 그렇습니다).
+  **칸을 `<button>` 으로 바꾸지 마세요.**
 
 ### 글자 쓰기는 획 하나씩 본다 (write.js)
 
@@ -154,6 +170,19 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 주석이 있으니 지키세요. 카드 아래 여백 계산에 `.tools` 줄 높이가 들어가므로 게임 화면에
 요소를 새로 넣으면 `fitBoard()` 도 같이 봐야 합니다.
 
+⚠️ **`--card` 는 화면마다 뜻이 다릅니다.** `:root` 에서는 카드 **색**(`#ffffff`)이고,
+`game.js` 가 `play.html` 의 카드에 **픽셀 크기**로 덮어씁니다. 그래서 `calc(var(--card, …) * 0.46)`
+같은 규칙(`.choice .art`)은 **`play.html` 밖에서는 조용히 깨집니다** — `calc(#ffffff * 0.46)` 이
+되어 글자 크기가 기본값으로 떨어집니다. `numbers.html` 의 패턴 카드가 여기 걸려서
+`.choice.emoji-card .art` 로 크기를 직접 적었습니다.
+
+`numbers.js` 의 `groupEl()` 은 **그림을 다섯 개씩 `.grow` 줄로 끊습니다** — 스무 개도 한눈에
+세이고 5의 배수 감각이 붙습니다. `flex-wrap` 으로 알아서 접게 두면 화면 폭에 따라 묶음 수가
+달라져 이 효과가 사라지니 되돌리지 마세요. 대신 줄이 다섯 칸으로 차면(`.w5`) 카드 안에서
+그림을 더 줄여야 합니다 — 폰의 카드 속은 142px 뿐이라 26px 짜리 다섯 개는 넘칩니다.
+`.cards` 격자에 `minmax(0, 1fr)` 이 붙어 있는 것도 같은 이유입니다 (없으면 카드가 칸을 밀어 넓혀
+화면 밖으로 나갑니다).
+
 ### 저장은 전부 localStorage (기기 한정, 서버 없음)
 
 | 키 | 내용 |
@@ -167,8 +196,11 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.write.<set>` | 글자 쓰기 묶음별(자음·모음·숫자·낱말) 최고 별 |
 | `daniland.best.write` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.make` | 글자 만들기 최고 별 |
+| `daniland.best.hundred.<act>` | 백 판 놀이별(뛰어 세기·여기는 몇·앞뒤 수) 최고 별 |
+| `daniland.best.hundred` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.balloon.level` | 풍선 터뜨리기에서 도달한 최고 단계 |
-| `daniland.mode` `daniland.numMax` `daniland.showLabel` `daniland.balloonStart` `daniland.townAct` `daniland.worldAct` `daniland.writeSet` `daniland.makeLevel` | 마지막에 고른 설정 |
+| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.townAct` `daniland.worldAct` `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` | 마지막에 고른 설정 |
+| `daniland.numMax` | 수학 놀이가 넷뿐이던 시절의 숫자 범위 — 읽기만 합니다 (`numbers.js` 의 `loadMax()`) |
 | `daniland.rate` `daniland.voice.<lang>` | 목소리·속도 |
 | `daniland.drawer` | 그림 그리기 도장 서랍 접힘 상태 |
 | `daniland.pass` | 비밀번호를 맞힌 기기 표시 (`js/gate.js`) |

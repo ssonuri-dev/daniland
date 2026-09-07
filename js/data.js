@@ -708,6 +708,14 @@ window.PAGES = [
   },
   {
     subject: '수학',
+    title: '더 많은 것',
+    icon: '⚖️',
+    meta: '어느 쪽이 많을까',
+    href: 'numbers.html?act=more',
+    bestKey: 'daniland.best.numbers.more'
+  },
+  {
+    subject: '수학',
     title: '더하기',
     icon: '➕',
     meta: '모두 몇 개?',
@@ -716,11 +724,35 @@ window.PAGES = [
   },
   {
     subject: '수학',
-    title: '더 많은 것',
-    icon: '⚖️',
-    meta: '어느 쪽이 많을까',
-    href: 'numbers.html?act=more',
-    bestKey: 'daniland.best.numbers.more'
+    title: '빼기',
+    icon: '➖',
+    meta: '몇 개 남았을까',
+    href: 'numbers.html?act=minus',
+    bestKey: 'daniland.best.numbers.minus'
+  },
+  {
+    subject: '수학',
+    title: '수 순서',
+    icon: '🪜',
+    meta: '빠진 수를 찾아요',
+    href: 'numbers.html?act=order',
+    bestKey: 'daniland.best.numbers.order'
+  },
+  {
+    subject: '수학',
+    title: '패턴 잇기',
+    icon: '🔁',
+    meta: '다음에 올 그림은?',
+    href: 'numbers.html?act=pattern',
+    bestKey: 'daniland.best.numbers.pattern'
+  },
+  {
+    subject: '수학',
+    title: '백 판 놀이',
+    icon: '💯',
+    meta: '100까지 뛰어 세요',
+    href: 'hundred.html',
+    bestKey: 'daniland.best.hundred'
   },
 
   {

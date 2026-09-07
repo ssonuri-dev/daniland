@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <meta name="theme-color" content="#ff8fab">
-  <title>숫자 공부 · 다니랜드 🔢</title>
+  <title>백 판 놀이 · 다니랜드 💯</title>
   <link rel="icon" href="dani.png">
   <!-- 구글 웹폰트: 제목은 Jua, 본문은 나눔고딕 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,19 +16,24 @@
   <!-- 들어올 때 비밀번호 (문패입니다 — js/gate.js 주석 참고) -->
   <script src="js/gate.js"></script>
 
-  <div class="wrap">
+  <div class="wrap hundred-page">
     <div class="topbar">
       <button class="icon-btn" id="backBtn" title="뒤로">←</button>
       <div class="progress"><div class="progress-bar" id="bar"></div></div>
       <div class="score" id="score">⭐ 0</div>
     </div>
 
-    <div class="quest">
-      <div class="label" id="questLabel">몇 개일까요?</div>
-      <div id="stage"></div>
+    <!-- 지금 무엇을 찾아야 하는지 — 한 줄로만 나옵니다 (판이 커야 하니까) -->
+    <div class="hundred-quest">
+      <div class="hundred-label" id="questLabel"></div>
+      <button class="speak-btn small" id="speakBtn">🔊 다시</button>
     </div>
 
-    <div class="cards" id="cards"></div>
+    <!-- 1~100 판. 칸은 누르는 곳이 아닙니다 (js/hundred.js 맨 위 주석 참고).
+         판 크기는 js/hundred.js 의 fitBoard() 가 화면에 맞춰 정합니다. -->
+    <div class="hundred-board" id="board"></div>
+
+    <div class="cards hundred-cards" id="cards"></div>
 
     <div class="tools">
       <button class="chip" id="voiceBtn">🎤 목소리</button>
@@ -38,11 +43,13 @@
   <!-- 시작 화면 -->
   <div class="overlay" id="startOverlay">
     <img src="dani.png" alt="다니">
-    <h2 id="startTitle">🔢 세어 보기</h2>
+    <h2>💯 백 판 놀이</h2>
 
-    <p class="hint" id="startDesc"></p>
+    <p class="hint">무엇을 하고 놀까요?</p>
+    <div class="mode-row" id="modeRow"></div>
+    <p class="hint" id="modeDesc"></p>
 
-    <p class="hint" id="levelHint">숫자는 어디까지 할까요?</p>
+    <p class="hint" id="levelHint"></p>
     <div class="level-row" id="levelRow"></div>
 
     <button class="big-btn" id="startBtn">시작하기 ▶</button>
@@ -66,6 +73,6 @@
   <script src="js/tts.js"></script>
   <script src="js/sfx.js"></script>
   <script src="js/voicepicker.js"></script>
-  <script src="js/numbers.js"></script>
+  <script src="js/hundred.js"></script>
 </body>
 </html>
