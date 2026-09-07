@@ -4,8 +4,8 @@
  * 주소) write.html
  *
  * 연한 글자 위를 손가락으로 덧그립니다. 써 볼 것은 시작 화면에서 고릅니다.
- *   자음 · 모음 · 숫자 : 획을 하나씩 안내합니다 (①번 획부터 차례대로)
- *   낱말               : 글자 전체를 자유롭게 따라 씁니다 (획 안내 없음)
+ * 어느 묶음이든 획을 하나씩 안내합니다 (①번 획부터 차례대로).
+ * 낱말은 글자를 자모로 풀어 그 획들을 이어 붙입니다 (아래 syllableStrokes).
  *
  * 잘 썼는지는 '얼마나 덮었나' 로 봅니다. 눈에 안 보이는 캔버스 두 장에
  *   ① 안내 획   ② 아이가 그은 획
@@ -18,7 +18,7 @@
  * ========================================================================= */
 
 (function () {
-  var ROUNDS = 8;          // 한 판에 쓸 글자(낱말) 수
+  var ROUNDS = 8;          // 한 판에 쓸 글자 수 (묶음에서 rounds 로 덮어쓸 수 있습니다)
   var LANG = 'ko-KR';
   var CELL_MIN = 120;      // 칸이 이보다 작아지면 손가락으로 못 씁니다
   var CELL_MAX = 420;
@@ -184,45 +184,119 @@
     { ch: '0', name: '영', strokes: [ ring(0.50, 0.50, 0.26, 0.38) ] }
   ];
 
-  // 낱말은 획순 없이 글자 전체를 따라 씁니다. 받침이 없거나 쉬운 것만 골랐습니다.
+  /* =======================================================================
+   * 낱말 — 글자를 자모 획으로 조립합니다
+   *
+   * '아' 를 통째로 한 덩어리로 보면 '이' 라고 써도 통과합니다. ㅏ 의 짧은 가로획이
+   * 빠져도 덮은 넓이로는 표가 안 나거든요. 그래서 낱말도 자음·모음과 똑같이
+   * **획 하나씩** 안내하고 하나씩 봅니다 — '아' 는 ㅇ · ㅣ · ㅏ의 가로, 세 획입니다.
+   *
+   * 글자 안에서 자모가 놓이는 자리는 중성이 세로(ㅏ ㅓ ㅣ …)냐 가로(ㅗ ㅜ ㅡ …)냐와
+   * 받침이 있느냐로 갈립니다. 그 네 가지 자리를 아래 BOXES 에 적어 두고,
+   * 자모의 0~1 좌표를 그 칸 안으로 옮겨 붙입니다.
+   * ===================================================================== */
+
+  var BASE = 0xAC00;
+  var CHO_LIST  = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+  var JUNG_LIST = ['ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ'];
+  var JONG_LIST = ['', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+
+  var TALL = ['ㅏ', 'ㅑ', 'ㅓ', 'ㅕ', 'ㅣ'];   // 세로로 선 모음 (오른쪽에 붙습니다)
+
+  // [왼쪽, 위, 너비, 높이] — 글자 칸을 1 × 1 로 봤을 때
+  var BOXES = {
+    tall:     { cho: [0.05, 0.17, 0.44, 0.62], jung: [0.50, 0.06, 0.46, 0.88] },
+    tallJong: { cho: [0.05, 0.07, 0.42, 0.48], jung: [0.48, 0.02, 0.46, 0.58],
+                jong: [0.17, 0.62, 0.66, 0.34] },
+    wide:     { cho: [0.25, 0.06, 0.50, 0.40], jung: [0.04, 0.46, 0.92, 0.48] },
+    wideJong: { cho: [0.27, 0.02, 0.46, 0.30], jung: [0.04, 0.32, 0.92, 0.32],
+                jong: [0.22, 0.64, 0.56, 0.33] }
+  };
+
+  var JAMO = {};   // 'ㄱ' → 획 목록 (자음·모음 표에서 그대로 씁니다)
+  CONSONANTS.concat(VOWELS).forEach(function (it) { JAMO[it.ch] = it.strokes; });
+
+  function place(pts, box) {
+    return pts.map(function (p) {
+      return [box[0] + p[0] * box[2], box[1] + p[1] * box[3]];
+    });
+  }
+
+  // 글자 하나를 획 목록으로 (자모 획을 초성 → 중성 → 받침 차례로 이어 붙입니다)
+  function syllableStrokes(ch) {
+    var code = ch.charCodeAt(0) - BASE;
+    if (code < 0 || code > 11171) return null;
+
+    var cho = CHO_LIST[Math.floor(code / 588)];
+    var jung = JUNG_LIST[Math.floor((code % 588) / 28)];
+    var jong = JONG_LIST[code % 28];
+
+    if (!JAMO[cho] || !JAMO[jung]) return null;
+    if (jong && !JAMO[jong]) return null;
+
+    var kind = (TALL.indexOf(jung) >= 0 ? 'tall' : 'wide') + (jong ? 'Jong' : '');
+    var box = BOXES[kind];
+    var out = [];
+
+    JAMO[cho].forEach(function (s) { out.push(place(s, box.cho)); });
+    JAMO[jung].forEach(function (s) { out.push(place(s, box.jung)); });
+    if (jong) JAMO[jong].forEach(function (s) { out.push(place(s, box.jong)); });
+
+    return out;
+  }
+
+  // 낱말은 여기 있는 자모로만 이뤄진 것을 씁니다 (쌍자음 ㄲ, 이중모음 ㅘ 는 획이 없습니다).
+  // 아래 목록은 페이지가 뜰 때 한 번 걸러지므로, 못 만드는 낱말을 적어도 조용히 빠집니다.
   var WORDS = [
     { emoji: '🐾', word: '다니' },
     { emoji: '👩', word: '엄마' },
-    { emoji: '👨', word: '아빠' },
     { emoji: '👶', word: '아기' },
-    { emoji: '🍎', word: '사과' },
     { emoji: '🍇', word: '포도' },
     { emoji: '🥛', word: '우유' },
     { emoji: '🌳', word: '나무' },
     { emoji: '🦋', word: '나비' },
-    { emoji: '🐰', word: '토끼' },
     { emoji: '🦆', word: '오리' },
     { emoji: '🦛', word: '하마' },
     { emoji: '🧢', word: '모자' },
     { emoji: '👖', word: '바지' },
     { emoji: '🌊', word: '바다' },
+    { emoji: '👠', word: '구두' },
+    { emoji: '🥛', word: '두부' },
+    { emoji: '🍜', word: '국수' },
+    { emoji: '🍖', word: '고기' },
+    { emoji: '🦵', word: '다리' },
+    { emoji: '🥒', word: '오이' },
+    { emoji: '🌏', word: '지구' },
     { emoji: '🍚', word: '밥' },
     { emoji: '⭐', word: '별' },
     { emoji: '🌙', word: '달' },
     { emoji: '🏠', word: '집' },
-    { emoji: '🌸', word: '꽃' },
     { emoji: '⛰️', word: '산' },
-    { emoji: '🐻', word: '곰' }
-  ];
+    { emoji: '🐻', word: '곰' },
+    { emoji: '💧', word: '물' },
+    { emoji: '👁️', word: '눈' },
+    { emoji: '✋', word: '손' }
+  ].filter(function (w) {
+    return w.word.split('').every(function (ch) { return !!syllableStrokes(ch); });
+  });
 
   var SETS = [
     { id: 'cons',  name: '자음', icon: 'ㄱ',  hint: 'ㄱ 부터 ㅎ 까지 열네 자를 획순대로 써요', items: CONSONANTS },
     { id: 'vowel', name: '모음', icon: 'ㅏ',  hint: 'ㅏ 부터 ㅣ 까지 열 자를 획순대로 써요',   items: VOWELS },
     { id: 'num',   name: '숫자', icon: '1',   hint: '1 부터 0 까지 획순대로 써요',            items: NUMBERS },
-    { id: 'word',  name: '낱말', icon: '✏️', hint: '그림을 보고 낱말을 따라 써요',            items: WORDS }
+    // 낱말은 글자마다 획이 대여섯이라 한 판을 짧게 잡습니다 (다섯 낱말이면 예순 획쯤).
+    { id: 'word',  name: '낱말', icon: '✏️', hint: '그림을 보고 낱말을 획순대로 써요',            items: WORDS, rounds: 5 }
   ];
 
   /* ---------- 통과 기준 ----------
    * covered : 안내 획을 아이 획이 덮은 비율 (이만큼은 덮어야 통과)
    * spill   : 아이 획이 안내 밖으로 나간 비율 (이보다 많이 나가면 다시)
-   * 낱말은 글자 전체가 안내라서 획보다 넉넉하게 봐 줍니다. */
-  var OK_COVER = { stroke: 0.70, glyph: 0.62 };
-  var OK_SPILL = { stroke: 0.34, glyph: 0.40 };
+   *
+   * 획 하나씩 따로 보기 때문에 이 두 가지로 충분합니다. 예전에는 낱말을 글자 통째로
+   * 봤는데, 그러면 '아' 를 '이' 라고 써도 통과했습니다 — ㅏ 의 짧은 가로획은
+   * 글자 넓이의 몇 %밖에 안 되니까요. 지금은 그 가로획이 '한 획'이라 빠뜨릴 수 없습니다. */
+  var OK_COVER = 0.70;
+  var OK_SPILL = 0.34;
 
   var dpr = Math.min(window.devicePixelRatio || 1, 2);
 
@@ -268,7 +342,6 @@
     misses: 0,
     locked: true,
     busy: false,        // 획순을 보여주는 동안은 못 씁니다
-    flash: false,       // 낱말에서 '어떻게 쓸까' 를 눌렀을 때 글자를 잠깐 진하게
     drawing: false,
     pointerId: null
   };
@@ -344,8 +417,9 @@
   /* ---------- 한 판 ---------- */
 
   function startGame() {
-    var items = UI.shuffle(findSet(state.set).items.slice());
-    state.queue = items.slice(0, Math.min(ROUNDS, items.length));
+    var set = findSet(state.set);
+    var items = UI.shuffle(set.items.slice());
+    state.queue = items.slice(0, Math.min(set.rounds || ROUNDS, items.length));
     state.total = state.queue.length;
     state.round = 0;
     state.stars = 0;
@@ -366,15 +440,12 @@
     state.firstTry = true;
     state.misses = 0;
     state.locked = false;
-    state.flash = false;
     el.skipBtn.hidden = true;
 
     el.questLabel.textContent = state.item.label;
     el.stage.textContent = state.item.emoji;
     el.stage.className = state.item.emoji ? 'write-art' : '';
-    el.hint.textContent = state.item.cells[0].parts[0].glyph
-      ? '연한 글자를 따라 써 보세요'
-      : '파란 ① 부터 차례대로 그어 보세요';
+    el.hint.textContent = '파란 ① 부터 차례대로 그어 보세요';
 
     renderCells();
     setTimeout(speakItem, 250);
@@ -397,7 +468,10 @@
       label: raw.word,
       speak: raw.word,
       emoji: raw.emoji || '',
-      cells: chars.map(function (ch) { return makeCell(ch, [{ glyph: ch }]); })
+      cells: chars.map(function (ch) {
+        var parts = syllableStrokes(ch).map(function (pts) { return { pts: pts }; });
+        return makeCell(ch, parts);
+      })
     };
   }
 
@@ -505,17 +579,6 @@
     cell.parts.forEach(function (part, i) {
       if (i < cell.at) return;                 // 이미 쓴 획은 아이 잉크로 보입니다
 
-      if (part.glyph) {
-        c.save();
-        c.fillStyle = state.flash && active ? 'rgba(64,50,58,0.34)' : 'rgba(64,50,58,0.14)';
-        glyphFont(c, s);
-        c.textAlign = 'center';
-        c.textBaseline = 'middle';
-        c.fillText(part.glyph, s / 2, s * 0.54);
-        c.restore();
-        return;
-      }
-
       var now = active && i === cell.at;
       strokeLine(c, part.pts, s, s * 0.13, now ? '#bcd9ff' : 'rgba(64,50,58,0.13)');
     });
@@ -584,11 +647,6 @@
     c.restore();
   }
 
-  function glyphFont(c, s) {
-    c.font = '700 ' + Math.round(s * 0.7) +
-             'px "Nanum Gothic", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
-  }
-
   /* ---------- 손가락 ---------- */
 
   function bindPointer(cell) {
@@ -638,17 +696,6 @@
 
     var part = cell.parts[cell.at];
     if (!part) { paintCell(cell); return; }
-
-    if (part.glyph) {
-      // 낱말은 여러 번 그어도 됩니다. 그을 때마다 다 덮였는지만 봅니다.
-      cell.ink.push(pts);
-      if (check(cell, part, cell.ink).ok) { passPart(cell); return; }
-
-      paintCell(cell);
-      state.misses++;
-      if (state.misses >= 3) el.skipBtn.hidden = false;
-      return;
-    }
 
     if (check(cell, part, [pts]).ok) {
       cell.ink.push(pts);
@@ -715,9 +762,7 @@
     state.firstTry = false;
     state.misses = 0;
     el.skipBtn.hidden = true;
-    el.hint.textContent = cell.parts[0].glyph
-      ? '연한 글자를 따라 써 보세요'
-      : '파란 ① 부터 차례대로 그어 보세요';
+    el.hint.textContent = '파란 ① 부터 차례대로 그어 보세요';
     syncCells();
   }
 
@@ -761,13 +806,12 @@
 
   function check(cell, part, inkList) {
     var s = Math.max(80, Math.round(cell.size));
-    var kind = part.glyph ? 'glyph' : 'stroke';
     var a = pad('guide', s);
     var b = pad('ink', s);
 
     // ① 안내(가느다란 속심)를 아이 획(두툼하게)이 얼마나 덮었나
     paintGuide(a.ctx, s, part, false);
-    paintInk(b.ctx, s, inkList, s * (part.glyph ? 0.20 : 0.24));
+    paintInk(b.ctx, s, inkList, s * 0.24);
     var one = compare(a.ctx, b.ctx, s);
     var covered = one.a ? one.both / one.a : 0;
 
@@ -777,7 +821,7 @@
     var two = compare(a.ctx, b.ctx, s);
     var spill = two.b ? (two.b - two.both) / two.b : 1;
 
-    return { ok: covered >= OK_COVER[kind] && spill <= OK_SPILL[kind], covered: covered, spill: spill };
+    return { ok: covered >= OK_COVER && spill <= OK_SPILL, covered: covered, spill: spill };
   }
 
   function paintGuide(c, s, part, fat) {
@@ -786,18 +830,6 @@
     c.strokeStyle = '#000';
     c.lineCap = 'round';
     c.lineJoin = 'round';
-
-    if (part.glyph) {
-      glyphFont(c, s);
-      c.textAlign = 'center';
-      c.textBaseline = 'middle';
-      if (fat) {
-        c.lineWidth = s * 0.16;
-        c.strokeText(part.glyph, s / 2, s * 0.54);
-      }
-      c.fillText(part.glyph, s / 2, s * 0.54);
-      return;
-    }
 
     c.lineWidth = s * (fat ? 0.34 : 0.05);
     c.beginPath();
@@ -856,14 +888,6 @@
 
     var part = cell.parts[cell.at];
     if (!part) return;
-
-    // 낱말은 보여줄 획이 없으니 연한 글자를 잠깐 진하게 비춰 줍니다.
-    if (part.glyph) {
-      state.flash = true;
-      paintCell(cell);
-      setTimeout(function () { state.flash = false; paintCell(cell); }, 900);
-      return;
-    }
 
     state.busy = true;
     el.showBtn.classList.add('on');
