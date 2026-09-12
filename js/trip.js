@@ -23,7 +23,8 @@
   var LANG = 'en-US';
   var MAP_RATIO = 1951 / 806;   // trip.jpg 의 가로÷세로. 그림을 바꾸면 이 값도 바꿔야 합니다.
   var MAX_CARDS = 720;          // 보기 카드 줄의 최대 너비 (css 의 .trip-cards max-width 와 같은 값)
-  var MIN_SCENE_H = 280;        // 폰에서 그림이 이보다 납작해지면, 창보다 넓게 그리고 다니를 따라 밉니다
+  var ZOOM = 1.5;               // 창보다 그림을 이만큼 크게 그리고, camera() 가 다니를 따라 움직입니다
+  var MIN_VIEW_H = 280;         // 폰에서 창이 이보다 납작해지면 창을 이 높이로 세웁니다 (그림이 옆으로 더 넘칩니다)
   var PRAISE = ['참 잘했어요!', '멋져요!', '최고예요!', '대단해요!', '와, 다 맞혔어요!'];
 
   /* -------------------------------------------------------------------------
@@ -54,11 +55,11 @@
     rail:    { x: 42.5, y: 93 },                          // 길이 끝나고 철길이 시작되는 곳
     station: { x: 49.5, y: 83, word: 'the train station' },
     pier:    { x: 61,   y: 84, word: 'the pier' },
-    island:  { x: 81.5, y: 73, word: "Grandma's island" }   // 집을 가리지 않게 섬 왼쪽 물가에 섭니다
+    island:  { x: 83.5, y: 71.5, word: "Grandma's island" }   // 집을 가리지 않게 섬 왼쪽 모래밭에 섭니다
   };
 
   // 할머니가 서 계신 곳 (섬의 집 앞)
-  var GRANDMA = { x: 89, y: 66 };
+  var GRANDMA = { x: 92.5, y: 67.5 };
 
   /* -------------------------------------------------------------------------
    * 여행 구간 — 순서대로 갑니다.
@@ -75,9 +76,9 @@
       path: [[45, 89], [47.5, 86], [49.5, 83]],
       walk: [[55, 84], [61, 84]] },
     { kind: 'sea',  to: 'island',
-      path: [[66, 82], [72, 79], [78, 75], [81.5, 73]] },
+      path: [[66, 82], [72, 79], [79, 75], [83.5, 71.5]] },
     { kind: 'sky',  to: 'home', say: 'Time to go home!',
-      path: [[76, 45], [60, 25], [30, 25], [12, 55], [9, 85]] }
+      path: [[76, 45], [60, 32], [30, 32], [12, 55], [9, 85]] }
   ];
 
   /* -------------------------------------------------------------------------
@@ -146,7 +147,7 @@
 
   if (!findAct(state.act)) state.act = 'ride';
 
-  var view = { w: 0, sceneW: 0 };     // 창 너비와 그림 너비 (fitMap 이 정하고 camera 가 씁니다)
+  var view = { w: 0, h: 0, sceneW: 0, sceneH: 0 };   // 창과 그림의 크기 (fitMap 이 정하고 camera 가 씁니다)
 
   if (!window.TTS || !TTS.supported) el.voiceBtn.hidden = true;
 
@@ -243,11 +244,12 @@
     if (a) el.modeDesc.textContent = a.desc;
   }
 
-  /* ---------- 그림 크기 맞추기 ----------
-   * 그림은 가로로 길어서(2.4:1) 보통 가로에 맞춰지고, 태블릿 가로처럼 낮은 화면에서는
+  /* ---------- 창 크기 맞추기 ----------
+   * 창(.trip-map)은 그림 비율(2.4:1)로 가로에 맞추고, 태블릿 가로처럼 낮은 화면에서는
    * 아래 보기 카드 자리를 뺀 세로에 맞춥니다. (스크롤이 생기면 안 됩니다)
-   * 폰(390px)에서는 가로에 맞추면 148px 짜리 띠가 되어 다니가 콩알만 해집니다 —
-   * 그럴 때는 그림을 MIN_SCENE_H 높이로 창보다 넓게 그리고, camera() 가 다니를 따라 옆으로 밉니다. */
+   * 폰(390px)에서는 그 비율대로면 148px 짜리 띠가 되어, 창을 MIN_VIEW_H 높이로 세웁니다.
+   * 그림(.trip-scene)은 창보다 ZOOM 배 크게 그리고 camera() 가 다니를 따라 가로·세로로 움직입니다 —
+   * 땅에 있을 때는 하늘이 잘려 나가고, 비행기를 타면 카메라가 위로 올라갑니다. */
   function fitMap() {
     var wrapEl = document.querySelector('.wrap');
     var toolsEl = document.querySelector('.tools');
@@ -265,34 +267,35 @@
     var w = Math.max(240, Math.min(availW, availH * MAP_RATIO));
     var h = Math.round(w / MAP_RATIO);
 
-    // 폰: 그림을 키워 창 밖으로 내보내고 다니를 따라갑니다
-    if (h < MIN_SCENE_H) {
-      h = Math.round(Math.max(h, Math.min(MIN_SCENE_H, availH)));
-      w = Math.round(h * MAP_RATIO);
-    }
+    // 폰: 창을 세워서 다니가 콩알만 해지지 않게 합니다
+    if (h < MIN_VIEW_H) h = Math.round(Math.max(h, Math.min(MIN_VIEW_H, availH)));
 
-    view.w = Math.min(availW, w);
-    view.sceneW = w;
-    el.map.style.width = view.w + 'px';
+    view.w = w;
+    view.h = h;
+    view.sceneH = Math.round(h * ZOOM);
+    view.sceneW = Math.round(view.sceneH * MAP_RATIO);
+    el.map.style.width = w + 'px';
     el.map.style.height = h + 'px';
-    el.scene.style.width = w + 'px';
-    el.scene.style.height = h + 'px';
-    el.scene.style.fontSize = Math.round(w / 22) + 'px';
+    el.scene.style.width = view.sceneW + 'px';
+    el.scene.style.height = view.sceneH + 'px';
+    el.scene.style.fontSize = Math.round(view.sceneW / 22) + 'px';
     camera(0);
   }
 
 
-  // 다니가 창 가운데 오도록 그림을 밉니다 (그림 끝에서는 멈춥니다). 다니와 같은 시간 동안 움직입니다.
+  // 다니가 창 가운데(세로로는 조금 아래)에 오도록 그림을 밉니다. 그림 끝에서는 멈추고,
+  // 다니와 같은 시간 동안 움직여 다니가 창 안에서 미끄러지지 않습니다.
   function camera(dur) {
-    var over = view.sceneW - view.w;
-    if (over <= 0) {
-      el.scene.style.transform = '';
-      return;
-    }
     var daniX = view.sceneW * state.pos.x / 100;
-    var off = Math.max(0, Math.min(over, daniX - view.w / 2));
+    var daniY = view.sceneH * state.pos.y / 100;
+    var offX = clamp(daniX - view.w / 2, 0, view.sceneW - view.w);
+    var offY = clamp(daniY - view.h * 0.62, 0, view.sceneH - view.h);
     el.scene.style.transitionDuration = dur + 'ms';
-    el.scene.style.transform = 'translateX(' + (-Math.round(off)) + 'px)';
+    el.scene.style.transform = 'translate(' + (-Math.round(offX)) + 'px, ' + (-Math.round(offY)) + 'px)';
+  }
+
+  function clamp(v, lo, hi) {
+    return Math.max(lo, Math.min(hi, v));
   }
 
   // 보기 카드가 차지할 세로 길이를 미리 뺍니다 — 문제마다 카드 모양이 달라도

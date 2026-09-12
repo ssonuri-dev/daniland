@@ -1707,8 +1707,8 @@ button {
 .trip-quest .speak-btn { margin-top: 0; flex: none; }
 .trip-quest .speak-btn[hidden] { display: none; }
 
-/* 창(.trip-map)과 그림(.trip-scene) — 넓은 화면에서는 둘이 같은 크기이고,
- * 폰에서는 그림이 창보다 넓어 fitMap()/camera() 가 다니를 따라 옆으로 밉니다. */
+/* 창(.trip-map)과 그림(.trip-scene) — 그림은 창보다 크게(js/trip.js 의 ZOOM 배) 그려지고
+ * camera() 가 다니를 따라 가로·세로로 밉니다. 창 밖으로 나간 부분은 잘립니다. */
 .trip-map {
   position: relative;
   margin: 0 auto;
@@ -1766,7 +1766,6 @@ button {
 }
 
 .trip-dani.riding img { transform: translateY(-14%); animation: trip-jiggle 0.35s ease-in-out infinite; }
-.trip-dani.flying { transition-timing-function: ease-in-out; }
 .trip-dani.flying img { animation: world-bob 0.6s ease-in-out infinite; }
 
 @keyframes trip-jiggle {
@@ -1780,7 +1779,7 @@ button {
   left: 50%;
   bottom: 100%;
   padding: 0.12em 0.2em;
-  font-size: 1.4em;
+  font-size: 1em;
   line-height: 1;
   background: #fff;
   border-radius: 0.5em;
@@ -1844,6 +1843,15 @@ button {
 }
 
 .trip-cards.say-cards .choice .art { font-size: 36px; }
+
+/* ⭕ ❌ 표시가 문장을 가리지 않게 오른쪽 여백에 작게 둡니다 */
+.trip-cards.say-cards .choice { padding-right: 36px; }
+.trip-cards.say-cards .choice .mark {
+  top: 50%;
+  right: 8px;
+  font-size: 22px;
+  transform: translateY(-50%);
+}
 
 .trip-cards.say-cards .choice .text {
   font-size: 16px;
