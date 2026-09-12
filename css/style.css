@@ -1670,6 +1670,196 @@ button {
   color: var(--yellow);
 }
 
+/* ---------- 할머니 섬 여행 (trip.html) ----------
+ * 마을·세계 지도와 같은 얼개 — 그림 한 장(trip.jpg) 위에 다니를 얹고 백분율로 움직입니다.
+ * 다른 점은 그림을 누르지 않고 아래 보기 카드(.trip-cards)에서 고른다는 것입니다.
+ * 그림 크기는 js/trip.js 의 fitMap() 이 카드 자리를 뺀 뒤 화면에 맞춰 정합니다.
+ * ------------------------------------------------------------------------ */
+
+/* 그림이 가로로 길어 태블릿 가로에서는 보통 폭(900px)이 남습니다 — 그림 그리기처럼 넓게 씁니다 */
+.trip-page { max-width: 1200px; padding-bottom: 14px; }
+
+/* 들리는 영어 문장(위) + 우리말 안내(아래) — 그림이 커야 하니 두 줄로만 씁니다 */
+.trip-quest {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 58px;
+  margin: 0 0 8px;
+}
+
+.trip-text { min-width: 0; text-align: center; }
+
+.trip-say {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1.25;
+}
+
+.trip-hint {
+  margin-top: 2px;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+.trip-quest .speak-btn { margin-top: 0; flex: none; }
+.trip-quest .speak-btn[hidden] { display: none; }
+
+/* 창(.trip-map)과 그림(.trip-scene) — 넓은 화면에서는 둘이 같은 크기이고,
+ * 폰에서는 그림이 창보다 넓어 fitMap()/camera() 가 다니를 따라 옆으로 밉니다. */
+.trip-map {
+  position: relative;
+  margin: 0 auto;
+  background-color: #7fd0f7;
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  touch-action: manipulation;
+}
+
+.trip-scene {
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-image: url('../trip.jpg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  transition-property: transform;
+  transition-timing-function: linear;
+  transition-duration: 400ms;
+}
+
+/* 다니 — 발끝이 땅에 닿도록 아래쪽을 기준으로 놓습니다.
+ * 이모지(탈것·말풍선)는 em 이라 그림 글자 크기를 따라갑니다 (fitMap() 이 정합니다). */
+.trip-dani {
+  position: absolute;
+  width: 11%;
+  transform: translate(-50%, -84%);
+  transition-property: left, top;
+  transition-timing-function: linear;
+  transition-duration: 400ms;
+  pointer-events: none;
+}
+
+.trip-dani img {
+  position: relative;          /* 탈것보다 앞에 오게 (다니가 탈것 위에 올라탄 모양) */
+  z-index: 1;
+  display: block;
+  width: 100%;
+  filter: drop-shadow(0 4px 6px rgba(64, 50, 58, 0.35));
+}
+
+.trip-dani.walking img { animation: town-bob 0.5s ease-in-out infinite; }
+
+/* 탈것은 다니 발 아래·뒤에 놓아 올라탄 것처럼 보이게 합니다 */
+.trip-ride {
+  position: absolute;
+  z-index: 0;
+  left: 50%;
+  bottom: 0;
+  font-size: 2em;
+  line-height: 1;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 3px 4px rgba(64, 50, 58, 0.35));
+}
+
+.trip-dani.riding img { transform: translateY(-14%); animation: trip-jiggle 0.35s ease-in-out infinite; }
+.trip-dani.flying { transition-timing-function: ease-in-out; }
+.trip-dani.flying img { animation: world-bob 0.6s ease-in-out infinite; }
+
+@keyframes trip-jiggle {
+  0%, 100% { transform: translateY(-14%); }
+  50%      { transform: translateY(-18%); }
+}
+
+/* 다니 머리 위 말풍선 — 목마름·졸림·배고픔 얼굴이 뜹니다 */
+.trip-bubble {
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  padding: 0.12em 0.2em;
+  font-size: 1.4em;
+  line-height: 1;
+  background: #fff;
+  border-radius: 0.5em;
+  box-shadow: var(--shadow);
+  transform: translate(-50%, -0.15em);
+}
+
+.trip-bubble::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  border: 0.22em solid transparent;
+  border-top-color: #fff;
+  transform: translateX(-50%);
+}
+
+.trip-bubble[hidden] { display: none; }
+.trip-bubble.pop { animation: pop 0.4s ease; }
+
+/* 할머니 — 섬의 집 앞에 늘 서 계시고, 도착하면 손을 흔듭니다 */
+.trip-grandma {
+  position: absolute;
+  font-size: 1.1em;
+  line-height: 1;
+  transform: translate(-50%, -100%);
+  filter: drop-shadow(0 3px 4px rgba(64, 50, 58, 0.35));
+  pointer-events: none;
+}
+
+.trip-grandma.wave { animation: trip-wave 0.5s ease-in-out 5; }
+
+@keyframes trip-wave {
+  0%, 100% { transform: translate(-50%, -100%) rotate(0); }
+  50%      { transform: translate(-50%, -100%) rotate(-12deg) translateY(-10%); }
+}
+
+/* 보기 카드 — 탈것은 한 줄에 넉 장, 폰에서는 두 줄 두 장 (손가락 최소 64px) */
+.cards.trip-cards {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  max-width: 720px;              /* js/trip.js 의 MAX_CARDS 와 같은 값 */
+  margin: 14px auto 0;
+}
+
+.trip-cards .choice { aspect-ratio: 3 / 2; padding: 6px; gap: 2px; }
+
+/* .choice .art 의 크기는 play.html 의 --card 에 물려 있어 여기서는 직접 적습니다 */
+.trip-cards .choice .art { font-size: 44px; line-height: 1.1; }
+.trip-cards .choice .word { font-size: 15px; }
+
+/* 물어볼 말·해 줄 말 — 석 장을 옆으로 눕혀 그림 + 문장으로 놓습니다 */
+.cards.trip-cards.say-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+.trip-cards.say-cards .choice {
+  flex-direction: row;
+  gap: 8px;
+  aspect-ratio: auto;
+  min-height: 72px;
+  padding: 8px 10px;
+}
+
+.trip-cards.say-cards .choice .art { font-size: 36px; }
+
+.trip-cards.say-cards .choice .text {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--ink);
+  text-align: left;
+  line-height: 1.2;
+}
+
+@media (max-width: 599px) {
+  .cards.trip-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cards.trip-cards.say-cards { grid-template-columns: minmax(0, 1fr); }
+  .trip-cards.say-cards .choice { min-height: 64px; }
+  .trip-say { font-size: 18px; }
+}
+
 /* ---------- 글자 쓰기 (write.html) ---------- */
 
 .write-page { padding-bottom: 14px; }

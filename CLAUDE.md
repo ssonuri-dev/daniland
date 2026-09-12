@@ -94,6 +94,7 @@ index.html            과목 카드            home.js
       ├ hundred.html                        hundred.js  (1~100 백 판, 놀이 3종)
       ├ town.html                           town.js     (지도 그림 town.jpg 위, 놀이 3종)
       ├ world.html                          world.js    (지도 그림 world.jpg 위, 놀이 3종)
+      ├ trip.html                           trip.js     (풍경 그림 trip.jpg 위, 놀이 2종 — 영어 문장·대화)
       ├ write.html                          write.js    (글자 따라 쓰기, 묶음 4종)
       ├ make.html                           make.js     (자음+모음으로 글자 조립)
       └ draw.html                           draw.js     (독립 — 다른 js 를 전혀 안 씀)
@@ -133,6 +134,14 @@ index.html            과목 카드            home.js
   낱말을 더 넣으면 그 놀이도 같이 늘어나니, 거기에 새 데이터 배열을 만들지 마세요.
   **백 판(`hundred.html`)이 다섯 번째 사례**입니다 — 1~100 이 열 칸씩 열 줄로 놓인 판 자체가
   교구라서(줄=십의 자리, 칸=일의 자리) 낱말 카드에도 `numbers.html` 의 보기 넉 장에도 안 담깁니다.
+  **할머니 섬 여행(`trip.html`)이 여섯 번째이자, 위에서 말한 영어 대화 수업의 첫 사례**입니다 (2026-09-12).
+  수업 책 *Grandma's Island* 의 문장(`How do you get there? / We go by ___.`,
+  `Are you thirsty? / Yes, I am. / Have a drink.`)을 풍경 그림 한 장 위의 여행으로 엮었습니다.
+  구간의 땅(길·철길·바다·하늘)이 정답 탈것을 정하므로 보기 넉 장은 **네 땅에서 하나씩** 뽑습니다 —
+  같은 땅의 탈것 둘을 한 문제에 넣으면 정답이 둘이 됩니다. 탈것 낱말 자체는 `LESSONS` 의
+  `en-transport` 에 따로 있고, `trip.js` 의 `VEHICLES` 는 여행에 쓰는 것만 추려 kind 를 붙인 것입니다.
+  폰에서는 그림(2.4:1)이 148px 띠가 되어 `MIN_SCENE_H` 높이로 키우고 `camera()` 가 다니를 따라 밉니다 —
+  `.trip-map`(창) 안에 `.trip-scene`(그림)이 따로 있는 이유입니다. 좌표는 모두 그림 기준 % 입니다.
 
   ⚠️ **세계 지도는 태블릿 전용입니다 — 이것은 버그가 아니라 정한 것입니다.** (2026-09-06)
   지리적으로 정확한 지도에서 한국은 가로의 4.5% 라서 폰(390px)에서는 16×18px 이 됩니다
@@ -198,8 +207,10 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.make` | 글자 만들기 최고 별 |
 | `daniland.best.hundred.<act>` | 백 판 놀이별(뛰어 세기·여기는 몇·앞뒤 수) 최고 별 |
 | `daniland.best.hundred` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
+| `daniland.best.trip.<act>` | 할머니 섬 여행 놀이별(탈것 여행·다니 돌보기) 최고 별 |
+| `daniland.best.trip` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.balloon.level` | 풍선 터뜨리기에서 도달한 최고 단계 |
-| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.townAct` `daniland.worldAct` `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` | 마지막에 고른 설정 |
+| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.townAct` `daniland.worldAct` `daniland.tripAct` `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` | 마지막에 고른 설정 |
 | `daniland.numMax` | 수학 놀이가 넷뿐이던 시절의 숫자 범위 — 읽기만 합니다 (`numbers.js` 의 `loadMax()`) |
 | `daniland.rate` `daniland.voice.<lang>` | 목소리·속도 |
 | `daniland.drawer` | 그림 그리기 도장 서랍 접힘 상태 |

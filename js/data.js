@@ -710,6 +710,15 @@ window.PAGES = [
   },
 
   {
+    subject: '영어',
+    title: '할머니 섬 여행',
+    icon: '🏝️',
+    meta: '탈것을 골라 할머니 섬에 가요',
+    href: 'trip.html',
+    bestKey: 'daniland.best.trip'
+  },
+
+  {
     subject: '세계',
     title: '세계 지도',
     icon: '🗺️',
