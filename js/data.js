@@ -194,6 +194,52 @@ window.LESSONS = [
   },
 
   {
+    id: 'en-transport',
+    subject: '영어',
+    title: '탈것',
+    icon: '🚌',
+    lang: 'en-US',
+    items: [
+      { emoji: '🚂', word: 'train',      ko: '기차' },
+      { emoji: '🚌', word: 'bus',        ko: '버스' },
+      { emoji: '✈️', word: 'plane',      ko: '비행기' },
+      { emoji: '🚗', word: 'car',        ko: '자동차' },
+      { emoji: '⛵', word: 'boat',       ko: '보트' },
+      { emoji: '🚢', word: 'ship',       ko: '배' },
+      { emoji: '🚕', word: 'taxi',       ko: '택시' },
+      { emoji: '🚇', word: 'subway',     ko: '지하철' },
+      { emoji: '🚁', word: 'helicopter', ko: '헬리콥터' },
+      { emoji: '🚲', word: 'bike',       ko: '자전거' },
+      { emoji: '🏍️', word: 'motorcycle', ko: '오토바이' },
+      { emoji: '🚚', word: 'truck',      ko: '트럭' },
+      { emoji: '🛴', word: 'scooter',    ko: '킥보드' },
+      { emoji: '🚀', word: 'rocket',     ko: '로켓' }
+    ]
+  },
+
+  {
+    id: 'en-feelings',
+    subject: '영어',
+    title: '기분',
+    icon: '😊',
+    lang: 'en-US',
+    items: [
+      { emoji: '😀', word: 'happy',     ko: '기뻐요' },
+      { emoji: '😢', word: 'sad',       ko: '슬퍼요' },
+      { emoji: '😠', word: 'angry',     ko: '화나요' },
+      { emoji: '😨', word: 'scared',    ko: '무서워요' },
+      { emoji: '😲', word: 'surprised', ko: '놀랐어요' },
+      { emoji: '😴', word: 'sleepy',    ko: '졸려요' },
+      { emoji: '😩', word: 'tired',     ko: '피곤해요' },
+      { emoji: '🤤', word: 'hungry',    ko: '배고파요' },
+      { emoji: '🥵', word: 'thirsty',   ko: '목말라요' },
+      { emoji: '🤒', word: 'sick',      ko: '아파요' },
+      { emoji: '🤩', word: 'excited',   ko: '신나요' },
+      { emoji: '😳', word: 'shy',       ko: '부끄러워요' }
+    ]
+  },
+
+  {
     id: 'ko-fruits',
     subject: '한글',
     title: '과일 이름',

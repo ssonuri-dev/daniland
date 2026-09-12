@@ -196,7 +196,7 @@ daniland/
 
 ```
 index.html            🔤 영어   🔢 수학   🇰🇷 한글   🌍 세계   🎨 놀이
-   └ subject.html?name=영어      과일 · 동물 · 색깔 · 숫자 세기 · 직업과 일터 · 날씨 · 요일 · 마을 지도
+   └ subject.html?name=영어      과일 · 동물 · 색깔 · 숫자 세기 · 직업과 일터 · 날씨 · 요일 · 탈것 · 기분 · 마을 지도
         └ play.html?lesson=en-fruits     놀이를 고르고 난이도를 고름
         └ town.html                      마을 지도 (놀이는 시작 화면에서 고름)
    └ subject.html?name=수학      세어 보기 · 같은 개수 찾기 · 더 많은 것 · 더하기 · 빼기 · 수 순서 · 패턴 잇기 · 백 판 놀이
