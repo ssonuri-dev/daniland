@@ -920,6 +920,20 @@ button {
 .choice.num-card { aspect-ratio: 3 / 2; }
 .choice.num-card .num { font-size: 64px; font-weight: 800; }
 
+/* 숫자 보기 넉 장(.num-cards 는 js/numbers.js 의 renderNumberCards 가 붙입니다).
+   3:2 두 줄이면 태블릿(폭 900px)에서 카드 한 장이 287px 이라 두 줄에 580px 을 먹고,
+   위의 그림 묶음까지 더하면 화면을 넘어 스크롤이 생깁니다 — 넓은 화면에서는 한 줄 넉 장으로 눕힙니다. */
+@media (min-width: 600px) {
+  .cards.num-cards {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .cards.num-cards .choice.num-card { aspect-ratio: auto; height: 96px; }
+  .cards.num-cards .choice.num-card .num { font-size: 48px; }
+}
+
 /* 수 순서(6 7 ❓ 9)와 패턴 잇기(🍎🍌🍎🍌 ❓)가 쓰는 한 줄 */
 .seq-row {
   display: flex;

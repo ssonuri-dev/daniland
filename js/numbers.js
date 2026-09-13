@@ -439,7 +439,7 @@
 
   function renderNumberCards(answer, min, avoid) {
     var choices = nearNumbers(answer, 4, min, avoid);
-    el.cards.className = 'cards' + (choices.length > 4 ? ' cols-3' : '');
+    el.cards.className = 'cards num-cards' + (choices.length > 4 ? ' cols-3' : '');
 
     UI.shuffle(choices).forEach(function (n) {
       var card = document.createElement('button');
