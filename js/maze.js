@@ -2,8 +2,12 @@
  * 다니랜드 - 미로 찾기
  *
  * 매번 새로 만들어지는 미로에서 손가락으로 길을 그어 다니를 간식까지 데려갑니다.
- * 한 판은 미로 다섯 개. 되돌아가지 않고(막다른 길에 들어가지 않고) 한 번에 찾으면 ⭐ 하나 —
- * 손보다 눈이 먼저 가게 하려고 그렇게 정했습니다. 💡 힌트를 보면 그 미로의 별은 없습니다.
+ * 한 판은 미로 하나 (다섯 개는 너무 길다고 해서 줄였습니다). 되돌아가지 않고(막다른 길에
+ * 들어가지 않고) 한 번에 찾으면 ⭐ — 손보다 눈이 먼저 가게 하려고 그렇게 정했습니다.
+ * 💡 힌트를 보면 별은 없습니다.
+ *
+ * 기록: 판 크기별로 '한 번에 찾은 적이 있나'(daniland.best.maze.<n>)를 남기고,
+ * 카드에는 한 번에 찾은 것 중 제일 큰 판(daniland.best.maze, 칸 수)을 보여 줍니다.
  *
  * 미로는 '완전 미로'(어느 두 칸 사이에도 길이 딱 하나)라 정답 길이 하나뿐이고,
  * 간식은 출발점에서 제일 먼 칸에 놓습니다 — 늘 오른쪽 아래에 있으면 안 보고도 가니까요.
@@ -13,7 +17,6 @@
  * ========================================================================= */
 
 (function () {
-  var ROUNDS = 5;
   var PRAISE = ['참 잘했어요!', '멋져요!', '최고예요!', '대단해요!', '길 찾기 박사!'];
   var TREATS = ['🦴', '🍖', '🍎', '🍓', '🧁', '🍪', '🍩', '🍦'];
 
@@ -68,8 +71,6 @@
     path: [],           // 지금까지 그은 길 (칸 번호들, 마지막이 다니 자리)
     wrong: 0,           // 정답 길에서 벗어난 횟수
     hinted: false,
-    round: 0,
-    stars: 0,
     locked: true,
     size: 0,            // 판 한 변 px
     cell: 0             // 칸 한 변 px
@@ -128,7 +129,7 @@
       b.className = 'level-btn' + (s.n === state.n ? ' on' : '');
       var best = UI.readBest(BEST_KEY + '.' + s.n);
       b.innerHTML = s.name + '<span class="lb">' + s.n + '×' + s.n +
-                    (best ? ' · ⭐ ' + best.stars + '/' + best.total : '') + '</span>';
+                    (best && best.stars ? ' · ⭐ 한 번에!' : '') + '</span>';
       b.addEventListener('click', function () {
         state.n = s.n;
         UI.saveValue(SIZE_KEY, String(s.n));
@@ -249,16 +250,6 @@
   /* ---------- 놀이 진행 ---------- */
 
   function startGame() {
-    state.round = 0;
-    state.stars = 0;
-    updateScore();
-    fitBoard();
-    nextRound();
-  }
-
-  function nextRound() {
-    if (state.round >= ROUNDS) return finish();
-
     state.cells = makeMaze(state.n);
     var s = solve(state.cells, state.n, 0);
     state.goal = s.goal;
@@ -269,8 +260,9 @@
     state.hinted = false;
     state.locked = false;
 
-    el.label.textContent = state.treat + ' 까지 길을 찾아요 (' + (state.round + 1) + '/' + ROUNDS + ')';
-    el.bar.style.width = Math.round((state.round / ROUNDS) * 100) + '%';
+    el.label.textContent = state.treat + ' 까지 길을 찾아요';
+    el.bar.style.width = '0%';
+    updateScore();
     el.hintBtn.disabled = false;
 
     fitBoard();
@@ -329,6 +321,7 @@
   function afterMove() {
     draw();
     placeDani(true);
+    updateScore();
 
     if (head() === state.goal) reach();
   }
@@ -338,9 +331,7 @@
     el.hintBtn.disabled = true;
 
     var star = !state.hinted && state.wrong === 0;
-    if (star) state.stars += 1;
-    updateScore();
-    el.bar.style.width = Math.round(((state.round + 1) / ROUNDS) * 100) + '%';
+    el.bar.style.width = '100%';
 
     if (window.SFX) SFX.correct();
     UI.confettiAt(el.dani);
@@ -349,8 +340,7 @@
 
     setTimeout(function () {
       el.dani.classList.remove('happy');
-      state.round += 1;
-      nextRound();
+      finish(star);
     }, 1500);
   }
 
@@ -360,28 +350,33 @@
     state.hinted = true;
     el.hintBtn.disabled = true;
     if (window.SFX) SFX.tap();
+    updateScore();
     draw(true);
     setTimeout(function () { if (!state.locked) draw(); }, 1800);
   }
 
-  function finish() {
-    el.bar.style.width = '100%';
-    UI.saveBest(BEST_KEY + '.' + state.n, state.stars, ROUNDS);
-    UI.saveBest(BEST_KEY, state.stars, ROUNDS);
+  function finish(star) {
+    if (star) {
+      UI.saveBest(BEST_KEY + '.' + state.n, 1, 1);
+      UI.saveBest(BEST_KEY, state.n, state.n);   // 카드에는 '한 번에 찾은 제일 큰 판' 이 남습니다
+    }
     buildLevelRow();
 
-    el.endStars.textContent = UI.starLine(state.stars, ROUNDS);
-    el.endTitle.textContent = (state.stars === ROUNDS)
+    el.endStars.textContent = star ? '⭐' : '';
+    el.endTitle.textContent = star
       ? PRAISE[Math.floor(Math.random() * PRAISE.length)]
-      : '잘했어요!';
-    el.endText.textContent = ROUNDS + '개 중에 ' + state.stars + '개를 한 번에 찾았어요!';
+      : '찾았어요!';
+    el.endText.textContent = star
+      ? state.n + '×' + state.n + ' 미로를 되돌아가지 않고 한 번에 찾았어요!'
+      : (state.hinted ? '힌트를 보고 찾았어요. 다음엔 힌트 없이!' : '막다른 길에 ' + state.wrong + '번 들어갔어요. 다음엔 한 번에!');
     el.endOverlay.hidden = false;
 
     if (window.SFX) SFX.finish();
   }
 
+  // 위쪽 점수 자리에는 막다른 길에 들어간 횟수를 보여 줍니다 (0 이면 ⭐ 가 살아 있습니다)
   function updateScore() {
-    el.score.textContent = '⭐ ' + state.stars;
+    el.score.textContent = (state.wrong === 0 && !state.hinted) ? '⭐' : '↩ ' + state.wrong;
   }
 
   /* ---------- 그리기 ---------- */

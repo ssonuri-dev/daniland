@@ -842,6 +842,7 @@ window.PAGES = [
     icon: '🧭',
     meta: '길을 그어 간식까지 가요',
     href: 'maze.html',
-    bestKey: 'daniland.best.maze'
+    bestKey: 'daniland.best.maze',   // 한 번에 찾은 것 중 제일 큰 판 (칸 수)
+    bestUnit: '칸 미로'
   }
 ];
