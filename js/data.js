@@ -852,7 +852,7 @@ window.PAGES = [
     icon: '🏃',
     meta: '좌우로 피하며 깃발까지 달려요',
     href: 'dodge.html',
-    bestKey: 'daniland.best.dodge.level',
-    bestUnit: '단계'
+    bestKey: 'daniland.best.dodge.m',   // 제일 멀리 간 거리 (순위표 1등)
+    bestUnit: 'm'
   }
 ];

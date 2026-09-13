@@ -214,7 +214,9 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.trip.<act>` | 할머니 섬 여행 놀이별(탈것 여행·다니 돌보기) 최고 별 |
 | `daniland.best.trip` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.balloon.level` | 풍선 터뜨리기에서 도달한 최고 단계 |
-| `daniland.best.dodge.level` | 장애물 피하기에서 도달한 최고 단계 (풍선 터뜨리기와 같은 얼개 — 시작 단계 고르기도 같습니다) |
+| `daniland.best.dodge.level` | 장애물 피하기에서 도달한 최고 단계 — 시작 단계 고르기에만 씁니다 (풍선 터뜨리기와 같은 얼개) |
+| `daniland.best.dodge.m` | 장애물 피하기에서 제일 멀리 간 거리 — stars 가 m 입니다 (카드의 ⭐ 는 이것을 `bestUnit: 'm'` 으로 읽습니다) |
+| `daniland.rank.dodge` | 장애물 피하기 순위표 — `[{ m, level, treats }, …]` 먼 순서로 다섯 개 (시작·결과 화면) |
 | `daniland.best.maze.<n>` | 미로 찾기 판 크기별(5·7·9·11) 한 번에 찾은 적 있음 (1/1) |
 | `daniland.best.maze` | 한 번에 찾은 것 중 제일 큰 판 — stars 가 칸 수(5~11)입니다 (카드의 ⭐ 는 이것을 `bestUnit: '칸 미로'` 로 읽습니다) |
 | `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.townAct` `daniland.worldAct` `daniland.tripAct` `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.mazeSize` | 마지막에 고른 설정 |

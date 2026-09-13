@@ -49,8 +49,11 @@
     <img src="dani.png" alt="다니">
     <h2>🏃 장애물 피하기</h2>
 
-    <p class="hint">다니를 좌우로 움직여 장애물을 피하고<br>깃발 🏁 까지 달려요</p>
-    <p class="hint">간식을 먹으면 ⭐ · 부딪히면 하트가 하나 사라져요 ❤️❤️❤️<br>단계가 올라갈수록 더 빨라져요!</p>
+    <p class="hint">다니를 좌우로 움직여 장애물을 피하고<br>깃발 🏁 까지 달려요 — 얼마나 멀리 가나 재요!</p>
+    <p class="hint">간식을 먹으면 ⭐<br>부딪히면 하트가 하나 사라져요 ❤️❤️❤️</p>
+
+    <!-- 이 기기에서 멀리 간 순서 (js/dodge.js 의 showRank) -->
+    <ol class="rank-list" id="startRank" hidden></ol>
 
     <p class="hint" id="startPick" hidden>어느 단계부터 할까요?</p>
     <div class="level-row" id="levelRow" hidden></div>
@@ -65,6 +68,7 @@
     <h2 id="endTitle">참 잘했어요!</h2>
     <div class="stars" id="endStars"></div>
     <p id="endText"></p>
+    <ol class="rank-list" id="endRank" hidden></ol>
     <button class="big-btn" id="againBtn">한 번 더 🔁</button>
     <button class="big-btn ghost" id="endHome">← 뒤로</button>
   </div>

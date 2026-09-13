@@ -6,8 +6,13 @@
  * 길이 더 빨리 흐르고 장애물이 더 촘촘해집니다. 간식(🦴 🍎 …)을 먹으면 ⭐ 하나.
  *
  * 하트 ❤️ 세 개로 시작해 부딪힐 때마다 하나씩 사라지고(잠깐 깜빡이는 동안은 안 다칩니다),
- * 다 없어지면 그 판이 끝납니다. 최고 기록은 풍선 터뜨리기처럼 '몇 단계까지 갔는가' 입니다
- * (daniland.best.dodge.level). 높은 단계까지 가 봤으면 시작 화면에서 시작 단계를 고를 수 있습니다.
+ * 다 없어지면 그 판이 끝납니다.
+ *
+ * 기록은 '얼마나 멀리 달렸나(m)' 입니다 — 단계를 넘어가도 계속 쌓이는 거리라 지난 판과 견주기 쉽습니다
+ * (놀이판 높이 하나가 METER_PER_H 미터, 1단계 끝이 80m 남짓). 이 기기에서 한 판들 중 잘한 순서로
+ * RANK_SIZE 개를 순위표(daniland.rank.dodge)에 남겨 시작 화면과 결과 화면에 보여 주고,
+ * 카드의 ⭐ 는 그중 1등(daniland.best.dodge.m)입니다. 시작 단계 고르기는 풍선 터뜨리기처럼
+ * '몇 단계까지 갔는가'(daniland.best.dodge.level)를 따로 봅니다.
  *
  * 움직이기: 길에 손가락을 대면 다니가 그쪽으로 달려가고, 아래 ◀ ▶ 단추를 누르고 있어도 됩니다.
  * 컴퓨터에서는 화살표 키.
@@ -42,7 +47,13 @@
   var SAFE_TIME = 1.3;      // 부딪힌 뒤 안 다치는 시간(초)
   var FIRST_ROW = -0.4;     // 첫 줄이 놓이는 자리 (화면 위 살짝 바깥)
 
-  var BEST_KEY = 'daniland.best.dodge.level';
+  var METER_PER_H = 10;     // 놀이판 높이 하나 = 10m (숫자가 너무 크지도 작지도 않게)
+  var RANK_SIZE = 5;
+  var MEDALS = ['🥇', '🥈', '🥉', '4', '5'];
+
+  var BEST_KEY = 'daniland.best.dodge.level';   // 시작 단계 고르기용 — 몇 단계까지 갔나
+  var BEST_M_KEY = 'daniland.best.dodge.m';     // 카드의 ⭐ — 제일 멀리 간 거리
+  var RANK_KEY = 'daniland.rank.dodge';         // 순위표 [{ m, level, treats }, …] 먼 순서
   var START_KEY = 'daniland.dodgeStart';
 
   var EMOJI_FONT = '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", serif';
@@ -64,6 +75,8 @@
     startHome: document.getElementById('startHome'),
     startPick: document.getElementById('startPick'),
     levelRow: document.getElementById('levelRow'),
+    startRank: document.getElementById('startRank'),
+    endRank: document.getElementById('endRank'),
 
     endOverlay: document.getElementById('endOverlay'),
     endTitle: document.getElementById('endTitle'),
@@ -83,6 +96,8 @@
     level: 1,
     lives: LIVES,
     treats: 0,        // 한 판 통틀어 먹은 간식 수 (⭐)
+    runDist: 0,       // 이 판에서 앞 단계들까지 다 더한 거리 (높이 배수) — dist 는 이번 단계 것만
+    shownM: -1,       // 마지막으로 화면에 적은 m (매 화면 글자를 다시 쓰지 않으려고)
     running: false,
     W: 0, H: 0,       // 놀이판 px
     dist: 0,          // 이 단계에서 지금까지 흐른 거리 (높이 배수)
@@ -101,6 +116,7 @@
   var bannerTimer = null;
 
   buildStartRow();
+  showRank(el.startRank, loadRank(), -1);
   fit();
   draw();
 
@@ -189,6 +205,7 @@
 
     state.level = state.startLevel;
     state.treats = 0;
+    state.runDist = 0;
     state.lives = LIVES;
 
     updateScore();
@@ -205,7 +222,8 @@
     state.pops = [];
     state.running = true;
 
-    el.levelChip.textContent = n + '단계';
+    state.shownM = -1;
+    updateChip();
     el.bar.style.width = '0%';
     fit();
 
@@ -323,7 +341,24 @@
     // 깃발까지 얼마나 왔나
     var total = DANI_Y - state.finish;
     el.bar.style.width = Math.min(100, Math.round(state.dist / total * 100)) + '%';
-    if (state.dist >= total) levelUp();
+    updateChip();
+    if (state.dist >= total) {
+      state.runDist += total;
+      state.dist = total;
+      levelUp();
+    }
+  }
+
+  // 지금까지 달린 거리 (m)
+  function meters() {
+    return Math.round((state.runDist + state.dist) * METER_PER_H);
+  }
+
+  function updateChip() {
+    var m = meters();
+    if (m === state.shownM) return;
+    state.shownM = m;
+    el.levelChip.textContent = state.level + '단계 · ' + m + 'm';
   }
 
   function hurt() {
@@ -360,18 +395,60 @@
     state.hold = 0;
     state.targetX = null;
 
-    // 최고 기록은 '몇 단계까지 갔는가' 로 남깁니다
-    var prev = UI.readBest(BEST_KEY);
-    var isBest = !prev || state.level > prev.stars;
+    var m = meters();
+    var rank = addRank({ m: m, level: state.level, treats: state.treats });
+
+    // 시작 단계 고르기는 '몇 단계까지 갔는가', 카드의 ⭐ 는 '얼마나 멀리' 로 남깁니다
     UI.saveBest(BEST_KEY, state.level, state.level);
+    UI.saveBest(BEST_M_KEY, rank.list[0].m, rank.list[0].m);
 
     buildStartRow();  // 기록이 올랐으면 고를 수 있는 시작 단계도 늘어납니다
+    showRank(el.startRank, rank.list, -1);
+    showRank(el.endRank, rank.list, rank.index);
 
-    el.endStars.textContent = '🏃 ' + state.level + '단계';
-    el.endTitle.textContent = isBest ? '새 최고 기록! 🏆' : PRAISE[UI.randInt(0, PRAISE.length - 1)];
+    el.endStars.textContent = '🏃 ' + m + 'm';
+    el.endTitle.textContent = rank.index === 0 ? '새 최고 기록! 🏆'
+      : (rank.index > 0 ? (rank.index + 1) + '등이에요!' : PRAISE[UI.randInt(0, PRAISE.length - 1)]);
     el.endText.textContent = (state.startLevel > 1 ? state.startLevel + '단계에서 시작해서 ' : '')
-      + state.level + '단계까지 갔어요. 간식 ' + state.treats + '개를 먹었어요!';
+      + state.level + '단계까지 ' + m + 'm 를 달렸어요. 간식 ' + state.treats + '개!';
     el.endOverlay.hidden = false;
+  }
+
+  /* ---------- 순위표 ----------
+   * 이 기기에서 한 판들 중 먼 순서로 RANK_SIZE 개. 같은 거리면 먼저 한 판이 위입니다. */
+
+  function loadRank() {
+    try {
+      var list = JSON.parse(UI.loadValue(RANK_KEY) || '[]');
+      return Array.isArray(list) ? list.filter(function (r) { return r && typeof r.m === 'number'; }) : [];
+    } catch (e) { return []; }
+  }
+
+  // 이번 판을 끼워 넣고, 몇 등인지(순위 밖이면 -1) 돌려줍니다
+  function addRank(entry) {
+    var list = loadRank();
+    var index = list.length;
+    for (var i = 0; i < list.length; i++) {
+      if (entry.m > list[i].m) { index = i; break; }
+    }
+    list.splice(index, 0, entry);
+    list = list.slice(0, RANK_SIZE);
+    UI.saveValue(RANK_KEY, JSON.stringify(list));
+    return { list: list, index: index < RANK_SIZE ? index : -1 };
+  }
+
+  function showRank(box, list, mine) {
+    box.innerHTML = '';
+    box.hidden = !list.length;
+    list.forEach(function (r, i) {
+      var li = document.createElement('li');
+      li.className = i === mine ? 'me' : '';
+      li.innerHTML = '<span class="medal">' + MEDALS[i] + '</span>' +
+                     '<span class="m">' + r.m + 'm</span>' +
+                     '<span class="lv">' + r.level + '단계' + (r.treats ? ' · ⭐ ' + r.treats : '') + '</span>' +
+                     (i === mine ? '<span class="tag">이번 판</span>' : '');
+      box.appendChild(li);
+    });
   }
 
   // UI.confettiAt 은 요소를 받으므로 다니 자리에 잠깐 빈 칸을 놓고 터뜨립니다
