@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#ff8fab">
+  <title>장애물 피하기 · 다니랜드 🏃</title>
+  <link rel="icon" href="dani.png">
+  <!-- 구글 웹폰트: 제목은 Jua, 본문은 나눔고딕 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Gothic:wght@400;700;800&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 들어올 때 비밀번호 (문패입니다 — js/gate.js 주석 참고) -->
+  <script src="js/gate.js"></script>
+
+  <div class="wrap dodge-page">
+    <div class="topbar">
+      <button class="icon-btn" id="backBtn" title="뒤로">←</button>
+      <div class="progress"><div class="progress-bar" id="bar"></div></div>
+      <div class="score" id="score">⭐ 0</div>
+    </div>
+
+    <div class="dodge-status">
+      <div class="level-chip" id="levelChip">1단계</div>
+      <div class="lives" id="lives"></div>
+    </div>
+
+    <!-- 길·장애물·다니를 모두 캔버스에 그립니다 (js/dodge.js).
+         높이는 fit() 이 화면에 맞춰 정합니다. 손가락을 대면 다니가 그쪽으로 갑니다. -->
+    <div class="dodge-field" id="field">
+      <canvas id="canvas"></canvas>
+    </div>
+
+    <!-- 단추로도 움직입니다 (누르고 있는 동안 계속 갑니다). 컴퓨터에서는 화살표 키. -->
+    <div class="dodge-controls">
+      <button class="dodge-btn" id="leftBtn" title="왼쪽">◀</button>
+      <button class="dodge-btn" id="rightBtn" title="오른쪽">▶</button>
+    </div>
+  </div>
+
+  <!-- 단계가 올라갈 때 잠깐 뜨는 안내 -->
+  <div class="banner" id="banner" hidden></div>
+
+  <!-- 시작 화면 -->
+  <div class="overlay" id="startOverlay">
+    <img src="dani.png" alt="다니">
+    <h2>🏃 장애물 피하기</h2>
+
+    <p class="hint">다니를 좌우로 움직여 장애물을 피하고<br>깃발 🏁 까지 달려요</p>
+    <p class="hint">간식을 먹으면 ⭐ · 부딪히면 하트가 하나 사라져요 ❤️❤️❤️<br>단계가 올라갈수록 더 빨라져요!</p>
+
+    <p class="hint" id="startPick" hidden>어느 단계부터 할까요?</p>
+    <div class="level-row" id="levelRow" hidden></div>
+
+    <button class="big-btn" id="startBtn">시작하기 ▶</button>
+    <button class="big-btn ghost" id="startHome">← 뒤로</button>
+  </div>
+
+  <!-- 결과 화면 -->
+  <div class="overlay" id="endOverlay" hidden>
+    <img src="dani.png" alt="다니">
+    <h2 id="endTitle">참 잘했어요!</h2>
+    <div class="stars" id="endStars"></div>
+    <p id="endText"></p>
+    <button class="big-btn" id="againBtn">한 번 더 🔁</button>
+    <button class="big-btn ghost" id="endHome">← 뒤로</button>
+  </div>
+
+  <script src="js/ui.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/catalog.js"></script>
+  <script src="js/sfx.js"></script>
+  <script src="js/dodge.js"></script>
+</body>
+</html>

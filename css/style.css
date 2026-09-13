@@ -1392,8 +1392,9 @@ button {
 
 .balloon-page { padding-bottom: 14px; }
 
-/* 몇 단계인지 · 하트가 몇 개 남았는지 (놀이판 바로 위 한 줄) */
-.balloon-status {
+/* 몇 단계인지 · 하트가 몇 개 남았는지 (놀이판 바로 위 한 줄 — 장애물 피하기도 같이 씁니다) */
+.balloon-status,
+.dodge-status {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1946,6 +1947,55 @@ button {
 .maze-levels .level-btn { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 18px; }
 .maze-levels .level-btn .lb { font-size: 12px; font-weight: 700; color: var(--ink-soft); }
 .maze-levels .level-btn.on .lb { color: var(--pink); }
+
+/* ---------- 장애물 피하기 (dodge.html) ----------
+ * 길·장애물·다니를 전부 캔버스에 그립니다 (js/dodge.js 의 draw()).
+ * 놀이판 높이는 fit() 이 ◀ ▶ 단추 자리를 빼고 화면에 맞춰 정합니다.
+ * 너비는 520px 까지만 — 넓은 화면에서 길이 너무 넓어지면 장애물 사이가 휑해집니다. */
+
+.dodge-page { padding-bottom: 14px; }
+
+.dodge-field {
+  position: relative;
+  max-width: 520px;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  touch-action: none;          /* 손가락으로 움직이는 동안 화면이 스크롤되지 않게 */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.dodge-field canvas { display: block; }
+
+.dodge-controls {
+  display: flex;
+  gap: 14px;
+  max-width: 520px;
+  margin: 12px auto 0;
+}
+
+/* 손가락으로 누르고 있는 단추라 64px 보다 넉넉하게 */
+.dodge-btn {
+  flex: 1;
+  height: 72px;
+  font-size: 34px;
+  color: var(--ink);
+  background: var(--card);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.dodge-btn.down {
+  color: #ffffff;
+  background: var(--pink);
+  transform: translateY(3px);
+  box-shadow: 0 3px 0 rgba(64, 50, 58, 0.10);
+}
 
 /* ---------- 글자 쓰기 (write.html) ---------- */
 

@@ -844,5 +844,15 @@ window.PAGES = [
     href: 'maze.html',
     bestKey: 'daniland.best.maze',   // 한 번에 찾은 것 중 제일 큰 판 (칸 수)
     bestUnit: '칸 미로'
+  },
+
+  {
+    subject: '놀이',
+    title: '장애물 피하기',
+    icon: '🏃',
+    meta: '좌우로 피하며 깃발까지 달려요',
+    href: 'dodge.html',
+    bestKey: 'daniland.best.dodge.level',
+    bestUnit: '단계'
   }
 ];
