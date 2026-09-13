@@ -22,6 +22,7 @@
   var LANG = 'ko-KR';
   var TOP = 100;
   var MAX_BOARD = 520;                       // 판 최대 폭 (css 의 .cards.hundred-cards 와 맞출 것)
+  var WIDE_CARDS = 600;                      // 이 폭부터 보기 카드가 한 줄 (css 의 @media 와 맞출 것)
   var PRAISE = ['참 잘했어요!', '멋져요!', '최고예요!', '대단해요!', '와, 다 맞혔어요!'];
 
   var ACTS = [
@@ -239,9 +240,16 @@
     var pad = getComputedStyle(box);
     // clientWidth 는 안쪽 여백까지 포함하므로 빼 줘야 판이 화면 밖으로 안 나갑니다
     var wide = box.clientWidth - parseFloat(pad.paddingLeft) - parseFloat(pad.paddingRight);
-    // 아래에 놓일 보기 카드(3:2 두 줄)와 목소리 단추 자리를 미리 빼 둡니다
-    var cardW = (Math.min(wide, MAX_BOARD) - 10) / 2;
-    var reserve = Math.round(cardW * 2 / 3) * 2 + 10 + 90;
+    // 아래에 놓일 보기 카드와 목소리 단추 자리를 미리 빼 둡니다.
+    // 넓은 화면에서는 카드가 한 줄(넉 장, 높이 76px)이고 폰에서는 3:2 두 줄입니다 — css 의 .hundred-cards 와 맞출 것.
+    // (두 줄을 그대로 두면 태블릿 가로에서 카드가 350px 을 먹어 판이 240px 로 쪼그라듭니다)
+    var reserve;
+    if (wide >= WIDE_CARDS) {
+      reserve = 76 + 90;
+    } else {
+      var cardW = (Math.min(wide, MAX_BOARD) - 10) / 2;
+      reserve = Math.round(cardW * 2 / 3) * 2 + 10 + 90;
+    }
     var top = el.board.getBoundingClientRect().top;
     var size = Math.min(wide, MAX_BOARD, Math.max(200, window.innerHeight - top - reserve));
 
