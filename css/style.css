@@ -1868,6 +1868,63 @@ button {
   .trip-say { font-size: 18px; }
 }
 
+/* ---------- 미로 찾기 (maze.html) ----------
+ * 벽·길·간식은 캔버스에 그리고(js/maze.js 의 draw()), 다니만 그 위에 <img> 로 얹습니다.
+ * 판 크기는 fitBoard() 가 화면에 맞춰 정합니다 (정사각형, 최대 640px). */
+
+.maze-page { padding-bottom: 14px; }
+
+.maze-quest {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin: 0 0 8px;
+}
+
+.maze-label {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.maze-board {
+  position: relative;
+  margin: 0 auto;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  touch-action: none;          /* 손가락으로 긋는 동안 화면이 스크롤되지 않게 */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.maze-board canvas { display: block; }
+
+/* 다니 — 칸 가운데를 기준으로 놓고, 칸을 옮길 때 살짝 미끄러집니다 */
+.maze-dani {
+  position: absolute;
+  transform: translate(-50%, -56%);
+  transition-property: left, top;
+  transition-timing-function: linear;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 4px rgba(64, 50, 58, 0.35));
+}
+
+.maze-dani.happy { animation: maze-hop 0.4s ease 3; }
+
+@keyframes maze-hop {
+  0%, 100% { transform: translate(-50%, -56%); }
+  50%      { transform: translate(-50%, -80%); }
+}
+
+.maze-page .chip:disabled { opacity: 0.4; }
+
+/* 난이도 단추 아래 칸 수와 최고 기록 */
+.maze-levels .level-btn { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 18px; }
+.maze-levels .level-btn .lb { font-size: 12px; font-weight: 700; color: var(--ink-soft); }
+.maze-levels .level-btn.on .lb { color: var(--pink); }
+
 /* ---------- 글자 쓰기 (write.html) ---------- */
 
 .write-page { padding-bottom: 14px; }

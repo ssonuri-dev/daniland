@@ -834,5 +834,14 @@ window.PAGES = [
     href: 'balloon.html',
     bestKey: 'daniland.best.balloon.level',
     bestUnit: '단계'
+  },
+
+  {
+    subject: '놀이',
+    title: '미로 찾기',
+    icon: '🧭',
+    meta: '길을 그어 간식까지 가요',
+    href: 'maze.html',
+    bestKey: 'daniland.best.maze'
   }
 ];
