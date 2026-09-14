@@ -23,6 +23,10 @@
  *
  * 좌표는 전부 화면 비율입니다 (가로는 길 너비의 0~1, 세로·거리는 놀이판 높이 배수).
  * 화면이 돌아가도 놀이가 깨지지 않게 그릴 때만 px 로 바꿉니다.
+ *
+ * 다니 그림은 한 장뿐이라 달리는 모습은 drawDani() 가 흉내 냅니다 — 길 빠르기에 맞춰 통통 뛰고
+ * (STRIDE), 착지할 때 납작해졌다 뛰어오를 때 길어지며, 발밑에 먼지(state.dust)가 남고,
+ * 오른쪽으로 갈 때는 그림을 뒤집어 그쪽을 보게 합니다 (원본은 왼쪽을 보고 있습니다).
  * ========================================================================= */
 
 (function () {
@@ -45,6 +49,8 @@
   var OBS_SIZE = 0.17;      // 장애물 글자 크기 (길 너비 배수)
   var GRASS = 0.06;         // 양옆 풀밭 너비 (놀이판 너비 배수)
   var SAFE_TIME = 1.3;      // 부딪힌 뒤 안 다치는 시간(초)
+  var STRIDE = 0.09;        // 한 걸음에 흐르는 거리 (놀이판 높이 배수) — 작을수록 종종걸음
+  var HOP = 0.06;           // 뛰어오르는 높이 (다니 키 배수)
   var FIRST_ROW = -0.4;     // 첫 줄이 놓이는 자리 (화면 위 살짝 바깥)
 
   var METER_PER_H = 10;     // 놀이판 높이 하나 = 10m (숫자가 너무 크지도 작지도 않게)
@@ -108,7 +114,10 @@
     targetX: null,    // 손가락이 가리키는 자리 (없으면 null)
     hold: 0,          // 단추·키로 미는 방향 -1 / 0 / 1
     safe: 0,          // 부딪힌 뒤 남은 안전 시간(초)
-    lean: 0           // 움직이는 방향으로 살짝 기울기 (-1~1)
+    lean: 0,          // 움직이는 방향으로 살짝 기울기 (-1~1)
+    face: -1,         // 보는 쪽 (-1 왼쪽 = 원본, 1 오른쪽 = 뒤집어 그림)
+    steps: 0,         // 지금까지 걸은 걸음 수 (소수 — 한 걸음 안의 어디쯤인지)
+    dust: []          // 발밑 먼지 { x, y, t, r }
   };
 
   var frame = null;     // requestAnimationFrame 손잡이
@@ -220,6 +229,9 @@
     state.targetX = null;
     state.safe = 0;
     state.pops = [];
+    state.dust = [];
+    state.steps = 0;
+    state.face = -1;
     state.running = true;
 
     state.shownM = -1;
@@ -300,6 +312,16 @@
     var half = DANI_W / 2;
     state.x = Math.max(half, Math.min(1 - half, state.x));
     state.lean += (dir - state.lean) * Math.min(1, dt * 12);
+    if (dir) state.face = dir;
+
+    // 달리기 — 길이 흐른 만큼 걸음이 쌓이고, 발이 땅에 닿는 순간마다 먼지가 납니다
+    var before = Math.floor(state.steps);
+    state.steps += Math.min(7, levelSpeed(state.level) / STRIDE) * dt;   // 아무리 빨라도 1초에 7걸음까지
+    if (Math.floor(state.steps) > before) puffDust();
+    for (var d2 = state.dust.length - 1; d2 >= 0; d2--) {
+      state.dust[d2].t += dt;
+      if (state.dust[d2].t > 0.5) state.dust.splice(d2, 1);
+    }
 
     // 부딪혔나 · 먹었나
     var roadW = W * (1 - GRASS * 2);
@@ -581,17 +603,44 @@
     ctx.fillText('🏁', state.W - grass / 2, fy - h * 0.4);
   }
 
+  function puffDust() {
+    var w = state.W * (1 - GRASS * 2) * DANI_W;
+    var h = w * (dani.naturalHeight / (dani.naturalWidth || 1) || 0.91);
+    state.dust.push({
+      x: daniX() - state.face * w * 0.25 + (Math.random() - 0.5) * w * 0.2,
+      y: DANI_Y * state.H + h * 0.42,
+      t: 0,
+      r: w * (0.06 + Math.random() * 0.05)
+    });
+  }
+
   function drawDani(roadW) {
     if (!dani.complete || !dani.naturalWidth) return;
     var w = roadW * DANI_W;
     var h = w * dani.naturalHeight / dani.naturalWidth;
     var x = daniX(), y = DANI_Y * state.H;
 
+    // 발밑 먼지 — 커지면서 옅어집니다
+    for (var i = 0; i < state.dust.length; i++) {
+      var d = state.dust[i], k = d.t / 0.5;
+      ctx.beginPath();
+      ctx.arc(d.x, d.y - k * h * 0.08, d.r * (1 + k * 1.2), 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(200, 176, 130, ' + (0.35 * (1 - k)).toFixed(2) + ')';
+      ctx.fill();
+    }
+
+    // 한 걸음마다 한 번 뛰어오릅니다. 뛰어오를 때 길쭉, 내려앉을 때 납작.
+    var phase = state.running ? (state.steps % 1) * Math.PI * 2 : 0;
+    var hop = Math.max(0, Math.sin(phase));
+    var squash = state.running ? 0.94 + hop * 0.12 : 1;   // 땅에서 0.94(납작) → 꼭대기에서 1.06(길쭉)
+
     ctx.save();
     // 부딪힌 뒤에는 깜빡입니다
     if (state.safe > 0 && Math.floor(state.safe * 10) % 2 === 0) ctx.globalAlpha = 0.35;
-    ctx.translate(x, y + h * 0.45);
+    ctx.translate(x, y + h * 0.45 - hop * h * HOP);
     ctx.rotate(state.lean * 0.15);
+    ctx.scale(state.face === 1 ? -1 : 1, 1);
+    ctx.scale(1 / squash, squash);
     ctx.drawImage(dani, -w / 2, -h * 0.95, w, h);
     ctx.restore();
   }
