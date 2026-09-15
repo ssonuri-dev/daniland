@@ -1101,6 +1101,7 @@ button {
 }
 
 .pad {
+  position: relative;
   flex: 1;
   min-width: 0;
   font-size: 0;          /* 캔버스 아래 빈 줄이 생기지 않게 */
@@ -1109,6 +1110,19 @@ button {
   box-shadow: var(--shadow);
   overflow: hidden;
 }
+
+/* 🖼️ 불러온 사진 — 캔버스 밑에 깔려서 지우개·되돌리기가 건드리지 않습니다 (js/draw.js) */
+.pad-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.pad-bg[hidden] { display: none; }
+.pad canvas { position: relative; }
 
 /* 도장 서랍 — 오른쪽에 세로로 붙습니다. 3열 고정이라 폭이 넘칠 일이 없어요. */
 .stamp-panel {

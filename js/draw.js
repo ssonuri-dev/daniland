@@ -1,6 +1,11 @@
 /* =========================================================================
  * 다니랜드 - 그림 그리기
  * 손가락(터치), 마우스, 펜 모두 됩니다.
+ *
+ * 캔버스는 투명하고 흰 바탕은 .pad 의 배경색입니다. 🖼️ 로 사진을 불러오면 캔버스 밑의
+ * <img class="pad-bg"> 에 깔리고 그 위에 그리는 것이라, 지우개(destination-out)·되돌리기·다 지우기는
+ * 그린 것만 건드립니다. 사진까지 없애려면 🗑️ 다 지우기입니다. 💾 저장은 흰 바탕 + 사진 + 그림을
+ * 합쳐서 한 장으로 내려받습니다 (composeForSave).
  * ========================================================================= */
 
 (function () {
@@ -291,10 +296,7 @@
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, width, height);
-
-    // 크기가 바뀌어도 그리던 그림은 남겨 둡니다.
+    // 크기가 바뀌어도 그리던 그림은 남겨 둡니다. (바탕은 투명 — 흰색은 .pad 가 칠합니다)
     if (before) {
       var img = new Image();
       img.onload = function () { ctx.drawImage(img, 0, 0, width, height); };
@@ -364,20 +366,63 @@
 
   /* ---------- 저장 · 지우기 · 홈 ---------- */
 
+  var padBg = document.getElementById('padBg');
+
   document.getElementById('clearBtn').addEventListener('click', function () {
-    if (!window.confirm('그림을 다 지울까요?')) return;
+    var hasBg = !padBg.hidden;
+    if (!window.confirm(hasBg ? '그림을 다 지울까요? 사진도 같이 없어져요.' : '그림을 다 지울까요?')) return;
     pushUndo();
     ctx.save();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.restore();
+    if (hasBg) { padBg.removeAttribute('src'); padBg.hidden = true; }
   });
+
+  /* ---------- 🖼️ 사진 불러오기 ----------
+   * 기기에 있는 사진(폰이면 사진첩·카메라)을 골라 캔버스 밑에 깝니다. 색칠 공부 그림을 넣고
+   * 칠하거나, 사진 위에 낙서할 수 있어요. 서버로 가지 않고 이 화면 안에서만 씁니다. */
+
+  var photoFile = document.getElementById('photoFile');
+
+  document.getElementById('photoBtn').addEventListener('click', function () {
+    photoFile.value = '';
+    photoFile.click();
+  });
+
+  photoFile.addEventListener('change', function () {
+    var file = photoFile.files && photoFile.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      padBg.src = reader.result;
+      padBg.hidden = false;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // 저장할 때는 흰 바탕 + 사진(캔버스처럼 contain 으로 맞춘 자리) + 그림을 한 장으로 합칩니다
+  function composeForSave() {
+    var out = document.createElement('canvas');
+    out.width = canvas.width;
+    out.height = canvas.height;
+    var c = out.getContext('2d');
+    c.fillStyle = '#ffffff';
+    c.fillRect(0, 0, out.width, out.height);
+
+    if (!padBg.hidden && padBg.naturalWidth) {
+      var scale = Math.min(out.width / padBg.naturalWidth, out.height / padBg.naturalHeight);
+      var w = padBg.naturalWidth * scale, h = padBg.naturalHeight * scale;
+      c.drawImage(padBg, (out.width - w) / 2, (out.height - h) / 2, w, h);
+    }
+    c.drawImage(canvas, 0, 0);
+    return out;
+  }
 
   document.getElementById('saveBtn').addEventListener('click', function () {
     var a = document.createElement('a');
     a.download = 'daniland-' + timeStamp() + '.png';
-    a.href = canvas.toDataURL('image/png');
+    a.href = composeForSave().toDataURL('image/png');
     a.click();
   });
 
@@ -468,7 +513,7 @@
   function drawSegment(from, to) {
     var size = LINE_SIZES[state.sizeIndex];
 
-    if (state.erasing) return stroke(from, to, '#ffffff', size * 2.2);
+    if (state.erasing) return erase(from, to, size * 2.2);
 
     switch (state.pen) {
       case 'rainbow': return penRainbow(from, to, size);
@@ -489,6 +534,14 @@
     ctx.moveTo(from.x, from.y);
     ctx.lineTo(to.x, to.y);
     ctx.stroke();
+    ctx.restore();
+  }
+
+  // 🧽 흰색을 칠하는 게 아니라 투명하게 파냅니다 — 밑에 사진이 있으면 사진이 드러납니다
+  function erase(from, to, width) {
+    ctx.save();
+    ctx.globalCompositeOperation = 'destination-out';
+    stroke(from, to, '#000000', width);
     ctx.restore();
   }
 

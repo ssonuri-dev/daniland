@@ -22,12 +22,16 @@
       <div class="draw-title">🎨 그림 그리기</div>
       <button class="icon-btn" id="undoBtn" title="되돌리기">↩️</button>
       <button class="icon-btn" id="redoBtn" title="다시 하기">↪️</button>
+      <button class="icon-btn" id="photoBtn" title="사진 불러오기 (배경으로 깔고 그 위에 그려요)">🖼️</button>
+      <input type="file" id="photoFile" accept="image/*" hidden>
       <button class="icon-btn" id="saveBtn" title="그림 저장하기">💾</button>
       <button class="icon-btn" id="clearBtn" title="다 지우기">🗑️</button>
     </div>
 
     <div class="draw-main" id="drawMain">
       <div class="pad" id="pad">
+        <!-- 사진을 불러오면 캔버스 밑에 깔립니다. 캔버스는 투명해서 그린 것만 위에 얹혀요. -->
+        <img class="pad-bg" id="padBg" alt="" hidden>
         <canvas id="canvas"></canvas>
       </div>
 
