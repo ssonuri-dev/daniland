@@ -64,7 +64,7 @@
     showKo: UI.loadValue(KO_KEY) !== '0'
   };
 
-  var artCache = {};    // 그림 이름 → 'file' | 'fallback' (한 번 못 찾은 파일은 다시 안 찾습니다)
+  var artCache = {};    // 그림 이름 → 'png' | 'jpg' | 'fallback' (한 번 찾은 결과는 다시 안 찾습니다)
 
   if (!books.length) {
     el.shelfHint.textContent = 'js/books.js 에 책이 없어요';
@@ -433,17 +433,23 @@
                              (fb.sky || '#e8f3ff') + ' 62%, ' + (fb.ground || '#cde8b0') + ' 62%)';
     }
 
-    if (name && artCache[name] !== 'fallback') {
+    // .png 를 먼저, 없으면 .jpg (배경은 투명이 필요 없어 jpg 가 훨씬 작습니다). 한 번 찾은 결과는 기억합니다.
+    var found = artCache[name];
+    if (name && found !== 'fallback') {
       var img = document.createElement('img');
       img.alt = '';
       img.draggable = false;
-      img.src = 'books/' + book.id + '/' + name + '.png';
-      img.addEventListener('load', function () { artCache[name] = 'file'; box.classList.add('has-file'); });
+      var exts = found ? [found] : ['png', 'jpg'];
+      var k = 0;
+      img.addEventListener('load', function () { artCache[name] = exts[k]; box.classList.add('has-file'); });
       img.addEventListener('error', function () {
+        k += 1;
+        if (k < exts.length) { img.src = 'books/' + book.id + '/' + name + '.' + exts[k]; return; }
         artCache[name] = 'fallback';
         img.remove();
         fillFallback(box, fb, kind);
       });
+      img.src = 'books/' + book.id + '/' + name + '.' + exts[0];
       box.appendChild(img);
     } else {
       fillFallback(box, fb, kind);
