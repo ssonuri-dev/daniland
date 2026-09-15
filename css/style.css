@@ -481,6 +481,39 @@ button {
 /* display:flex 가 hidden 을 이기므로 따로 적어 줍니다 */
 .level-row[hidden] { display: none; }
 
+/* 단추 밖의 수도 고르는 −/+ (백 판 뛰어 세기 — js/hundred.js 의 buildLevelRow) */
+.level-row.with-step { flex-wrap: wrap; }
+
+.step-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  margin-top: 6px;
+}
+
+.step-btn {
+  width: 64px;
+  height: 64px;
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--ink);
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: var(--shadow);
+}
+
+.step-btn:active { transform: translateY(3px); }
+
+.step-val {
+  min-width: 90px;
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--pink);
+  text-align: center;
+}
+
 /* 열 문제짜리 놀이는 별이 열 개라 40px 로는 폰에서 양옆이 잘립니다.
    화면 폭에 물려 두면 태블릿에서는 그대로 40px 입니다. */
 .stars {

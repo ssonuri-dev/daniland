@@ -5,7 +5,7 @@
  * 낱말 카드에 담기지 않는 내용이라 town.html · world.html 처럼 따로 만들었습니다.
  *
  * 놀이 3가지 (시작 화면에서 고릅니다)
- *   skip  : 뛰어 세기  - 2·5·10 씩 뛰며 다음 수를 고릅니다. 지나온 칸이 계속 칠해져서
+ *   skip  : 뛰어 세기  - 몇씩(2~10, 아무 수나) 뛰며 다음 수를 고릅니다. 지나온 칸이 계속 칠해져서
  *                        5씩 뛰면 두 줄, 10씩 뛰면 한 줄로 서는 것이 눈에 보입니다.
  *   where : 여기는 몇? - 깃발이 꽂힌 칸의 수를 맞힙니다. 어려운 단계에서는 줄 첫 수와
  *                        맨 윗줄만 남기고 지워서, 줄(십의 자리)과 칸(일의 자리)을 읽게 합니다.
@@ -26,8 +26,10 @@
   var PRAISE = ['참 잘했어요!', '멋져요!', '최고예요!', '대단해요!', '와, 다 맞혔어요!'];
 
   var ACTS = [
+    // 뛰어 세기는 2·5·10 단추 말고도 free 범위 안의 아무 수나 −/+ 로 고를 수 있습니다 (3씩, 4씩, 7씩 …).
+    // 위가 10 인 이유: 열 문제라 10씩이면 딱 100 에 닿고, 그보다 크면 판 밖으로 나갑니다.
     { id: 'skip',  name: '뛰어 세기', icon: '👟', desc: '몇씩 뛰어서 세어요',
-      hint: '몇씩 뛸까요?', levels: [2, 5, 10], names: ['2씩', '5씩', '10씩'], def: 5 },
+      hint: '몇씩 뛸까요?', levels: [2, 5, 10], names: ['2씩', '5씩', '10씩'], def: 5, free: { min: 2, max: 10 } },
     { id: 'where', name: '여기는 몇?', icon: '📍', desc: '깃발이 꽂힌 칸이 몇인지 찾아요',
       hint: '얼마나 어렵게 할까요?', levels: [0, 1], names: ['수가 다 보여요', '줄 첫 수만 보여요'], def: 0 },
     { id: 'near',  name: '앞뒤 수',   icon: '↔️', desc: '바로 앞·바로 뒤에 오는 수를 찾아요',
@@ -157,6 +159,7 @@
     var a = findAct(act);
     if (!a) return 0;
     var v = parseInt(UI.loadValue('daniland.hundred.' + act), 10);
+    if (a.free && v >= a.free.min && v <= a.free.max) return v;
     return (a.levels.indexOf(v) >= 0) ? v : a.def;
   }
 
@@ -202,20 +205,52 @@
 
   function buildLevelRow(a) {
     el.levelRow.innerHTML = '';
+    el.levelRow.classList.toggle('with-step', !!a.free);
 
+    var buttons = [];
     a.levels.forEach(function (value, i) {
       var b = document.createElement('button');
-      b.className = 'level-btn' + (state.level === value ? ' on' : '');
+      b.className = 'level-btn';
       b.textContent = a.names[i];
-      b.addEventListener('click', function () {
-        state.level = value;
-        UI.saveValue('daniland.hundred.' + state.act, String(value));
-        Array.prototype.forEach.call(el.levelRow.children, function (x) {
-          x.classList.toggle('on', x === b);
-        });
-      });
+      b.addEventListener('click', function () { setLevel(value); });
       el.levelRow.appendChild(b);
+      buttons.push({ value: value, el: b });
     });
+
+    // 아무 수나 고르는 −/+ (뛰어 세기). 단추에 있는 수(2·5·10)를 고르면 그 단추도 같이 켜집니다.
+    var valEl = null;
+    if (a.free) {
+      var row = document.createElement('div');
+      row.className = 'step-row';
+      var minus = document.createElement('button');
+      minus.className = 'step-btn';
+      minus.textContent = '−';
+      valEl = document.createElement('div');
+      valEl.className = 'step-val';
+      var plus = document.createElement('button');
+      plus.className = 'step-btn';
+      plus.textContent = '+';
+      minus.addEventListener('click', function () { setLevel(Math.max(a.free.min, state.level - 1)); });
+      plus.addEventListener('click', function () { setLevel(Math.min(a.free.max, state.level + 1)); });
+      row.appendChild(minus);
+      row.appendChild(valEl);
+      row.appendChild(plus);
+      el.levelRow.appendChild(row);
+    }
+
+    function setLevel(value) {
+      state.level = value;
+      UI.saveValue('daniland.hundred.' + state.act, String(value));
+      if (window.SFX) SFX.tap();
+      sync();
+    }
+
+    function sync() {
+      buttons.forEach(function (b) { b.el.classList.toggle('on', b.value === state.level); });
+      if (valEl) valEl.textContent = state.level + '씩';
+    }
+
+    sync();
   }
 
   /* ---------- 백 판 ---------- */
@@ -321,7 +356,7 @@
 
   function step() { return ' (' + (state.round + 1) + '/' + ROUNDS + ')'; }
 
-  // 👟 뛰어 세기 — 2·5·10 씩. 열 번이면 10씩일 때 딱 100 에 닿습니다.
+  // 👟 뛰어 세기 — 2~10 중 고른 수씩. 열 번이면 10씩일 때 딱 100 에 닿습니다.
   function makeSkip() {
     var by = state.level;
     var target = by * (state.round + 1);
