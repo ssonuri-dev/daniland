@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#ff8fab">
+  <title>영어 그림책 · 다니랜드 📚</title>
+  <link rel="icon" href="dani.png">
+  <!-- 구글 웹폰트: 제목은 Jua, 본문은 나눔고딕 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Gothic:wght@400;700;800&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 들어올 때 비밀번호 (문패입니다 — js/gate.js 주석 참고) -->
+  <script src="js/gate.js"></script>
+
+  <div class="wrap book-page">
+    <div class="topbar">
+      <button class="icon-btn" id="backBtn" title="뒤로">←</button>
+      <div class="progress"><div class="progress-bar" id="bar"></div></div>
+      <div class="score" id="score">1 / 8</div>
+    </div>
+
+    <!-- 펼친 책. 넓은 화면에서는 book.jpg 위에 왼쪽(그림)·오른쪽(글) 두 쪽을 얹고,
+         좁은 화면에서는 그림 → 글 순서로 위아래로 쌓습니다 (css/style.css 의 .book-spread). -->
+    <div class="book-spread" id="spread">
+      <div class="book-side book-left">
+        <div class="book-scene" id="scene"></div>
+      </div>
+      <div class="book-side book-right">
+        <div class="book-text" id="text"></div>
+        <div class="book-ko" id="ko"></div>
+        <!-- 만드는 책에서 빈칸에 넣을 것을 고르는 그림 셋 -->
+        <div class="book-choices" id="choices" hidden></div>
+      </div>
+    </div>
+
+    <div class="book-nav">
+      <button class="book-nav-btn" id="prevBtn" title="앞 장">◀</button>
+      <button class="chip" id="speakBtn">🔊 다시 듣기</button>
+      <button class="chip" id="koBtn">💬 뜻</button>
+      <button class="chip" id="voiceBtn">🎤 목소리</button>
+      <button class="book-nav-btn" id="nextBtn" title="다음 장">▶</button>
+    </div>
+  </div>
+
+  <!-- 책장 (시작 화면) — 책을 고르고, 읽을지 만들지 고릅니다 -->
+  <div class="overlay" id="startOverlay">
+    <img src="dani.png" alt="다니">
+    <h2>📚 영어 그림책</h2>
+    <div class="book-shelf" id="shelf"></div>
+    <p class="hint" id="shelfHint"></p>
+    <button class="big-btn" id="readBtn">📖 읽어 주세요</button>
+    <button class="big-btn" id="makeBtn">✏️ 내가 만들래요</button>
+    <button class="big-btn" id="mineBtn" hidden>📚 내가 만든 책 보기</button>
+    <button class="big-btn ghost" id="startHome">← 뒤로</button>
+  </div>
+
+  <!-- 마지막 장을 넘겼을 때 -->
+  <div class="overlay" id="endOverlay" hidden>
+    <img src="dani.png" alt="다니">
+    <h2 id="endTitle">다 읽었어요!</h2>
+    <p id="endText"></p>
+    <button class="big-btn" id="endMain">📚 내 책 읽기</button>
+    <button class="big-btn ghost" id="endAgain">🔁 한 번 더</button>
+    <button class="big-btn ghost" id="endShelf">← 책장으로</button>
+  </div>
+
+  <script src="js/ui.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/catalog.js"></script>
+  <script src="js/books.js"></script>
+  <script src="js/tts.js"></script>
+  <script src="js/sfx.js"></script>
+  <script src="js/voicepicker.js"></script>
+  <script src="js/book.js"></script>
+</body>
+</html>

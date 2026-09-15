@@ -2028,6 +2028,303 @@ button {
 .rank-list li.me { color: var(--pink); background: var(--pink-soft); border-radius: 10px; }
 .rank-list li.me .lv { color: var(--pink); }
 
+/* ---------- 영어 그림책 (book.html) ----------
+ * 넓은 화면: 펼친 책 그림(book.jpg, 3:2) 위에 왼쪽 그림·오른쪽 글을 %로 얹습니다.
+ *   두 쪽의 자리(top 13% / height 73% / width 44.3%, left 5.5%·50.5%)는 그 그림에서 잰 값이라
+ *   책 그림을 바꾸면 같이 다시 재야 합니다. 너비는 js/book.js 의 fit() 이 화면 높이에 맞춰 정합니다.
+ * 좁은 화면(639px 이하): 책 그림 없이 그림 → 글 순서로 위아래로 쌓습니다 (폰에서 펼침면은 너무 좁아요).
+ * 장면 안의 크기는 cqw(장면 너비 기준)라 장면이 커지든 작아지든 그림·이모지 비율이 같습니다. */
+
+.book-page { padding-bottom: 14px; }
+
+.book-spread {
+  position: relative;
+  max-width: 1000px;
+  margin: 0 auto;
+  aspect-ratio: 3 / 2;
+  background: url('../book.jpg') center / 100% 100% no-repeat;
+}
+
+.book-side {
+  position: absolute;
+  top: 13%;
+  width: 44.3%;
+  height: 73%;
+}
+
+.book-left {
+  left: 5.5%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.book-right {
+  left: 50.5%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  padding: 2% 4%;
+  container-type: inline-size;
+}
+
+/* 장을 넘길 때 살짝 밀려 들어옵니다 */
+.book-spread.flip .book-side { animation: book-turn 0.35s ease; }
+
+@keyframes book-turn {
+  from { opacity: 0.2; transform: translateX(14px); }
+  to   { opacity: 1;   transform: translateX(0); }
+}
+
+/* 장면 — 정사각형. 배경 한 장 위에 인물(.actor)과 소품(.book-prop)을 %로 놓습니다 */
+.book-scene {
+  position: relative;
+  width: 100%;
+  max-height: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 2px rgba(64, 50, 58, 0.06);
+  container-type: inline-size;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.book-art { position: absolute; }
+.book-art img { display: block; }
+
+.book-art.bg, .book-art.cover { inset: 0; }
+.book-art.bg img, .book-art.cover img { width: 100%; height: 100%; object-fit: cover; }
+.book-art.cover { position: relative; width: 100%; aspect-ratio: 1; border-radius: 10px; overflow: hidden; }
+
+/* 그림 파일이 없을 때의 배경 이모지 — 땅 위에 서 있게 */
+.book-art .bg-emoji {
+  position: absolute;
+  left: 50%;
+  bottom: 34%;
+  font-size: 26cqw;
+  line-height: 1;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+.book-art.actor {
+  width: calc(var(--w) * 1%);
+  transform: translateX(-50%);
+  transform-origin: 50% 100%;
+}
+
+.book-art.actor img {
+  width: 100%;
+  filter: drop-shadow(0 4px 6px rgba(64, 50, 58, 0.25));
+}
+
+.book-art.actor .emoji {
+  font-size: calc(var(--w) * 0.85cqw);
+  line-height: 1;
+  text-align: center;
+  filter: drop-shadow(0 4px 6px rgba(64, 50, 58, 0.25));
+}
+
+/* 대체 그림에 붙는 왕관·표정 (그림 파일이 오면 사라집니다) */
+.book-art .badge {
+  position: absolute;
+  left: 50%;
+  top: -6%;
+  font-size: calc(var(--w) * 0.3cqw);
+  line-height: 1;
+  transform: translateX(-50%);
+}
+
+.book-art .tint {
+  position: absolute;
+  left: 50%;
+  bottom: 6%;
+  width: 26%;
+  height: 22%;
+  border-radius: 50%;
+  opacity: 0.85;
+  transform: translateX(-50%);
+}
+
+.book-prop {
+  position: absolute;
+  font-size: calc(var(--w) * 1cqw);
+  line-height: 1;
+  transform: translate(-50%, -50%);
+}
+
+.book-prop.bubble {
+  padding: 0.3em 0.4em;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: var(--shadow);
+}
+
+.book-art.hop, .book-prop.hop { animation: book-hop 0.4s ease 2; }
+
+@keyframes book-hop {
+  0%, 100% { margin-bottom: 0; }
+  50%      { margin-bottom: 5cqw; }
+}
+
+/* 글 — 낱말마다 누를 수 있고, 빈칸이었던 낱말은 분홍 */
+.book-text {
+  font-size: clamp(17px, 6.2cqw, 30px);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--ink);
+  text-align: left;
+}
+
+.book-text .w {
+  display: inline-block;
+  padding: 0 1px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.book-text .w:active { background: var(--blue-soft); }
+
+.book-text .blank {
+  min-width: 2.4em;
+  padding: 0 4px;
+  font-weight: 800;
+  color: var(--pink);
+  text-align: center;
+  border-bottom: 3px solid var(--pink);
+}
+
+.book-text .blank:not(.filled) { background: var(--pink-soft); border-radius: 8px 8px 0 0; }
+.book-text .blank:not(.filled)::after { content: '\00a0'; }
+
+.book-ko {
+  font-size: clamp(13px, 3.6cqw, 17px);
+  color: var(--ink-soft);
+  text-align: left;
+}
+
+.book-ko[hidden] { display: none; }
+
+/* 빈칸에 넣을 그림 셋 */
+.book-choices {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.book-choices[hidden] { display: none; }
+.book-choices.nudge { animation: book-shake 0.45s ease; }
+
+@keyframes book-shake {
+  0%, 100% { transform: translateX(0); }
+  25%      { transform: translateX(-6px); }
+  75%      { transform: translateX(6px); }
+}
+
+.book-choice {
+  flex: 1;
+  min-width: 0;
+  min-height: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 4px;
+  color: var(--ink);
+  background: var(--card);
+  border: 3px solid transparent;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.book-choice .art { font-size: clamp(26px, 8cqw, 40px); line-height: 1.1; }
+.book-choice .word { font-size: clamp(12px, 3.4cqw, 15px); font-weight: 800; }
+.book-choice .ko { font-size: clamp(10px, 2.8cqw, 12px); color: var(--ink-soft); }
+.book-choice.on { border-color: var(--pink); color: var(--pink); }
+
+/* 아래 단추 줄 — ◀ ▶ 는 손가락 크기, 가운데는 듣기·뜻·목소리 */
+.book-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  max-width: 1000px;
+  margin: 12px auto 0;
+}
+
+.book-nav .chip { white-space: nowrap; }
+
+.book-nav-btn {
+  width: 76px;
+  height: 64px;
+  font-size: 26px;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(180deg, #ffa2ba, var(--pink));
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+
+.book-nav-btn:disabled { opacity: 0.35; cursor: default; }
+.book-nav-btn.dim { opacity: 0.55; }
+
+/* 책장 (시작 화면) */
+.book-shelf {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  max-width: 100%;
+}
+
+.book-cover {
+  position: relative;
+  width: 150px;
+  padding: 8px;
+  background: var(--card);
+  border: 3px solid transparent;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  container-type: inline-size;
+}
+
+.book-cover.on { border-color: var(--pink); }
+
+.book-cover-badge {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 16px;
+}
+
+.book-cover-title { display: flex; flex-direction: column; margin-top: 6px; }
+.book-cover-title b { font-size: 15px; color: var(--ink); }
+.book-cover-title span { font-size: 12px; color: var(--ink-soft); }
+
+@media (max-width: 639px) {
+  .book-spread { aspect-ratio: auto; background: none; width: 100% !important; }
+  .book-side { position: static; width: 100%; height: auto; }
+  .book-right {
+    margin-top: 10px;
+    padding: 14px;
+    background: #fffaf0;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+  }
+  .book-scene { border-radius: 16px; box-shadow: var(--shadow); }
+
+  /* 단추 다섯 개가 한 줄에 안 들어가서 ◀ 듣기 ▶ / 뜻 목소리 두 줄로 */
+  .book-nav { display: grid; grid-template-columns: 72px 1fr 1fr 72px; gap: 10px 8px; }
+  .book-nav #prevBtn { grid-area: 1 / 1; width: auto; }
+  .book-nav #speakBtn { grid-area: 1 / 2 / 2 / 4; justify-self: center; }
+  .book-nav #nextBtn { grid-area: 1 / 4; width: auto; }
+  .book-nav #koBtn { grid-area: 2 / 2; justify-self: end; }
+  .book-nav #voiceBtn { grid-area: 2 / 3; justify-self: start; }
+}
+
 /* ---------- 글자 쓰기 (write.html) ---------- */
 
 .write-page { padding-bottom: 14px; }

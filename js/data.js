@@ -719,6 +719,14 @@ window.PAGES = [
   },
 
   {
+    subject: '영어',
+    title: '영어 그림책',
+    icon: '📚',
+    meta: '읽어 주는 책 · 내가 만드는 책',
+    href: 'book.html'
+  },
+
+  {
     subject: '세계',
     title: '세계 지도',
     icon: '🗺️',

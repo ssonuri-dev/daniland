@@ -55,6 +55,7 @@ ES5 IIFE 로 감싸 `window` 에 전역을 붙이는 방식입니다. `import`/`
 | 전역 | 파일 | 하는 일 |
 |---|---|---|
 | `SUBJECTS` `LESSONS` `PAGES` | `js/data.js` | 콘텐츠 전부 (평소 손댈 파일은 여기뿐) |
+| `BOOKS` | `js/books.js` | 영어 그림책 — 책 한 권이 객체 하나, 그림은 `books/<id>/` (전집처럼 계속 늘어납니다) |
 | `Catalog` | `js/catalog.js` | LESSONS+PAGES 를 과목별로 묶고 최고 기록을 붙임 |
 | `UI` | `js/ui.js` | 섞기·이모지 개수 세기·URL 파라미터·폭죽·localStorage |
 | `TTS` | `js/tts.js` | 브라우저 speechSynthesis 래퍼 (목소리 순위 매기기 포함) |
@@ -99,6 +100,7 @@ index.html            과목 카드            home.js
       ├ make.html                           make.js     (자음+모음으로 글자 조립)
       ├ maze.html                           maze.js     (미로를 매번 생성, 캔버스에 그림)
       ├ dodge.html                          dodge.js    (장애물 피하기 — 흐르는 길을 캔버스에 그림, 단계·하트)
+      ├ book.html                           book.js     (영어 그림책 — js/books.js 의 책을 book.jpg 위에, 읽기·만들기)
       └ draw.html                           draw.js     (독립 — 다른 js 를 전혀 안 씀)
 ```
 
@@ -146,6 +148,13 @@ index.html            과목 카드            home.js
   잘리고 비행기를 타면 위로 올라갑니다) — `.trip-map`(창) 안에 `.trip-scene`(그림)이 따로 있는 이유입니다.
   폰에서는 창 자체가 148px 띠가 되어 `MIN_VIEW_H`(280px)로 세웁니다. 좌표는 모두 그림 기준 % 입니다.
   카메라와 다니가 같은 박자로 움직여야 다니가 창 안에서 미끄러지지 않으니 둘 다 `linear` 입니다.
+  **영어 그림책(`book.html`)이 일곱 번째**입니다 (2026-09-15). 부모가 전집처럼 계속 책을 더할 것이라
+  책 데이터를 `js/books.js` 로 따로 뺐고, 화면은 한 개가 모든 책을 씁니다. 읽는 책과 만드는 책이
+  **같은 뼈대**라 빈칸(`{home}`)이 든 글 하나로 둘 다 됩니다 — `book.js` 의 `sub()` 가 영어에는 `word`,
+  우리말에는 `ko`, 그림 이름에는 `img` 를 넣습니다. 장면은 통그림이 아니라 **배경 + 투명 png 인물 + 이모지
+  소품을 겹치는 것**이라 선택지 조합만큼 그림이 필요하지 않습니다 (1권: 그림 17장으로 729가지 책).
+  그림 파일이 없으면 `art` 의 이모지·dani.png 로 대신 그리므로 그림이 오기 전에도 돌아갑니다 (`artEl()`).
+  아이가 영어를 싫어해서 만든 것이라 **고른 낱말이 다음 장을 바꾸는 것**이 핵심이니, 빈칸을 장식으로 두지 마세요.
 
   ⚠️ **세계 지도는 태블릿 전용입니다 — 이것은 버그가 아니라 정한 것입니다.** (2026-09-06)
   지리적으로 정확한 지도에서 한국은 가로의 4.5% 라서 폰(390px)에서는 16×18px 이 됩니다
@@ -214,6 +223,9 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.trip.<act>` | 할머니 섬 여행 놀이별(탈것 여행·다니 돌보기) 최고 별 |
 | `daniland.best.trip` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.balloon.level` | 풍선 터뜨리기에서 도달한 최고 단계 |
+| `daniland.book.<id>.made` | 영어 그림책에서 아이가 만든 책 — `{ 빈칸이름: word }` (책마다 마지막 것 하나) |
+| `daniland.book.<id>.read` | 그 책을 끝까지 읽은 적 있음 (책장의 📖) |
+| `daniland.book.last` `daniland.book.ko` | 마지막에 본 책 · 우리말 뜻 보이기 |
 | `daniland.best.dodge.level` | 장애물 피하기에서 도달한 최고 단계 — 시작 단계 고르기에만 씁니다 (풍선 터뜨리기와 같은 얼개) |
 | `daniland.best.dodge.m` | 장애물 피하기에서 제일 멀리 간 거리 — stars 가 m 입니다 (카드의 ⭐ 는 이것을 `bestUnit: 'm'` 으로 읽습니다) |
 | `daniland.rank.dodge` | 장애물 피하기 순위표 — `[{ m, level, treats }, …]` 먼 순서로 다섯 개 (시작·결과 화면) |
