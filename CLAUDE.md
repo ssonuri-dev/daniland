@@ -91,7 +91,7 @@ Jua 는 굵기가 400 하나뿐이라 제목 규칙에서 `font-weight: 400` 으
 index.html            과목 카드            home.js
  └ subject.html?name=영어   수업·놀이 카드   subject.js
       ├ play.html?lesson=en-fruits          game.js     (수업 데이터 기반, 놀이 5종)
-      ├ numbers.html?act=plus               numbers.js  (문제를 매번 생성, 놀이 7종)
+      ├ numbers.html?act=plus               numbers.js  (문제를 매번 생성, 놀이 8종)
       ├ hundred.html                        hundred.js  (1~100 백 판, 놀이 3종)
       ├ town.html                           town.js     (지도 그림 town.jpg 위, 놀이 3종)
       ├ world.html                          world.js    (지도 그림 world.jpg 위, 놀이 3종)

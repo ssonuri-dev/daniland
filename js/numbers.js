@@ -3,14 +3,18 @@
  *
  * 주소 예) numbers.html?act=plus
  *
- * 놀이 7가지 (문제는 매번 새로 만들어집니다)
+ * 놀이 8가지 (문제는 매번 새로 만들어집니다)
  *   count   : 세어 보기     - 그림이 몇 개인지 숫자를 고릅니다
  *   group   : 같은 개수 찾기 - 숫자를 보고 그만큼 있는 묶음을 고릅니다
  *   more    : 더 많은 것    - 두 묶음 중 많은 쪽을 고릅니다
- *   plus    : 더하기        - 🍎🍎 ➕ 🍎 = ?
- *   minus   : 빼기          - 🍎🍎🍎 중에 두 개를 먹으면 몇 개?
+ *   plus    : 더하기        - 🍎🍎 ➕ 🍎 = ?  (그림 아래 '2 + 1 = ❓' 식도 같이)
+ *   minus   : 빼기          - 🍎🍎🍎 중에 두 개를 먹으면 몇 개?  ('3 − 2 = ❓')
+ *   times   : 곱하기        - 🍎🍎 가 세 상자면 모두 몇 개?  ('2 × 3 = ❓', 2개씩 3묶음)
  *   order   : 수 순서       - 6 7 ❓ 9 에서 빠진 수를 찾습니다
  *   pattern : 패턴 잇기     - 🍎🍌🍎🍌🍎 다음에 올 그림을 찾습니다
+ *
+ * 더하기·빼기·곱하기는 그림 밑에 숫자 식(formulaEl)을 같이 보여 주고, 맞히면 ❓ 자리에 답이 들어갑니다 —
+ * 그림으로 세는 것과 기호로 적는 것이 같은 일이라는 걸 붙여 주려고요.
  *
  * 놀이는 수학 과목 페이지에서 카드로 고릅니다. 그래서 어떤 놀이를 할지는
  * 주소(act)로 정해져 오고, 이 페이지에서는 다시 고르지 않습니다.
@@ -47,6 +51,9 @@
       levels: [5, 10, 20], def: 10 },
     { id: 'minus',   name: '빼기',          icon: '➖', desc: '먹고 나면 몇 개가 남을까요',
       levels: [5, 10, 20], def: 10 },
+    // 곱하기의 단계는 '답이 어디까지' 입니다 — 9 면 3개씩 3묶음까지, 25 면 5×5, 50 이면 9개씩 6묶음까지
+    { id: 'times',   name: '곱하기',        icon: '✖️', desc: '몇 개씩 몇 묶음이면 모두 몇 개일까요',
+      levels: [9, 25, 50], def: 9 },
     { id: 'order',   name: '수 순서',       icon: '🪜', desc: '빠진 수를 찾아요',
       levels: [20, 50, 100], def: 20 },
     { id: 'pattern', name: '패턴 잇기',     icon: '🔁', desc: '다음에 올 그림을 찾아요',
@@ -244,6 +251,7 @@
     else if (state.act === 'group') makeGroup();
     else if (state.act === 'plus') makePlus();
     else if (state.act === 'minus') makeMinus();
+    else if (state.act === 'times') makeTimes();
     else if (state.act === 'order') makeOrder();
     else if (state.act === 'pattern') makePattern();
     else makeMore();
@@ -311,6 +319,7 @@
       boxEl(groupEl(b, emoji, true)),
       opEl('= ❓')
     ], true));
+    el.stage.appendChild(formulaEl([a, '+', b]));
     el.stage.appendChild(listenBtn());
 
     renderNumberCards(a + b, 1);
@@ -332,10 +341,44 @@
       boxEl(groupEl(a, emoji, true, a - b)),
       opEl('= ❓')
     ]));
+    el.stage.appendChild(formulaEl([a, '−', b]));
     el.stage.appendChild(listenBtn());
 
     // 하나도 안 남는 경우가 있으니 보기에 0 도 나올 수 있게 합니다.
     renderNumberCards(a - b, 0);
+  }
+
+  // ✖️ 곱하기 — 같은 개수가 든 상자가 여러 개. '2개씩 3묶음' 이 2 × 3 입니다.
+  // 보기는 정답 ±1 보다 '한 묶음 더·덜'(정답 ± 개수)을 먼저 씁니다 — 묶음으로 세는지 보려고요.
+  function makeTimes() {
+    var emoji = pick(EMOJIS);
+    var lim = state.max;
+    var perMax = lim <= 9 ? 3 : (lim <= 25 ? 5 : 9);
+    var grpMax = lim <= 9 ? 3 : (lim <= 25 ? 5 : 6);
+
+    var groups = UI.randInt(2, grpMax);
+    var per = UI.randInt(1, perMax);
+    while (per * groups > lim && per > 1) per -= 1;
+
+    state.answer = per * groups;
+    state.prompt = koCount(per) + ' 개씩 ' + koCount(groups) + ' 묶음이면 모두 몇 개일까요?';
+    el.questLabel.textContent = '모두 몇 개일까요?' + step();
+
+    var boxes = [];
+    for (var i = 0; i < groups; i++) boxes.push(boxEl(groupEl(per, emoji, true)));
+    var row = eqRow(boxes);
+    row.classList.add('eq-times');
+    el.stage.appendChild(row);
+    el.stage.appendChild(formulaEl([per, '×', groups]));
+    el.stage.appendChild(listenBtn());
+
+    var ans = state.answer;
+    var pool = [ans - per, ans + per, ans - groups, ans + groups, ans - 1, ans + 1];
+    var choices = [ans];
+    pool.forEach(function (n) {
+      if (choices.length < 4 && n >= 1 && choices.indexOf(n) < 0) choices.push(n);
+    });
+    renderNumberCards(ans, 1, null, choices);
   }
 
   // ⚖️ 더 많은 것 — 두 묶음 중 많은 쪽을 고릅니다.
@@ -437,8 +480,9 @@
 
   /* ---------- 보기 만들기 ---------- */
 
-  function renderNumberCards(answer, min, avoid) {
-    var choices = nearNumbers(answer, 4, min, avoid);
+  // choices 를 주면 그대로 씁니다 (곱하기), 아니면 정답 근처 수로 만듭니다.
+  function renderNumberCards(answer, min, avoid, choices) {
+    choices = choices || nearNumbers(answer, 4, min, avoid);
     el.cards.className = 'cards num-cards' + (choices.length > 4 ? ' cols-3' : '');
 
     UI.shuffle(choices).forEach(function (n) {
@@ -541,6 +585,20 @@
     return op;
   }
 
+  // 그림 밑의 숫자 식 — [3, '+', 2] 를 '3 + 2 = ❓' 로. 맞히면 ❓ 가 답으로 바뀝니다 (choose).
+  function formulaEl(parts) {
+    var f = document.createElement('div');
+    f.className = 'eq-formula';
+    parts.concat(['=', '❓']).forEach(function (p) {
+      var s = document.createElement('span');
+      var isOp = typeof p === 'string' && p !== '❓';
+      s.className = isOp ? 'op' : 'n' + (p === '❓' ? ' q' : '');
+      s.textContent = p;
+      f.appendChild(s);
+    });
+    return f;
+  }
+
   function listenBtn() {
     var b = document.createElement('button');
     b.className = 'speak-btn small';
@@ -563,6 +621,10 @@
       UI.confettiAt(card);
 
       if (state.firstTry) { state.stars += 1; updateScore(); }
+
+      // 숫자 식의 ❓ 에 답을 채웁니다
+      var q = el.stage.querySelector('.eq-formula .q');
+      if (q) { q.textContent = state.answer; q.classList.add('filled'); }
 
       // 맞히는 즉시 막대를 채웁니다. (마지막 문제에서 다 찬 모습을 볼 수 있게)
       el.bar.style.width = Math.round(((state.round + 1) / ROUNDS) * 100) + '%';

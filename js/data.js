@@ -795,6 +795,14 @@ window.PAGES = [
   },
   {
     subject: '수학',
+    title: '곱하기',
+    icon: '✖️',
+    meta: '몇 개씩 몇 묶음',
+    href: 'numbers.html?act=times',
+    bestKey: 'daniland.best.numbers.times'
+  },
+  {
+    subject: '수학',
     title: '수 순서',
     icon: '🪜',
     meta: '빠진 수를 찾아요',
