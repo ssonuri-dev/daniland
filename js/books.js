@@ -73,7 +73,7 @@ window.BOOKS = [
         text: 'This is Princess Dani. She lives in a {home}.',
         ko: '다니 공주예요. 공주는 {home}에 살아요.',
         bg: '{home}',
-        actors: [{ art: 'dani', x: 32, w: 40 }],
+        actors: [{ art: 'dani', x: 30, w: 34 }],
         blank: {
           key: 'home',
           options: [
@@ -174,7 +174,7 @@ window.BOOKS = [
         text: 'Now they are friends. They fly home together. The end.',
         ko: '이제 둘은 친구예요. 함께 집으로 날아가요. 끝.',
         bg: 'bg-sky',
-        actors: [{ art: '{monster}-nice', x: 60, w: 50, y: 78 }, { art: 'dani-fly', x: 28, w: 34, y: 62 }],
+        actors: [{ art: '{monster}-nice', x: 62, w: 50, y: 78 }, { art: 'dani-fly', x: 28, w: 44, y: 62 }],
         props: [{ emoji: '💕', x: 46, y: 30, size: 12 }] // 집은 bg-sky.jpg 오른쪽 아래에 그려져 있어 따로 안 띄웁니다
       }
     ]
