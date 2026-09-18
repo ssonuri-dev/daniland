@@ -743,7 +743,7 @@ window.LESSONS = [
 window.PAGES = [
   {
     subject: '영어',
-    group: '단어 공부',
+    group: '문장·놀이',
     title: '마을 지도',
     icon: '🗺️',
     meta: '마을 시설 이름을 익혀요',
