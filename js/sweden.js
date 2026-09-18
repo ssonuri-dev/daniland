@@ -34,41 +34,41 @@
    *                   사진의 출처는 sweden/CREDITS.md 에 적습니다.
    * ---------------------------------------------------------------------- */
   var FACTS = [
-    { id: 'flag', emoji: '🇸🇪', label: '국기', title: '스웨덴 국기',
+    { id: 'flag', img: 'flag.jpg', emoji: '🇸🇪', label: '국기', title: '스웨덴 국기',
       sv: 'Sverige', svKo: '스베리예',
       text: '파란 바탕에 노란 십자가예요. 파랑은 하늘과 호수, 노랑은 해를 뜻한다고 해요. ' +
             '이웃 나라 노르웨이·덴마크·핀란드 국기에도 십자가가 있어요. ' +
             '스웨덴 사람들은 자기 나라를 "스베리예" 라고 불러요.' },
 
-    { id: 'where', emoji: '🧭', label: '어디일까', title: '유럽의 북쪽 끝',
+    { id: 'where', img: 'where.jpg', emoji: '🧭', label: '어디일까', title: '유럽의 북쪽 끝',
       text: '스웨덴은 유럽의 북쪽, 스칸디나비아반도에 있어요. 왼쪽 이웃은 노르웨이, ' +
             '위쪽 이웃은 핀란드예요. 덴마크와는 바다 위 긴 다리로 이어져 있어요. ' +
             '우리나라에서는 비행기를 타고 열 시간 넘게 가야 해요.' },
 
-    { id: 'stockholm', emoji: '🏰', label: '수도', title: '수도 스톡홀름',
+    { id: 'stockholm', img: 'stockholm.jpg', emoji: '🏰', label: '수도', title: '수도 스톡홀름',
       sv: 'Stockholm', svKo: '스톡홀름',
       text: '스톡홀름은 열네 개의 섬 위에 세워진 도시예요. 그래서 어디서나 물이 보이고, ' +
             '섬과 섬은 다리 쉰 개가 넘게 이어 줘요. 왕이 사는 궁전도 여기 있어요.' },
 
-    { id: 'royal', emoji: '👑', label: '왕과 공주', title: '왕이 있는 나라',
+    { id: 'royal', img: 'royal.jpg', emoji: '👑', label: '왕과 공주', title: '왕이 있는 나라',
       text: '스웨덴에는 왕이 있어요. 지금 왕은 칼 16세 구스타프예요. ' +
             '다음 왕이 될 사람은 왕의 딸 빅토리아 공주이고, ' +
             '그다음은 빅토리아 공주의 딸 에스텔 공주예요.' },
 
-    { id: 'winter', emoji: '❄️', label: '긴 겨울', title: '길고 하얀 겨울', find: '눈 오는 긴 겨울',
+    { id: 'winter', img: 'winter.jpg', emoji: '❄️', label: '긴 겨울', title: '길고 하얀 겨울', find: '눈 오는 긴 겨울',
       text: '북쪽에 있어서 겨울이 길고 눈이 많이 와요. 한겨울에는 해가 아주 잠깐만 떠요. ' +
             '제일 북쪽에서는 겨울에 해가 아예 안 뜨는 날도 있고, ' +
             '여름에는 밤에도 해가 안 지는 "백야" 가 돼요.' },
 
-    { id: 'aurora', emoji: '🌌', label: '오로라', title: '겨울밤의 오로라', find: '오로라',
+    { id: 'aurora', img: 'aurora.jpg', emoji: '🌌', label: '오로라', title: '겨울밤의 오로라', find: '오로라',
       text: '스웨덴 북쪽 하늘에서는 겨울밤에 초록빛·보랏빛 커튼 같은 오로라가 춤춰요. ' +
             '아비스코라는 마을은 오로라를 보러 세계에서 사람들이 찾아오는 곳이에요.' },
 
-    { id: 'reindeer', emoji: '🦌', label: '순록', title: '순록과 사미 사람들', find: '순록',
+    { id: 'reindeer', img: 'reindeer.jpg', emoji: '🦌', label: '순록', title: '순록과 사미 사람들', find: '순록',
       text: '스웨덴 북쪽 라플란드에는 순록이 살아요. 오래전부터 그곳에 살아온 사미 사람들이 ' +
             '순록을 키우며 함께 다녀요. 숲에는 커다란 사슴인 무스도 살아요.' },
 
-    { id: 'forest', emoji: '🌲', label: '숲과 호수', title: '숲과 호수의 나라',
+    { id: 'forest', img: 'forest.jpg', emoji: '🌲', label: '숲과 호수', title: '숲과 호수의 나라',
       text: '스웨덴은 땅의 3분의 2가 숲이에요. 호수는 십만 개 가까이 돼요. ' +
             '누구나 숲에 들어가 블루베리와 링곤베리를 따도 돼요 — "모두의 권리" 라는 법이에요.' },
 
@@ -77,41 +77,41 @@
       text: '힘이 아주 센 빨간 머리 삐삐는 스웨덴 작가 아스트리드 린드그렌이 만들었어요. ' +
             '삐삐는 말을 번쩍 들어 올리고, 원숭이 닐슨 씨와 함께 살아요.' },
 
-    { id: 'dala', emoji: '🐴', label: '달라 말', title: '빨간 나무 말, 달라 말', find: '달라 말',
+    { id: 'dala', img: 'dala.jpg', emoji: '🐴', label: '달라 말', title: '빨간 나무 말, 달라 말', find: '달라 말',
       sv: 'Dalahäst', svKo: '달라헤스트',
       text: '빨간 나무 말에 알록달록 꽃무늬를 그린 장난감이에요. 달라르나 지방에서 ' +
             '오래전부터 만들어서 "달라 말" 이라고 해요. 스웨덴을 대표하는 물건이에요.' },
 
-    { id: 'meatball', emoji: '🧆', label: '미트볼', title: '스웨덴 미트볼', find: '미트볼',
+    { id: 'meatball', img: 'meatball.jpg', emoji: '🧆', label: '미트볼', title: '스웨덴 미트볼', find: '미트볼',
       sv: 'köttbullar', svKo: '셰트불라르',
       text: '스웨덴 사람들이 좋아하는 음식은 동글동글 미트볼이에요. ' +
             '으깬 감자, 새콤한 링곤베리 잼과 같이 먹어요.' },
 
-    { id: 'fika', emoji: '☕', label: '피카', title: '피카 — 쉬는 시간', find: '피카',
+    { id: 'fika', img: 'fika.jpg', emoji: '☕', label: '피카', title: '피카 — 쉬는 시간', find: '피카',
       sv: 'fika', svKo: '피카',
       text: '스웨덴 사람들은 하루에 한두 번 하던 일을 멈추고 다 같이 차와 빵을 먹으며 쉬어요. ' +
             '이 시간을 "피카" 라고 해요. 피카에 제일 많이 먹는 건 달콤한 시나몬롤 "카넬불레" 예요.' },
 
-    { id: 'candy', emoji: '🍬', label: '토요일 사탕', title: '토요일에만 사탕', find: '토요일 사탕',
+    { id: 'candy', img: 'candy.jpg', emoji: '🍬', label: '토요일 사탕', title: '토요일에만 사탕', find: '토요일 사탕',
       sv: 'lördagsgodis', svKo: '뢰르닥스구디스',
       text: '스웨덴 아이들은 토요일에만 사탕을 먹는 풍습이 있어요. "토요일 사탕" 이라는 뜻의 ' +
             '뢰르닥스구디스예요. 토요일이 되면 가게에서 좋아하는 사탕을 봉지에 골라 담아요.' },
 
-    { id: 'nobel', emoji: '🏅', label: '노벨상', title: '노벨상', find: '노벨상',
+    { id: 'nobel', img: 'nobel.jpg', emoji: '🏅', label: '노벨상', title: '노벨상', find: '노벨상',
       text: '세계에서 가장 유명한 상인 노벨상은 스웨덴 사람 알프레드 노벨이 만들었어요. ' +
             '해마다 12월 10일 스톡홀름에서 상을 줘요. 평화상만 이웃 나라 노르웨이에서 줘요.' },
 
-    { id: 'lucia', emoji: '🕯️', label: '루시아', title: '루시아 축제', find: '루시아 축제',
+    { id: 'lucia', img: 'lucia.jpg', emoji: '🕯️', label: '루시아', title: '루시아 축제', find: '루시아 축제',
       text: '12월 13일에는 하얀 옷을 입고 머리에 촛불 관을 쓴 "루시아" 가 앞장서고, ' +
             '아이들이 노래하며 줄지어 걸어요. 어두운 겨울에 빛을 가져다준다는 뜻이에요.' },
 
-    { id: 'midsommar', emoji: '💐', label: '미드솜마르', title: '한여름 축제 미드솜마르', find: '미드솜마르',
+    { id: 'midsommar', img: 'midsommar.jpg', emoji: '💐', label: '미드솜마르', title: '한여름 축제 미드솜마르', find: '미드솜마르',
       sv: 'midsommar', svKo: '미드솜마르',
       text: '6월, 해가 제일 긴 날 즈음에 하는 한여름 축제예요. 꽃과 잎으로 꾸민 기둥을 세우고 ' +
             '그 둘레에서 노래하며 춤춰요. 머리에는 꽃으로 만든 관을 쓰고, ' +
             '"작은 개구리" 노래에 맞춰 개구리처럼 폴짝폴짝 뛰어요.' },
 
-    { id: 'viking', emoji: '⛵', label: '바이킹', title: '바이킹', find: '바이킹',
+    { id: 'viking', img: 'viking.jpg', emoji: '⛵', label: '바이킹', title: '바이킹', find: '바이킹',
       text: '천 년쯤 전 스웨덴을 비롯한 북유럽에는 바이킹이 살았어요. 길고 날렵한 배를 타고 ' +
             '강과 바다를 건너 멀리까지 다녔어요. 뿔 달린 투구는 사실 안 썼대요.' },
 
@@ -405,7 +405,20 @@
       fitCards();
     };
     im.onload = fitCards;
+    im.addEventListener('click', function () { zoomPhoto(im.src); });
     return im;
+  }
+
+  // 사진을 누르면 화면 가득 크게 — 폰에서는 판의 사진이 작아서요. 아무 데나 누르면 닫힙니다.
+  function zoomPhoto(src) {
+    var box = document.createElement('div');
+    box.className = 'photo-zoom';
+    var big = document.createElement('img');
+    big.src = src;
+    big.alt = '';
+    box.appendChild(big);
+    box.addEventListener('click', function () { box.remove(); });
+    document.body.appendChild(box);
   }
 
   function setLabel(text) {
