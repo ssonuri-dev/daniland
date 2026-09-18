@@ -108,7 +108,7 @@
     var pages = window.PAGES || [];
     for (var i = 0; i < pages.length; i++) {
       if ((pages[i].href || '').indexOf('maze.html') === 0 && pages[i].subject) {
-        return Catalog.href(pages[i].subject);
+        return Catalog.href(pages[i].subject, pages[i].group);
       }
     }
     return 'index.html';

@@ -885,7 +885,7 @@
 
   // ← 는 방금 지나온 과목 페이지로 돌아갑니다 (거기서 한 번 더 누르면 홈).
   function bindHome() {
-    var back = (lesson && window.Catalog) ? Catalog.href(lesson.subject) : 'index.html';
+    var back = (lesson && window.Catalog) ? Catalog.href(lesson.subject, lesson.group) : 'index.html';
 
     go(el.backBtn, back);
     go(el.startHome, back);

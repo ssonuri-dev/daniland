@@ -142,16 +142,18 @@
     });
   }
 
-  // 이 페이지를 카드로 갖고 있는 과목을 data.js 에서 찾습니다.
+  // 이 놀이(?act=)를 카드로 갖고 있는 과목·묶음을 data.js 에서 찾습니다.
+  // 수학 놀이는 묶음이 여럿이라 'numbers.html' 로만 찾으면 첫 카드(세어 보기)의 묶음으로 가 버립니다.
   function backHref() {
     var pages = window.PAGES || [];
+    var mine = 'numbers.html?act=' + state.act;
 
     for (var i = 0; i < pages.length; i++) {
-      if ((pages[i].href || '').indexOf('numbers.html') === 0 && pages[i].subject) {
-        return Catalog.href(pages[i].subject);
+      if (pages[i].href === mine && pages[i].subject) {
+        return Catalog.href(pages[i].subject, pages[i].group);
       }
     }
-    return 'index.html';
+    return Catalog.backHref('numbers.html');
   }
 
   document.addEventListener('keydown', function (e) {

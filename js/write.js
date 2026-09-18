@@ -972,7 +972,7 @@
 
   // ← 는 한글 과목 페이지로 돌아갑니다.
   function bindHome() {
-    var back = window.Catalog ? Catalog.href('한글') : 'index.html';
+    var back = window.Catalog ? Catalog.backHref('write.html') : 'index.html';
 
     [el.backBtn, el.startHome, el.endHome].forEach(function (btn) {
       if (!btn) return;

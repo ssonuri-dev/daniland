@@ -6,6 +6,7 @@
  *
  *  id      : 다른 레슨과 겹치지 않는 영문 이름 (주소와 기록 저장에 쓰임)
  *  subject : 어느 과목에 넣을지 (아래 SUBJECTS 의 name 과 똑같이)
+ *  group   : 그 과목 안의 어느 묶음에 넣을지 (SUBJECTS 의 groups 에 적은 name 과 똑같이)
  *  title   : 카드에 보일 제목
  *  icon    : 카드 아이콘 이모지
  *  lang    : 읽어줄 언어 ('en-US' 영어 / 'ko-KR' 한국어)
@@ -27,17 +28,38 @@
  * ========================================================================= */
 
 /* =========================================================================
- * 과목 — 홈 화면에 큰 카드로 나오는 네 가지
+ * 과목 — 홈 화면에 큰 카드로 나오는 다섯 가지
  *
  * 여기 적힌 순서대로 홈에 놓입니다.
  * 아래 수업/학습 카드의 subject 에 이 name 을 똑같이 적으면 그 과목에 들어갑니다.
  * (SUBJECTS 에 없는 이름을 쓰면 맨 뒤에 과목이 하나 새로 생깁니다)
+ *
+ * groups : (없어도 됩니다) 카드가 많은 과목은 한 층 더 나눕니다 — 과목 카드를 누르면 먼저
+ *          이 묶음 카드들이 나오고, 묶음을 누르면 그 안의 카드가 나옵니다.
+ *          카드의 group 에 이 name 을 똑같이 적으면 그 묶음에 들어갑니다.
+ *          groups 가 없는 과목(세계 · 놀이)은 지금처럼 카드가 바로 나옵니다.
+ *          (groups 에 없는 이름을 group 에 쓰면 맨 뒤에 묶음이 새로 생기고,
+ *           groups 가 있는 과목에서 group 을 안 적은 카드는 '그 밖에' 묶음으로 갑니다)
  * ========================================================================= */
 
 window.SUBJECTS = [
-  { name: '영어', icon: '🔤', desc: '듣고 찾고 짝 맞춰요' },
-  { name: '수학', icon: '🔢', desc: '세고 더해요' },
-  { name: '한글', icon: '🇰🇷', desc: '글자를 익혀요' },
+  { name: '영어', icon: '🔤', desc: '듣고 찾고 짝 맞춰요',
+    groups: [
+      { name: '단어 공부', icon: '📖', desc: '그림을 보고 낱말을 익혀요' },
+      { name: '책 읽기',   icon: '📚', desc: '그림책을 읽고 만들어요' },
+      { name: '문장·놀이', icon: '🚏', desc: '배운 문장으로 놀아요' }
+    ] },
+  { name: '수학', icon: '🔢', desc: '세고 더해요',
+    groups: [
+      { name: '세기·비교',          icon: '🔢', desc: '세어 보고 견줘요' },
+      { name: '더하기·빼기·곱하기', icon: '➕', desc: '식을 세워요' },
+      { name: '수 순서·백 판',      icon: '💯', desc: '수의 차례와 자리' }
+    ] },
+  { name: '한글', icon: '🇰🇷', desc: '글자를 익혀요',
+    groups: [
+      { name: '낱말 공부',        icon: '📖', desc: '그림을 보고 낱말을 익혀요' },
+      { name: '글자 쓰기·만들기', icon: '✏️', desc: '획을 긋고 자모를 붙여요' }
+    ] },
   { name: '세계', icon: '🌍', desc: '나라를 만나요' },
   { name: '놀이', icon: '🎨', desc: '자유롭게 놀아요' }
 ];
@@ -47,6 +69,7 @@ window.LESSONS = [
   {
     id: 'en-fruits',
     subject: '영어',
+    group: '단어 공부',
     title: '과일',
     icon: '🍎',
     lang: 'en-US',
@@ -73,6 +96,7 @@ window.LESSONS = [
   {
     id: 'en-animals',
     subject: '영어',
+    group: '단어 공부',
     title: '동물',
     icon: '🐶',
     lang: 'en-US',
@@ -93,6 +117,7 @@ window.LESSONS = [
   {
     id: 'en-colors',
     subject: '영어',
+    group: '단어 공부',
     title: '색깔',
     icon: '🌈',
     lang: 'en-US',
@@ -113,6 +138,7 @@ window.LESSONS = [
   {
     id: 'en-numbers',
     subject: '영어',
+    group: '단어 공부',
     title: '숫자 세기',
     icon: '1️⃣',
     lang: 'en-US',
@@ -133,6 +159,7 @@ window.LESSONS = [
   {
     id: 'en-jobs',
     subject: '영어',
+    group: '단어 공부',
     title: '직업과 일터',
     icon: '👮',
     lang: 'en-US',
@@ -153,6 +180,7 @@ window.LESSONS = [
   {
     id: 'en-weather',
     subject: '영어',
+    group: '단어 공부',
     title: '날씨',
     icon: '⛅',
     lang: 'en-US',
@@ -171,6 +199,7 @@ window.LESSONS = [
   {
     id: 'en-days',
     subject: '영어',
+    group: '단어 공부',
     title: '요일',
     icon: '📅',
     lang: 'en-US',
@@ -196,6 +225,7 @@ window.LESSONS = [
   {
     id: 'en-transport',
     subject: '영어',
+    group: '단어 공부',
     title: '탈것',
     icon: '🚌',
     lang: 'en-US',
@@ -220,6 +250,7 @@ window.LESSONS = [
   {
     id: 'en-feelings',
     subject: '영어',
+    group: '단어 공부',
     title: '기분',
     icon: '😊',
     lang: 'en-US',
@@ -242,6 +273,7 @@ window.LESSONS = [
   {
     id: 'ko-fruits',
     subject: '한글',
+    group: '낱말 공부',
     title: '과일 이름',
     icon: '🍓',
     lang: 'ko-KR',
@@ -268,6 +300,7 @@ window.LESSONS = [
   {
     id: 'ko-vehicles',
     subject: '한글',
+    group: '낱말 공부',
     title: '탈것',
     icon: '🚗',
     lang: 'ko-KR',
@@ -294,6 +327,7 @@ window.LESSONS = [
   {
     id: 'ko-body',
     subject: '한글',
+    group: '낱말 공부',
     title: '우리 몸',
     icon: '👀',
     lang: 'ko-KR',
@@ -316,6 +350,7 @@ window.LESSONS = [
   {
     id: 'ko-family',
     subject: '한글',
+    group: '낱말 공부',
     title: '가족',
     icon: '👨‍👩‍👧',
     lang: 'ko-KR',
@@ -334,6 +369,7 @@ window.LESSONS = [
   {
     id: 'ko-food',
     subject: '한글',
+    group: '낱말 공부',
     title: '음식',
     icon: '🍚',
     lang: 'ko-KR',
@@ -360,6 +396,7 @@ window.LESSONS = [
   {
     id: 'ko-nature',
     subject: '한글',
+    group: '낱말 공부',
     title: '자연과 하늘',
     icon: '🌳',
     lang: 'ko-KR',
@@ -386,6 +423,7 @@ window.LESSONS = [
   {
     id: 'ko-clothes',
     subject: '한글',
+    group: '낱말 공부',
     title: '옷과 물건',
     icon: '👕',
     lang: 'ko-KR',
@@ -408,6 +446,7 @@ window.LESSONS = [
   {
     id: 'ko-house',
     subject: '한글',
+    group: '낱말 공부',
     title: '집 안',
     icon: '🏠',
     lang: 'ko-KR',
@@ -432,6 +471,7 @@ window.LESSONS = [
   {
     id: 'ko-school',
     subject: '한글',
+    group: '낱말 공부',
     title: '유치원 물건',
     icon: '🎒',
     lang: 'ko-KR',
@@ -454,6 +494,7 @@ window.LESSONS = [
   {
     id: 'ko-feeling',
     subject: '한글',
+    group: '낱말 공부',
     title: '기분',
     icon: '😊',
     lang: 'ko-KR',
@@ -702,6 +743,7 @@ window.LESSONS = [
 window.PAGES = [
   {
     subject: '영어',
+    group: '단어 공부',
     title: '마을 지도',
     icon: '🗺️',
     meta: '마을 시설 이름을 익혀요',
@@ -711,6 +753,7 @@ window.PAGES = [
 
   {
     subject: '영어',
+    group: '문장·놀이',
     title: '할머니 섬 여행',
     icon: '🏝️',
     meta: '탈것을 골라 할머니 섬에 가요',
@@ -720,6 +763,7 @@ window.PAGES = [
 
   {
     subject: '영어',
+    group: '문장·놀이',
     title: '탈것 타기',
     icon: '🚏',
     meta: 'get on 일까 get in 일까',
@@ -729,6 +773,7 @@ window.PAGES = [
 
   {
     subject: '영어',
+    group: '책 읽기',
     title: '영어 그림책',
     icon: '📚',
     meta: '읽어 주는 책 · 내가 만드는 책',
@@ -746,6 +791,7 @@ window.PAGES = [
 
   {
     subject: '한글',
+    group: '글자 쓰기·만들기',
     title: '글자 쓰기',
     icon: '✏️',
     meta: '획순대로 따라 써요',
@@ -755,6 +801,7 @@ window.PAGES = [
 
   {
     subject: '한글',
+    group: '글자 쓰기·만들기',
     title: '글자 만들기',
     icon: '🧩',
     meta: '자음과 모음을 붙여요',
@@ -764,6 +811,7 @@ window.PAGES = [
 
   {
     subject: '수학',
+    group: '세기·비교',
     title: '세어 보기',
     icon: '🔢',
     meta: '그림을 세어요',
@@ -772,6 +820,7 @@ window.PAGES = [
   },
   {
     subject: '수학',
+    group: '세기·비교',
     title: '같은 개수 찾기',
     icon: '🍎',
     meta: '숫자만큼 찾아요',
@@ -780,6 +829,7 @@ window.PAGES = [
   },
   {
     subject: '수학',
+    group: '세기·비교',
     title: '더 많은 것',
     icon: '⚖️',
     meta: '어느 쪽이 많을까',
@@ -788,6 +838,7 @@ window.PAGES = [
   },
   {
     subject: '수학',
+    group: '더하기·빼기·곱하기',
     title: '더하기',
     icon: '➕',
     meta: '모두 몇 개?',
@@ -796,6 +847,7 @@ window.PAGES = [
   },
   {
     subject: '수학',
+    group: '더하기·빼기·곱하기',
     title: '빼기',
     icon: '➖',
     meta: '몇 개 남았을까',
@@ -804,6 +856,7 @@ window.PAGES = [
   },
   {
     subject: '수학',
+    group: '더하기·빼기·곱하기',
     title: '곱하기',
     icon: '✖️',
     meta: '몇 개씩 몇 묶음',
@@ -812,6 +865,7 @@ window.PAGES = [
   },
   {
     subject: '수학',
+    group: '수 순서·백 판',
     title: '수 순서',
     icon: '🪜',
     meta: '빠진 수를 찾아요',
@@ -820,6 +874,7 @@ window.PAGES = [
   },
   {
     subject: '수학',
+    group: '수 순서·백 판',
     title: '패턴 잇기',
     icon: '🔁',
     meta: '다음에 올 그림은?',
@@ -828,6 +883,7 @@ window.PAGES = [
   },
   {
     subject: '수학',
+    group: '수 순서·백 판',
     title: '백 판 놀이',
     icon: '💯',
     meta: '100까지 뛰어 세요',

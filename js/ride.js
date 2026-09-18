@@ -152,13 +152,13 @@
     });
   }
 
-  // 이 페이지를 카드로 갖고 있는 과목을 data.js 에서 찾습니다.
+  // 이 페이지를 카드로 갖고 있는 과목·묶음을 data.js 에서 찾습니다.
   function backHref() {
     var pages = window.PAGES || [];
 
     for (var i = 0; i < pages.length; i++) {
       if ((pages[i].href || '').indexOf('ride.html') === 0 && pages[i].subject) {
-        return Catalog.href(pages[i].subject);
+        return Catalog.href(pages[i].subject, pages[i].group);
       }
     }
     return 'index.html';

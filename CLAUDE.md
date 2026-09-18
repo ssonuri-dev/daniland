@@ -83,13 +83,21 @@ Jua 는 굵기가 400 하나뿐이라 제목 규칙에서 `font-weight: 400` 으
 `PAGES`(따로 만든 페이지 카드)를 같은 모양으로 합쳐 과목 페이지에서 **같은 층**으로 보여 줍니다.
 `SUBJECTS` 에 없는 `subject` 이름을 쓰면 과목이 맨 뒤에 자동 생성됩니다.
 
+**과목 안에 한 층이 더 있습니다 (2026-09-18).** 카드가 많아진 영어·수학·한글은 `SUBJECTS[].groups` 로
+묶음을 정의하고, 카드마다 `group` 을 적습니다. `catalog.js` 의 `groupsOf()` 가 과목과 같은 규칙으로 묶습니다
+(정의 순서대로, 없는 이름은 맨 뒤에 자동 생성, `group` 을 안 적은 카드는 '그 밖에'). 묶음이 없는 과목(세계·놀이)은
+카드가 바로 나옵니다. **게임 페이지 주소는 안 바뀌고** 목록 주소만 `subject.html?name=영어&group=…` 가 됩니다.
+게임 화면의 ← 는 `Catalog.href(subject, group)` 또는 `Catalog.backHref('make.html')` 로 **묶음 페이지**로 돌아갑니다 —
+새 페이지를 만들면 이 둘 중 하나를 쓰세요. `numbers.html` 은 놀이(`?act=`)마다 묶음이 달라 `href` 를 통째로 맞춥니다.
+
 필드의 의미와 예시는 `js/data.js` 상단 주석과 README 의 "새 수업 추가하기"에 이미 정리돼 있습니다.
 
 ### 화면 흐름
 
 ```
 index.html            과목 카드            home.js
- └ subject.html?name=영어   수업·놀이 카드   subject.js
+ └ subject.html?name=영어   묶음 카드        subject.js  (SUBJECTS[].groups 가 있는 과목만 — 없으면 바로 아래 층)
+   └ subject.html?name=영어&group=단어 공부   수업·놀이 카드   subject.js
       ├ play.html?lesson=en-fruits          game.js     (수업 데이터 기반, 놀이 5종)
       ├ numbers.html?act=plus               numbers.js  (문제를 매번 생성, 놀이 8종)
       ├ hundred.html                        hundred.js  (1~100 백 판, 놀이 3종)
