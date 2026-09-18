@@ -155,6 +155,12 @@ index.html            과목 카드            home.js
   소품을 겹치는 것**이라 선택지 조합만큼 그림이 필요하지 않습니다 (1권: 그림 17장으로 729가지 책).
   그림 파일이 없으면 `art` 의 이모지·dani.png 로 대신 그리므로 그림이 오기 전에도 돌아갑니다 (`artEl()`).
   아이가 영어를 싫어해서 만든 것이라 **고른 낱말이 다음 장을 바꾸는 것**이 핵심이니, 빈칸을 장식으로 두지 마세요.
+  **탈것 타기(`ride.html`)가 여덟 번째**입니다 (2026-09-18) — `Get on the bus / Get in the car` 전치사 수업.
+  탈것 낱말은 `en-transport` 에 있지만 전치사는 낱말이 아니라 **탈것마다 붙는 규칙**이라 `js/ride.js` 의 `RIDES` 에
+  `prep` 을 붙여 따로 두었습니다. 그림 파일 없이 css 로 길가를 그렸고, 맞히면 **다니가 그 전치사대로 탑니다**
+  (on 은 지붕 위 `.aboard-on`, in 은 안에 들어가 머리만 `.aboard-in`) — 전치사 뜻이 그림으로 보이는 것이 핵심이니
+  두 자세를 같게 만들지 마세요. boat 는 크기에 따라 on/in 이 갈려 일부러 뺐고, 한 판은 on·in 을 넉 대씩 뽑습니다
+  (in 이 드물어 그냥 섞으면 on 만 눌러도 거의 맞습니다).
 
   ⚠️ **세계 지도는 태블릿 전용입니다 — 이것은 버그가 아니라 정한 것입니다.** (2026-09-06)
   지리적으로 정확한 지도에서 한국은 가로의 4.5% 라서 폰(390px)에서는 16×18px 이 됩니다
@@ -222,6 +228,8 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.hundred` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.trip.<act>` | 할머니 섬 여행 놀이별(탈것 여행·다니 돌보기) 최고 별 |
 | `daniland.best.trip` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
+| `daniland.best.ride.<act>` | 탈것 타기 놀이별(타기·문장 고르기·타고 내리기) 최고 별 |
+| `daniland.best.ride` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.balloon.level` | 풍선 터뜨리기에서 도달한 최고 단계 |
 | `daniland.book.<id>.made` | 영어 그림책에서 아이가 만든 책 — `{ 빈칸이름: word }` (책마다 마지막 것 하나) |
 | `daniland.book.<id>.read` | 그 책을 끝까지 읽은 적 있음 (책장의 📖) |
@@ -231,7 +239,7 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.rank.dodge` | 장애물 피하기 순위표 — `[{ m, level, treats }, …]` 먼 순서로 다섯 개 (시작·결과 화면) |
 | `daniland.best.maze.<n>` | 미로 찾기 판 크기별(5·7·9·11) 한 번에 찾은 적 있음 (1/1) |
 | `daniland.best.maze` | 한 번에 찾은 것 중 제일 큰 판 — stars 가 칸 수(5~11)입니다 (카드의 ⭐ 는 이것을 `bestUnit: '칸 미로'` 로 읽습니다) |
-| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.townAct` `daniland.worldAct` `daniland.tripAct` `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.mazeSize` | 마지막에 고른 설정 |
+| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.townAct` `daniland.worldAct` `daniland.tripAct` `daniland.rideAct` `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.mazeSize` | 마지막에 고른 설정 |
 | `daniland.numMax` | 수학 놀이가 넷뿐이던 시절의 숫자 범위 — 읽기만 합니다 (`numbers.js` 의 `loadMax()`) |
 | `daniland.rate` `daniland.voice.<lang>` | 목소리·속도 |
 | `daniland.drawer` | 그림 그리기 도장 서랍 접힘 상태 |

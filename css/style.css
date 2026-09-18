@@ -1967,6 +1967,193 @@ button {
   .trip-say { font-size: 18px; }
 }
 
+/* ---------- 탈것 타기 (ride.html) ----------
+ * 그림 파일 없이 css 로 길가 풍경(하늘·나무·길)을 그리고 탈것 이모지와 다니를 얹습니다.
+ * 풍경 높이와 글자 크기는 js/ride.js 의 fitScene() 이 정합니다 — 탈것·다니·나무는 모두 em 이라
+ * 그 글자 크기를 따라 커지고 작아집니다. 문장 줄은 할머니 섬 여행의 .trip-quest 를 그대로 씁니다.
+ * ------------------------------------------------------------------------ */
+
+.ride-page { padding-bottom: 14px; }
+
+.ride-scene {
+  position: relative;
+  max-width: 900px;
+  height: 260px;
+  margin: 0 auto;
+  background: linear-gradient(180deg, #bfe6ff 0%, #e9f7ff 54%, #b9e39a 54%, #a3d684 100%);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.ride-clouds {
+  position: absolute;
+  left: 6%;
+  top: 8%;
+  font-size: 0.5em;
+  line-height: 1;
+  opacity: 0.9;
+}
+
+.ride-clouds span { margin-left: 3em; }
+
+/* 길가의 나무·집 — 같은 줄 두 벌을 이어 두고, 달릴 때(.moving) 한 벌만큼 흘려보내면
+   처음 자리로 돌아와 끝없이 이어집니다 */
+.ride-trees {
+  position: absolute;
+  left: 0;
+  bottom: 22%;
+  display: flex;
+  font-size: 0.55em;
+  line-height: 1;
+  white-space: nowrap;
+  transform: translateY(18%);
+}
+
+.ride-trees span { display: block; letter-spacing: 0.4em; }
+
+/* 멈출 때 처음 자리로 튀지 않게, 애니메이션은 늘 걸어 두고 달릴 때만 재생합니다 (길의 점선도 같음) */
+.ride-trees { animation: ride-scroll 2.4s linear infinite; animation-play-state: paused; }
+.ride-scene.moving .ride-trees { animation-play-state: running; }
+
+@keyframes ride-scroll {
+  from { transform: translate(0, 18%); }
+  to   { transform: translate(-50%, 18%); }
+}
+
+/* 길 — 가운데 노란 점선이 달릴 때 흘러갑니다 */
+.ride-road {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 22%;
+  background-color: #5f6672;
+  background-image: repeating-linear-gradient(90deg, #ffe27a 0 1em, transparent 1em 2em);
+  background-size: 2em 0.12em;
+  background-repeat: repeat-x;
+  background-position: 0 50%;
+  border-top: 0.08em solid #8b929c;
+}
+
+.ride-road { animation: ride-road 0.5s linear infinite; animation-play-state: paused; }
+.ride-scene.moving .ride-road { animation-play-state: running; }
+
+@keyframes ride-road {
+  from { background-position: 0 50%; }
+  to   { background-position: -2em 50%; }
+}
+
+/* 정류장 표지 — 다니가 기다리는 자리 옆 */
+.ride-sign {
+  position: absolute;
+  left: 15%;
+  bottom: 10%;
+  font-size: 0.8em;
+  line-height: 1;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+/* 탈것 — 왼쪽(left)은 js/ride.js 가 % 로 움직입니다. 걷는 것과 달리 탈것은 미끄러지듯 linear */
+.ride-car {
+  position: absolute;
+  bottom: 10%;
+  z-index: 1;
+  font-size: 1.3em;
+  line-height: 1;
+  transform: translateX(-50%);
+  transition-property: left;
+  transition-timing-function: linear;
+  filter: drop-shadow(0 3px 4px rgba(64, 50, 58, 0.35));
+  pointer-events: none;
+}
+
+/* 다니 — 타면(.aboard-on / .aboard-in) 자세가 바뀝니다.
+   on 은 탈것 위에 올라타고(앞에), in 은 탈것 안에 들어가 머리만 내밉니다(뒤에, 작게). */
+.ride-dani {
+  position: absolute;
+  bottom: 10%;
+  z-index: 2;
+  height: 1.4em;
+  width: auto;
+  transform: translateX(-50%);
+  transition-property: left, transform;
+  transition-timing-function: linear, ease;
+  transition-duration: 0ms, 300ms;
+  filter: drop-shadow(0 4px 6px rgba(64, 50, 58, 0.35));
+  pointer-events: none;
+}
+
+.ride-dani.aboard-on { transform: translate(-50%, -0.72em) scale(0.8); }
+.ride-dani.aboard-in { z-index: 0; transform: translate(-50%, -0.3em) scale(0.6); }
+
+.ride-scene.moving .ride-dani.aboard-on { animation: ride-jiggle-on 0.35s ease-in-out infinite; }
+.ride-scene.moving .ride-dani.aboard-in { animation: ride-jiggle-in 0.35s ease-in-out infinite; }
+
+@keyframes ride-jiggle-on {
+  0%, 100% { transform: translate(-50%, -0.72em) scale(0.8); }
+  50%      { transform: translate(-50%, -0.8em) scale(0.8); }
+}
+
+@keyframes ride-jiggle-in {
+  0%, 100% { transform: translate(-50%, -0.3em) scale(0.6); }
+  50%      { transform: translate(-50%, -0.36em) scale(0.6); }
+}
+
+/* 타고 내릴 때 폴짝 */
+.ride-dani.hop { animation: ride-hop 0.36s ease; }
+
+@keyframes ride-hop {
+  0%, 100% { transform: translate(-50%, 0); }
+  50%      { transform: translate(-50%, -0.6em); }
+}
+
+/* 탈것과 함께 떠난 다니가 정류장에 다시 나타날 때 */
+.ride-dani.pop { animation: ride-pop 0.4s ease; }
+
+@keyframes ride-pop {
+  from { transform: translate(-50%, 0) scale(0.5); opacity: 0; }
+  to   { transform: translate(-50%, 0) scale(1); opacity: 1; }
+}
+
+/* 보기 카드 — on / in 두 장(.prep-cards) 또는 문장 넉 장(.say-cards).
+   카드 높이는 js/ride.js 의 cardsReserve() 와 같은 값이어야 풍경 크기가 맞습니다. */
+.cards.ride-cards {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  max-width: 560px;
+  margin: 14px auto 0;
+}
+
+.ride-cards .choice { aspect-ratio: auto; }
+
+.ride-cards .prep-card { height: 104px; padding: 8px 12px; gap: 0; }
+.ride-cards .prep-card .big { font-size: 40px; font-weight: 800; line-height: 1.1; color: var(--ink); }
+.ride-cards .prep-card .ko { font-size: 14px; color: var(--ink-soft); }
+
+.ride-cards .say-card { height: 76px; padding: 8px 32px 8px 12px; }
+.ride-cards .say-card .text { font-size: 18px; font-weight: 800; line-height: 1.2; text-align: center; }
+
+/* ⭕ ❌ 표시가 글자를 가리지 않게 오른쪽 여백에 작게 둡니다 */
+.ride-cards .choice .mark {
+  top: 50%;
+  right: 8px;
+  font-size: 22px;
+  transform: translateY(-50%);
+}
+
+/* 시작 화면의 규칙 한 줄 */
+.overlay .ride-rule { max-width: 560px; font-size: 15px; line-height: 1.55; }
+.overlay .ride-rule b { color: var(--ink); }
+
+/* 폰: 문장 넉 장은 한 줄에 하나씩 (두 칸이면 'Get out of the helicopter.' 가 세 줄이 됩니다) */
+@media (max-width: 599px) {
+  .cards.ride-cards.say-cards { grid-template-columns: minmax(0, 1fr); }
+  .ride-cards .say-card { height: 64px; }
+  .ride-cards .prep-card .big { font-size: 34px; }
+}
+
 /* ---------- 미로 찾기 (maze.html) ----------
  * 벽·길·간식은 캔버스에 그리고(js/maze.js 의 draw()), 다니만 그 위에 <img> 로 얹습니다.
  * 판 크기는 fitBoard() 가 화면에 맞춰 정합니다 (정사각형, 최대 640px). */

@@ -720,6 +720,15 @@ window.PAGES = [
 
   {
     subject: '영어',
+    title: '탈것 타기',
+    icon: '🚏',
+    meta: 'get on 일까 get in 일까',
+    href: 'ride.html',
+    bestKey: 'daniland.best.ride'
+  },
+
+  {
+    subject: '영어',
     title: '영어 그림책',
     icon: '📚',
     meta: '읽어 주는 책 · 내가 만드는 책',
