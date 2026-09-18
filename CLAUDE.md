@@ -106,7 +106,7 @@ index.html            과목 카드            home.js
       ├ town.html                           town.js     (지도 그림 town.jpg 위, 놀이 3종)
       ├ world.html                          world.js    (지도 그림 world.jpg 위, 놀이 3종)
       ├ trip.html                           trip.js     (풍경 그림 trip.jpg 위, 놀이 2종 — 영어 문장·대화)
-      ├ write.html                          write.js    (글자 따라 쓰기, 묶음 4종)
+      ├ write.html                          write.js    (글자 따라 쓰기, 묶음 6종 — 한글 자음·모음·숫자·낱말 + 영어 대문자·소문자. 영어 카드는 ?lang=en)
       ├ make.html                           make.js     (자음+모음으로 글자 조립)
       ├ maze.html                           maze.js     (미로를 매번 생성, 캔버스에 그림)
       ├ dodge.html                          dodge.js    (장애물 피하기 — 흐르는 길을 캔버스에 그림, 단계·하트)
@@ -209,6 +209,12 @@ index.html            과목 카드            home.js
 `BOXES` 는 중성이 세로(ㅏ ㅓ ㅣ …)냐 가로(ㅗ ㅜ ㅡ …)냐 × 받침 유무의 네 가지입니다.
 획이 없는 자모(쌍자음 ㄲ, 이중모음 ㅘ, 겹받침 ㄳ)가 든 낱말은 `WORDS` 에 적어도 조용히 걸러집니다.
 
+**영어 알파벳(`UPPER`/`LOWER`)도 같은 화면·같은 판정입니다** (2026-09-18). 묶음(`SETS`)에 `lang: 'en-US'` 와
+`lines`(십자 대신 영어 공책 가로줄 0.14·0.46·0.78)가 붙고, `en: true` 인 묶음의 기록은 `daniland.best.write.en` 으로
+갈라 영어 과목의 '알파벳 쓰기' 카드(`write.html?lang=en`)가 읽습니다. `PAGES` 에서 그 카드는 **한글 카드보다 뒤**에
+있어야 합니다 — `Catalog.backHref()` 가 href 앞머리로 앞에서부터 찾기 때문입니다. 소문자는 `a` 로 읽히면 관사처럼
+'어' 가 되는 목소리가 있어 `speak` 를 대문자로 둡니다. i·j 의 점은 `isDot()` 이 톡 찍기도 획으로 받습니다.
+
 ### 화면에 맞추는 배치는 JS 가 한다
 
 `game.js` 의 `fitBoard()` 가 열 수와 카드 픽셀 크기를 계산해 `--card` CSS 변수로 넘깁니다.
@@ -240,8 +246,9 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.town` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.world.<act>` | 세계 지도 놀이별 최고 별 |
 | `daniland.best.world` | 그중 제일 잘한 기록 |
-| `daniland.best.write.<set>` | 글자 쓰기 묶음별(자음·모음·숫자·낱말) 최고 별 |
-| `daniland.best.write` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
+| `daniland.best.write.<set>` | 글자 쓰기 묶음별(자음·모음·숫자·낱말·대문자·소문자) 최고 별 |
+| `daniland.best.write` | 한글 묶음 중 제일 잘한 기록 (한글 카드의 ⭐ 는 이것을 읽습니다) |
+| `daniland.best.write.en` | 알파벳 묶음(대문자·소문자) 중 제일 잘한 기록 (영어의 '알파벳 쓰기' 카드가 읽습니다) |
 | `daniland.best.make` | 글자 만들기 최고 별 |
 | `daniland.best.hundred.<act>` | 백 판 놀이별(뛰어 세기·여기는 몇·앞뒤 수) 최고 별 |
 | `daniland.best.hundred` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |

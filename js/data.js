@@ -811,6 +811,18 @@ window.PAGES = [
     bestKey: 'daniland.best.write'
   },
 
+  // 같은 글자 쓰기 화면을 영어 과목에서도 엽니다 — ?lang=en 이면 알파벳 묶음이 먼저 골라지고
+  // ← 가 영어로 돌아갑니다. 위 한글 카드보다 뒤에 있어야 합니다 (Catalog.backHref 가 앞에서부터 찾음).
+  {
+    subject: '영어',
+    group: '단어 공부',
+    title: '알파벳 쓰기',
+    icon: '🔡',
+    meta: 'A 부터 z 까지 획순대로 따라 써요',
+    href: 'write.html?lang=en',
+    bestKey: 'daniland.best.write.en'
+  },
+
   {
     subject: '한글',
     group: '글자 쓰기·만들기',

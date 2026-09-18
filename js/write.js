@@ -3,9 +3,12 @@
  *
  * 주소) write.html
  *
- * 연한 글자 위를 손가락으로 덧그립니다. 써 볼 것은 시작 화면에서 고릅니다.
+ * 연한 글자 위를 손가락으로 덧그립니다. 써 볼 것은 시작 화면에서 고릅니다
+ * (자음 · 모음 · 숫자 · 낱말 · 알파벳 대문자 · 소문자).
  * 어느 묶음이든 획을 하나씩 안내합니다 (①번 획부터 차례대로).
  * 낱말은 글자를 자모로 풀어 그 획들을 이어 붙입니다 (아래 syllableStrokes).
+ * 알파벳은 영어 과목 카드(write.html?lang=en)에서도 들어오는데, 그때는 ← 가 영어로 돌아가고
+ * 기록도 daniland.best.write.en 에 따로 남습니다 (한글 카드의 ⭐ 와 섞이지 않게).
  *
  * 잘 썼는지는 '얼마나 덮었나' 로 봅니다. 눈에 안 보이는 캔버스 두 장에
  *   ① 안내 획   ② 아이가 그은 획
@@ -19,25 +22,32 @@
 
 (function () {
   var ROUNDS = 8;          // 한 판에 쓸 글자 수 (묶음에서 rounds 로 덮어쓸 수 있습니다)
-  var LANG = 'ko-KR';
+  var LANG = 'ko-KR';      // 묶음에 lang 이 없으면 이것으로 읽습니다 (알파벳은 en-US)
+  var FROM_EN = UI.getParam('lang') === 'en';   // 영어 과목 카드에서 들어왔나
   var CELL_MIN = 120;      // 칸이 이보다 작아지면 손가락으로 못 씁니다
   var CELL_MAX = 420;
   var BORDER = 4;          // css 의 .write-cell 테두리 두께
   var PRAISE = ['참 잘했어요!', '멋져요!', '최고예요!', '대단해요!', '와, 다 썼어요!'];
 
-  /* ---------- 동그란 획 만들기 (ㅇ ㅎ 8 9 0) ---------- */
+  /* ---------- 둥근 획 만들기 (ㅇ ㅎ 8 9 0 · 알파벳 곡선) ---------- */
 
-  // 12시에서 시작해 왼쪽으로 도는 동그라미를 점 여러 개로 풉니다.
-  function ring(cx, cy, rx, ry) {
+  // 타원 위의 점을 각도 from 에서 to 까지 12° 마다 하나씩 뽑습니다.
+  // 각도는 3시가 0, 6시가 90, 12시가 -90 (캔버스와 같은 방향 — 커지면 시계 방향).
+  function arc(cx, cy, rx, ry, from, to) {
     var pts = [];
-    var from = -Math.PI / 2;
-    var to = from - Math.PI * 2;
-    for (var i = 0; i <= 28; i++) {
-      var a = from + (to - from) * (i / 28);
+    var n = Math.max(6, Math.round(Math.abs(to - from) / 12));
+    for (var i = 0; i <= n; i++) {
+      var a = (from + (to - from) * (i / n)) * Math.PI / 180;
       pts.push([cx + rx * Math.cos(a), cy + ry * Math.sin(a)]);
     }
     return pts;
   }
+
+  // 12시에서 시작해 왼쪽으로 도는 동그라미.
+  function ring(cx, cy, rx, ry) { return arc(cx, cy, rx, ry, -90, -450); }
+
+  // 점 목록 여러 개를 한 획으로 잇습니다 (직선 → 곡선 → 직선).
+  function join() { return [].concat.apply([], arguments); }
 
   /* =======================================================================
    * 쓸 글자와 획순
@@ -185,6 +195,136 @@
   ];
 
   /* =======================================================================
+   * 영어 알파벳 — 대문자 · 소문자
+   *
+   * 한글과 같은 칸에 쓰지만 안내선이 다릅니다. 한글은 가운데 십자, 알파벳은
+   * 영어 공책처럼 가로줄 셋(윗줄 0.14 · 가운뎃줄 0.46 · 밑줄 0.78)입니다 —
+   * 대문자는 윗줄~밑줄, 소문자는 가운뎃줄~밑줄에 쓰고 b d h k l 은 윗줄까지,
+   * g j p q y 는 밑줄 아래(0.94)까지 내려갑니다. SETS 의 lines 가 그 줄입니다.
+   *
+   * 획순은 미국 유아 쓰기 교재(세로획 먼저, 둥근 획은 왼쪽으로)를 따랐습니다.
+   * 곡선은 arc() 로 점을 뽑고, 한 획에 곡선과 직선이 섞이면 join() 으로 잇습니다.
+   * ===================================================================== */
+
+  var ABC_NAMES = ['에이', '비', '씨', '디', '이', '에프', '지', '에이치', '아이', '제이', '케이', '엘', '엠',
+                   '엔', '오', '피', '큐', '알', '에스', '티', '유', '브이', '더블유', '엑스', '와이', '제트'];
+
+  var UPPER = [
+    { ch: 'A', strokes: [ [[0.50, 0.14], [0.24, 0.78]], [[0.50, 0.14], [0.76, 0.78]], [[0.33, 0.58], [0.67, 0.58]] ] },
+    { ch: 'B', strokes: [
+      [[0.27, 0.14], [0.27, 0.78]],
+      join([[0.27, 0.14]], arc(0.54, 0.30, 0.18, 0.16, -90, 90), [[0.27, 0.46]],
+           arc(0.55, 0.62, 0.21, 0.16, -90, 90), [[0.27, 0.78]])
+    ] },
+    { ch: 'C', strokes: [ arc(0.50, 0.46, 0.27, 0.32, -50, -310) ] },
+    { ch: 'D', strokes: [
+      [[0.27, 0.14], [0.27, 0.78]],
+      join([[0.27, 0.14], [0.45, 0.14]], arc(0.45, 0.46, 0.31, 0.32, -90, 90), [[0.27, 0.78]])
+    ] },
+    { ch: 'E', strokes: [
+      [[0.28, 0.14], [0.28, 0.78]],
+      [[0.28, 0.14], [0.74, 0.14]],
+      [[0.28, 0.46], [0.68, 0.46]],
+      [[0.28, 0.78], [0.74, 0.78]]
+    ] },
+    { ch: 'F', strokes: [
+      [[0.28, 0.14], [0.28, 0.78]],
+      [[0.28, 0.14], [0.74, 0.14]],
+      [[0.28, 0.46], [0.66, 0.46]]
+    ] },
+    { ch: 'G', strokes: [ arc(0.50, 0.46, 0.27, 0.32, -50, -360), [[0.77, 0.46], [0.52, 0.46]] ] },
+    { ch: 'H', strokes: [ [[0.26, 0.14], [0.26, 0.78]], [[0.74, 0.14], [0.74, 0.78]], [[0.26, 0.46], [0.74, 0.46]] ] },
+    { ch: 'I', strokes: [ [[0.50, 0.14], [0.50, 0.78]], [[0.32, 0.14], [0.68, 0.14]], [[0.32, 0.78], [0.68, 0.78]] ] },
+    { ch: 'J', strokes: [ join([[0.62, 0.14], [0.62, 0.60]], arc(0.46, 0.60, 0.16, 0.18, 0, 180)) ] },
+    { ch: 'K', strokes: [ [[0.27, 0.14], [0.27, 0.78]], [[0.72, 0.14], [0.29, 0.48]], [[0.40, 0.40], [0.74, 0.78]] ] },
+    { ch: 'L', strokes: [ [[0.28, 0.14], [0.28, 0.78], [0.74, 0.78]] ] },
+    { ch: 'M', strokes: [ [[0.24, 0.14], [0.24, 0.78]], [[0.24, 0.14], [0.50, 0.58], [0.76, 0.14]], [[0.76, 0.14], [0.76, 0.78]] ] },
+    { ch: 'N', strokes: [ [[0.26, 0.14], [0.26, 0.78]], [[0.26, 0.14], [0.74, 0.78]], [[0.74, 0.14], [0.74, 0.78]] ] },
+    { ch: 'O', strokes: [ ring(0.50, 0.46, 0.28, 0.32) ] },
+    { ch: 'P', strokes: [
+      [[0.28, 0.14], [0.28, 0.78]],
+      join([[0.28, 0.14]], arc(0.53, 0.31, 0.21, 0.17, -90, 90), [[0.28, 0.48]])
+    ] },
+    { ch: 'Q', strokes: [ ring(0.50, 0.46, 0.28, 0.32), [[0.56, 0.60], [0.78, 0.82]] ] },
+    { ch: 'R', strokes: [
+      [[0.28, 0.14], [0.28, 0.78]],
+      join([[0.28, 0.14]], arc(0.53, 0.31, 0.21, 0.17, -90, 90), [[0.28, 0.48]]),
+      [[0.46, 0.48], [0.74, 0.78]]
+    ] },
+    { ch: 'S', strokes: [ join(arc(0.50, 0.30, 0.22, 0.16, -40, -270), arc(0.50, 0.62, 0.23, 0.16, -90, 140)) ] },
+    { ch: 'T', strokes: [ [[0.50, 0.14], [0.50, 0.78]], [[0.22, 0.14], [0.78, 0.14]] ] },
+    { ch: 'U', strokes: [ join([[0.26, 0.14], [0.26, 0.56]], arc(0.50, 0.56, 0.24, 0.22, 180, 0), [[0.74, 0.14]]) ] },
+    { ch: 'V', strokes: [ [[0.24, 0.14], [0.50, 0.78], [0.76, 0.14]] ] },
+    { ch: 'W', strokes: [ [[0.20, 0.14], [0.35, 0.78], [0.50, 0.30], [0.65, 0.78], [0.80, 0.14]] ] },
+    { ch: 'X', strokes: [ [[0.26, 0.14], [0.74, 0.78]], [[0.74, 0.14], [0.26, 0.78]] ] },
+    { ch: 'Y', strokes: [ [[0.26, 0.14], [0.50, 0.48], [0.50, 0.78]], [[0.74, 0.14], [0.50, 0.48]] ] },
+    { ch: 'Z', strokes: [ [[0.26, 0.14], [0.74, 0.14], [0.26, 0.78], [0.74, 0.78]] ] }
+  ];
+
+  // 소문자의 둥근 부분(a d g q 의 배)은 오른쪽 위에서 시작해 왼쪽으로 한 바퀴 돕니다.
+  var LOWER = [
+    { ch: 'a', strokes: [ arc(0.46, 0.62, 0.19, 0.16, -40, -400), [[0.66, 0.46], [0.66, 0.78]] ] },
+    { ch: 'b', strokes: [
+      [[0.32, 0.14], [0.32, 0.78]],
+      join([[0.32, 0.50]], arc(0.50, 0.62, 0.18, 0.16, -120, 120), [[0.32, 0.78]])
+    ] },
+    { ch: 'c', strokes: [ arc(0.50, 0.62, 0.18, 0.16, -50, -310) ] },
+    { ch: 'd', strokes: [ arc(0.48, 0.62, 0.18, 0.16, -40, -400), [[0.66, 0.14], [0.66, 0.78]] ] },
+    { ch: 'e', strokes: [ join([[0.32, 0.62], [0.68, 0.62]], arc(0.50, 0.62, 0.18, 0.16, 0, -310)) ] },
+    { ch: 'f', strokes: [
+      join(arc(0.60, 0.28, 0.14, 0.14, -30, -180), [[0.46, 0.78]]),
+      [[0.32, 0.46], [0.62, 0.46]]
+    ] },
+    { ch: 'g', strokes: [
+      arc(0.46, 0.62, 0.19, 0.16, -40, -400),
+      join([[0.66, 0.46], [0.66, 0.84]], arc(0.50, 0.84, 0.16, 0.10, 0, 180))
+    ] },
+    { ch: 'h', strokes: [
+      [[0.32, 0.14], [0.32, 0.78]],
+      join([[0.32, 0.62]], arc(0.50, 0.62, 0.18, 0.16, -180, 0), [[0.68, 0.78]])
+    ] },
+    { ch: 'i', strokes: [ [[0.50, 0.46], [0.50, 0.78]], [[0.50, 0.24], [0.50, 0.28]] ] },
+    { ch: 'j', strokes: [
+      join([[0.54, 0.46], [0.54, 0.84]], arc(0.40, 0.84, 0.14, 0.10, 0, 180)),
+      [[0.54, 0.24], [0.54, 0.28]]
+    ] },
+    { ch: 'k', strokes: [ [[0.32, 0.14], [0.32, 0.78]], [[0.66, 0.46], [0.34, 0.66]], [[0.42, 0.61], [0.68, 0.78]] ] },
+    { ch: 'l', strokes: [ [[0.50, 0.14], [0.50, 0.78]] ] },
+    { ch: 'm', strokes: [
+      [[0.26, 0.46], [0.26, 0.78]],
+      join([[0.26, 0.60]], arc(0.38, 0.60, 0.12, 0.14, -180, 0), [[0.50, 0.78]],
+           arc(0.62, 0.60, 0.12, 0.14, -180, 0), [[0.74, 0.78]])
+    ] },
+    { ch: 'n', strokes: [
+      [[0.32, 0.46], [0.32, 0.78]],
+      join([[0.32, 0.62]], arc(0.50, 0.62, 0.18, 0.16, -180, 0), [[0.68, 0.78]])
+    ] },
+    { ch: 'o', strokes: [ ring(0.50, 0.62, 0.18, 0.16) ] },
+    { ch: 'p', strokes: [
+      [[0.32, 0.46], [0.32, 0.94]],
+      join([[0.32, 0.50]], arc(0.50, 0.62, 0.18, 0.16, -120, 120), [[0.32, 0.78]])
+    ] },
+    { ch: 'q', strokes: [ arc(0.48, 0.62, 0.18, 0.16, -40, -400), [[0.66, 0.46], [0.66, 0.94]] ] },
+    { ch: 'r', strokes: [ [[0.36, 0.46], [0.36, 0.78]], join([[0.36, 0.62]], arc(0.52, 0.62, 0.16, 0.16, -180, -20)) ] },
+    { ch: 's', strokes: [ join(arc(0.50, 0.54, 0.14, 0.08, -40, -270), arc(0.50, 0.70, 0.15, 0.08, -90, 140)) ] },
+    { ch: 't', strokes: [ join([[0.48, 0.20], [0.48, 0.66]], arc(0.60, 0.66, 0.12, 0.12, 180, 90)), [[0.32, 0.46], [0.66, 0.46]] ] },
+    { ch: 'u', strokes: [
+      join([[0.32, 0.46], [0.32, 0.64]], arc(0.50, 0.64, 0.18, 0.14, 180, 0), [[0.68, 0.46]]),
+      [[0.68, 0.46], [0.68, 0.78]]
+    ] },
+    { ch: 'v', strokes: [ [[0.32, 0.46], [0.50, 0.78], [0.68, 0.46]] ] },
+    { ch: 'w', strokes: [ [[0.24, 0.46], [0.37, 0.78], [0.50, 0.52], [0.63, 0.78], [0.76, 0.46]] ] },
+    { ch: 'x', strokes: [ [[0.32, 0.46], [0.68, 0.78]], [[0.68, 0.46], [0.32, 0.78]] ] },
+    { ch: 'y', strokes: [ [[0.32, 0.46], [0.50, 0.78]], [[0.68, 0.46], [0.38, 0.94]] ] },
+    { ch: 'z', strokes: [ [[0.32, 0.46], [0.68, 0.46], [0.32, 0.78], [0.68, 0.78]] ] }
+  ];
+
+  // 이름은 우리말로 보여 주고(A · 에이), 읽을 때는 영어 대문자로 읽습니다
+  // (소문자 'a' 를 그대로 읽히면 관사 a 처럼 '어' 로 읽는 목소리가 있습니다).
+  UPPER.forEach(function (it, i) { it.name = ABC_NAMES[i]; it.speak = it.ch; });
+  LOWER.forEach(function (it, i) { it.name = ABC_NAMES[i]; it.speak = it.ch.toUpperCase(); });
+
+  /* =======================================================================
    * 낱말 — 글자를 자모 획으로 조립합니다
    *
    * '아' 를 통째로 한 덩어리로 보면 '이' 라고 써도 통과합니다. ㅏ 의 짧은 가로획이
@@ -285,7 +425,12 @@
     { id: 'vowel', name: '모음', icon: 'ㅏ',  hint: 'ㅏ 부터 ㅣ 까지 열 자를 획순대로 써요',   items: VOWELS },
     { id: 'num',   name: '숫자', icon: '1',   hint: '1 부터 0 까지 획순대로 써요',            items: NUMBERS },
     // 낱말은 글자마다 획이 대여섯이라 한 판을 짧게 잡습니다 (다섯 낱말이면 예순 획쯤).
-    { id: 'word',  name: '낱말', icon: '✏️', hint: '그림을 보고 낱말을 획순대로 써요',            items: WORDS, rounds: 5 }
+    { id: 'word',  name: '낱말', icon: '✏️', hint: '그림을 보고 낱말을 획순대로 써요',            items: WORDS, rounds: 5 },
+    // 알파벳은 영어로 읽고, 칸에 십자 대신 영어 공책 가로줄을 긋습니다 (en 은 영어 카드의 ⭐ 묶음).
+    { id: 'upper', name: '대문자', icon: 'A', hint: 'A 부터 Z 까지 큰 글자를 획순대로 써요',    items: UPPER,
+      lang: 'en-US', lines: [0.14, 0.46, 0.78], en: true },
+    { id: 'lower', name: '소문자', icon: 'a', hint: 'a 부터 z 까지 작은 글자를 획순대로 써요',   items: LOWER,
+      lang: 'en-US', lines: [0.14, 0.46, 0.78], en: true }
   ];
 
   /* ---------- 통과 기준 ----------
@@ -347,6 +492,7 @@
   };
 
   if (!findSet(state.set)) state.set = 'cons';
+  if (FROM_EN && !findSet(state.set).en) state.set = 'upper';
   if (!window.TTS || !TTS.supported) { el.voiceBtn.hidden = true; el.soundBtn.hidden = true; }
 
   buildSetRow();
@@ -376,7 +522,8 @@
   el.skipBtn.addEventListener('click', skipPart);
 
   el.voiceBtn.addEventListener('click', function () {
-    VoicePicker.open({ lang: LANG, sample: function () { return state.item ? state.item.speak : '가나다'; } });
+    var set = findSet(state.set);
+    VoicePicker.open({ lang: set.lang || LANG, sample: function () { return state.item ? state.item.speak : (set.en ? 'ABC' : '가나다'); } });
   });
 
   window.addEventListener('resize', function () {
@@ -453,11 +600,14 @@
 
   // 문제 하나 = 칸 하나(자모·숫자) 또는 글자 수만큼의 칸(낱말)
   function buildItem(raw) {
+    var set = findSet(state.set);
+
     if (raw.strokes) {
       var parts = raw.strokes.map(function (pts) { return { pts: pts }; });
       return {
         label: raw.ch + ' · ' + raw.name,
-        speak: raw.name,
+        speak: raw.speak || raw.name,
+        lang: set.lang || LANG,
         emoji: '',
         cells: [makeCell(raw.ch, parts)]
       };
@@ -467,6 +617,7 @@
     return {
       label: raw.word,
       speak: raw.word,
+      lang: set.lang || LANG,
       emoji: raw.emoji || '',
       cells: chars.map(function (ch) {
         var parts = syllableStrokes(ch).map(function (pts) { return { pts: pts }; });
@@ -483,8 +634,9 @@
     updateBar(state.total);
 
     // 묶음별 기록과, 그중 제일 잘한 기록(카드의 ⭐ 가 읽는 것)을 함께 남깁니다.
+    // 알파벳은 영어 과목 카드가 읽는 .en 에, 나머지는 한글 카드가 읽는 곳에.
     UI.saveBest('daniland.best.write.' + state.set, state.stars, state.total);
-    UI.saveBest('daniland.best.write', state.stars, state.total);
+    UI.saveBest('daniland.best.write' + (findSet(state.set).en ? '.en' : ''), state.stars, state.total);
 
     el.endStars.textContent = UI.starLine(state.stars, state.total);
     el.endTitle.textContent = (state.stars === state.total)
@@ -573,7 +725,7 @@
     var active = (state.cells[state.cellIndex] === cell) && !state.locked;
 
     c.clearRect(0, 0, s, s);
-    drawGrid(c, s);
+    drawGrid(c, s, findSet(state.set).lines);
 
     // 아직 안 쓴 안내
     cell.parts.forEach(function (part, i) {
@@ -593,14 +745,19 @@
     }
   }
 
-  function drawGrid(c, s) {
+  // 한글·숫자는 가운데 십자, 알파벳은 영어 공책처럼 가로줄(lines)입니다.
+  function drawGrid(c, s, lines) {
     c.save();
     c.strokeStyle = 'rgba(94,177,255,0.32)';
     c.lineWidth = 1.5;
     c.setLineDash([6, 8]);
     c.beginPath();
-    c.moveTo(s / 2, 8); c.lineTo(s / 2, s - 8);
-    c.moveTo(8, s / 2); c.lineTo(s - 8, s / 2);
+    if (lines) {
+      lines.forEach(function (y) { c.moveTo(8, y * s); c.lineTo(s - 8, y * s); });
+    } else {
+      c.moveTo(s / 2, 8); c.lineTo(s / 2, s - 8);
+      c.moveTo(8, s / 2); c.lineTo(s - 8, s / 2);
+    }
     c.stroke();
     c.restore();
   }
@@ -691,11 +848,14 @@
     var pts = cell.cur || [];
     cell.cur = null;
 
-    // 톡 찍기만 한 것은 획으로 세지 않습니다.
-    if (pts.length < 2) { paintCell(cell); return; }
-
     var part = cell.parts[cell.at];
     if (!part) { paintCell(cell); return; }
+
+    // 톡 찍기만 한 것은 획으로 세지 않습니다 — 안내 획이 점(i j 의 점)일 때만 점으로 받습니다.
+    if (pts.length < 2) {
+      if (!isDot(part.pts)) { paintCell(cell); return; }
+      pts = [pts[0], [pts[0][0], pts[0][1] + 0.001]];
+    }
 
     if (check(cell, part, [pts]).ok) {
       cell.ink.push(pts);
@@ -713,6 +873,9 @@
     el.hint.textContent = '파란 ' + circled(cell.at + 1) + ' 에서 시작해 천천히 그어 보세요';
     if (state.misses >= 2) el.skipBtn.hidden = false;
   }
+
+  // i j 의 점처럼 아주 짧은 안내 획 (칸의 1/10 보다 짧으면)
+  function isDot(pts) { return lengthOf(pts) < 0.1; }
 
   function passPart(cell) {
     cell.at++;
@@ -953,7 +1116,7 @@
   function speakItem() {
     if (!state.item || !window.TTS || !TTS.supported) return;
     el.soundBtn.classList.add('speaking');
-    TTS.speak(state.item.speak, LANG, {
+    TTS.speak(state.item.speak, state.item.lang || LANG, {
       onend: function () { el.soundBtn.classList.remove('speaking'); }
     });
     setTimeout(function () { el.soundBtn.classList.remove('speaking'); }, 2500);
@@ -970,9 +1133,10 @@
     return marks[n - 1] || (n + '번');
   }
 
-  // ← 는 한글 과목 페이지로 돌아갑니다.
+  // ← 는 들어온 카드의 묶음 페이지로 돌아갑니다 (한글, 또는 ?lang=en 이면 영어).
   function bindHome() {
-    var back = window.Catalog ? Catalog.backHref('write.html') : 'index.html';
+    var file = 'write.html' + (FROM_EN ? '?lang=en' : '');
+    var back = window.Catalog ? Catalog.backHref(file) : 'index.html';
 
     [el.backBtn, el.startHome, el.endHome].forEach(function (btn) {
       if (!btn) return;
