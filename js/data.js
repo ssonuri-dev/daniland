@@ -793,6 +793,15 @@ window.PAGES = [
   },
 
   {
+    subject: '세계',
+    title: '스웨덴',
+    icon: '🇸🇪',
+    meta: '알아보기 · 무엇이 있을까 · 퀴즈',
+    href: 'sweden.html',
+    bestKey: 'daniland.best.sweden'
+  },
+
+  {
     subject: '한글',
     group: '글자 쓰기·만들기',
     title: '글자 쓰기',

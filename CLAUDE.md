@@ -111,6 +111,7 @@ index.html            과목 카드            home.js
       ├ maze.html                           maze.js     (미로를 매번 생성, 캔버스에 그림)
       ├ dodge.html                          dodge.js    (장애물 피하기 — 흐르는 길을 캔버스에 그림, 단계·하트)
       ├ book.html                           book.js     (영어 그림책 — js/books.js 의 책을 book.jpg 위에, 읽기·만들기)
+      ├ sweden.html                         sweden.js   (스웨덴 한 나라 — 이야기 카드 18장·퀴즈, 그림 파일 없음)
       └ draw.html                           draw.js     (독립 — 다른 js 를 전혀 안 씀)
 ```
 
@@ -171,6 +172,14 @@ index.html            과목 카드            home.js
   (on 은 지붕 위 `.aboard-on`, in 은 안에 들어가 머리만 `.aboard-in`) — 전치사 뜻이 그림으로 보이는 것이 핵심이니
   두 자세를 같게 만들지 마세요. boat 는 크기에 따라 on/in 이 갈려 일부러 뺐고, 한 판은 on·in 을 넉 대씩 뽑습니다
   (in 이 드물어 그냥 섞으면 on 만 눌러도 거의 맞습니다).
+  **스웨덴(`sweden.html`)이 아홉 번째**입니다 (2026-09-18) — 세계 과목에서 **나라 한 곳을 깊이** 보는 첫 사례.
+  세계 지도(`world.js`)가 열두 나라를 얕게 훑는 것과 달리 이야기 카드 18장(`FACTS`)·다른 나라 것(`OTHERS`)·퀴즈(`QUIZ`)가
+  `js/sweden.js` 위쪽에 있고, 그림 파일 없이 이모지와 글뿐입니다. 읽어 주는 말은 **우리말**(ko-KR)이고 스웨덴 말은
+  `sv-SE` 목소리가 있을 때만 뒤에 한 번 더 읽습니다 (없으면 조용히 건너뜀 — 읽는 법 `svKo` 가 우리말 안에 있어서 괜찮습니다).
+  내용은 6~7살 수준이지만 **사실은 정확하게** — 쉽게 한다고 틀리게 적지 마세요. 다른 나라를 더하려면 이 파일을 복사해
+  세 배열만 바꾸는 것이 의도입니다 (한 화면에 여러 나라를 넣는 것은 아직 안 정했습니다).
+  읽기는 `speak()` 의 `seq` 로 최신 것만 이어집니다 — 읽는 중에 다른 카드를 누르면 앞 사슬(우리말→스웨덴 말→끝 확인)이
+  조용히 끊깁니다. 이게 없으면 TTS 가 cancel 될 때 앞 말의 onend 가 불려 끊긴 말이 이어서 또 나옵니다.
 
   ⚠️ **세계 지도는 태블릿 전용입니다 — 이것은 버그가 아니라 정한 것입니다.** (2026-09-06)
   지리적으로 정확한 지도에서 한국은 가로의 4.5% 라서 폰(390px)에서는 16×18px 이 됩니다
@@ -240,6 +249,8 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.trip` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.ride.<act>` | 탈것 타기 놀이별(타기·문장 고르기·타고 내리기) 최고 별 |
 | `daniland.best.ride` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
+| `daniland.best.sweden.<act>` | 스웨덴 놀이별(무엇이 있을까·퀴즈) 최고 별 (알아보기는 점수가 없습니다) |
+| `daniland.best.sweden` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.balloon.level` | 풍선 터뜨리기에서 도달한 최고 단계 |
 | `daniland.book.<id>.made` | 영어 그림책에서 아이가 만든 책 — `{ 빈칸이름: word }` (책마다 마지막 것 하나) |
 | `daniland.book.<id>.read` | 그 책을 끝까지 읽은 적 있음 (책장의 📖) |
@@ -249,7 +260,7 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.rank.dodge` | 장애물 피하기 순위표 — `[{ m, level, treats }, …]` 먼 순서로 다섯 개 (시작·결과 화면) |
 | `daniland.best.maze.<n>` | 미로 찾기 판 크기별(5·7·9·11) 한 번에 찾은 적 있음 (1/1) |
 | `daniland.best.maze` | 한 번에 찾은 것 중 제일 큰 판 — stars 가 칸 수(5~11)입니다 (카드의 ⭐ 는 이것을 `bestUnit: '칸 미로'` 로 읽습니다) |
-| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.townAct` `daniland.worldAct` `daniland.tripAct` `daniland.rideAct` `daniland.numShow`(더하기·빼기·곱하기의 그림/식/둘 다) `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.mazeSize` | 마지막에 고른 설정 |
+| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.townAct` `daniland.worldAct` `daniland.tripAct` `daniland.rideAct` `daniland.swedenAct` `daniland.numShow`(더하기·빼기·곱하기의 그림/식/둘 다) `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.mazeSize` | 마지막에 고른 설정 |
 | `daniland.numMax` | 수학 놀이가 넷뿐이던 시절의 숫자 범위 — 읽기만 합니다 (`numbers.js` 의 `loadMax()`) |
 | `daniland.rate` `daniland.voice.<lang>` | 목소리·속도 |
 | `daniland.drawer` | 그림 그리기 도장 서랍 접힘 상태 |

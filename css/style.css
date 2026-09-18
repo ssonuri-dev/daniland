@@ -48,7 +48,8 @@ h1, h2, h3, h4,
 .gate h2,
 .panel h3,
 .draw-title,
-.xylo-title {
+.xylo-title,
+.fact-title {
   font-family: 'Jua', 'Nanum Gothic', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
   font-weight: 400;
 }
@@ -2752,3 +2753,133 @@ button {
 .jamo-btn.on    { color: var(--green); border-color: var(--green); }
 .jamo-btn.dim   { opacity: 0.35; }
 .jamo-btn.wrong { animation: shake 0.4s; border-color: var(--pink); }
+
+/* ---------- 스웨덴 (sweden.html) ----------
+ * 나라 한 곳을 깊이 보는 화면. 그림 파일 없이 이모지와 글뿐입니다.
+ * 위 판(.fact-panel)에 이야기·문제가 나오고, 아래 카드(.sweden-cards)의 높이는 js/sweden.js 의
+ * fitCards() 가 --ch 로 넘겨줍니다 — 알아보기 열여덟 장이 스크롤 없이 한 화면에 들어가야 해서요. */
+.sweden-page { padding-bottom: 14px; }
+
+.sweden-quest {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 44px;
+  margin: 0 0 8px;
+}
+
+.sweden-label { font-size: 16px; color: var(--ink-soft); text-align: center; }
+.sweden-quest .speak-btn { margin-top: 0; flex: none; }
+.sweden-quest .speak-btn[hidden] { display: none; }
+
+/* 판의 바탕은 스웨덴 국기 색(파랑·노랑)을 연하게 섞은 것입니다 */
+.fact-panel {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 128px;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, #e3f0ff 0%, #fff8d6 100%);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+}
+
+.fact-panel.pop { animation: pop 0.35s ease; }
+
+.fact-art {
+  flex: none;
+  width: 88px;
+  font-size: 64px;
+  line-height: 1;
+  text-align: center;
+}
+
+.fact-body { flex: 1; min-width: 0; }
+
+.fact-title { font-size: 22px; line-height: 1.25; color: var(--ink); }
+
+.fact-sv {
+  margin-top: 2px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #2f7fcb;
+}
+
+.fact-sv[hidden] { display: none; }
+
+.fact-text {
+  margin-top: 6px;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--ink);
+  word-break: keep-all;
+}
+
+.cards.sweden-cards { gap: 10px; margin-top: 12px; }
+
+.sweden-cards .choice {
+  aspect-ratio: auto;
+  height: var(--ch, 96px);
+  padding: 6px 8px;
+  gap: 2px;
+  overflow: hidden;
+}
+
+/* 알아보기 — 열여덟 장을 여섯 줄에 셋씩 (폰에서는 넷씩 다섯 줄) */
+.cards.sweden-cards.look-cards { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+
+.look-cards .fact-card .art { font-size: 34px; line-height: 1.1; }
+
+.look-cards .fact-card .lbl {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.look-cards .fact-card.seen { border-color: var(--blue-soft); }
+.look-cards .choice .mark { top: 2px; right: 4px; font-size: 16px; }
+
+/* 무엇이 있을까 · 퀴즈 — 보기 넉 장을 둘씩 두 줄로 */
+.cards.sweden-cards.pick-cards,
+.cards.sweden-cards.ans-cards {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.pick-cards .pick-card .art { font-size: 52px; line-height: 1.1; }
+.pick-cards .pick-card .lbl { font-size: 17px; font-weight: 800; color: var(--ink); }
+
+.ans-cards .ans-card .text {
+  padding: 0 4px;
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--ink);
+  text-align: center;
+  word-break: keep-all;
+}
+
+.ans-cards .ans-card.flag .art { font-size: 64px; line-height: 1.1; }
+
+.overlay .sweden-intro { max-width: 520px; }
+
+@media (max-width: 599px) {
+  .cards.sweden-cards.look-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .look-cards .fact-card .art { font-size: 28px; }
+  .look-cards .fact-card .lbl { font-size: 11px; }
+  .fact-panel { gap: 10px; min-height: 96px; padding: 12px; }
+  .fact-art { width: 56px; font-size: 44px; }
+  .fact-title { font-size: 18px; }
+  .fact-text { font-size: 14px; }
+  .pick-cards .pick-card .art { font-size: 40px; }
+  .pick-cards .pick-card .lbl { font-size: 15px; }
+  .ans-cards .ans-card .text { font-size: 16px; }
+}
