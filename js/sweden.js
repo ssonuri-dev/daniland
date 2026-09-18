@@ -10,6 +10,10 @@
  *   find : 무엇이 있을까 - 넉 장 중 스웨덴에 있는 것을 고릅니다 (다른 나라 것 셋이 섞입니다)
  *   quiz : 퀴즈         - 알아보기에서 배운 것을 물어봅니다 (보기 넉 개)
  *
+ * 폰(가로 600px 미만)에서는 알아보기가 다릅니다 — 위 판이 없고, 카드를 누르면 사진과 이야기가
+ * 화면 가득 뜹니다(openStory). 폰 폭에서는 판 옆의 사진이 112px 로 너무 작고, 판을 키우면 카드 18장이
+ * 밀려 스크롤이 생기며 아래 카드를 눌렀을 때 판이 안 보이기 때문입니다. 태블릿은 위 판 그대로입니다.
+ *
  * 읽어 주는 말은 우리말(ko-KR)입니다. 스웨덴 말(sv)이 붙은 카드는 우리말 뒤에 스웨덴 말로도
  * 한 번 읽어 주는데, 기기에 스웨덴어 목소리가 없으면 조용히 건너뜁니다 — 우리말 안에 이미
  * '스베리예' 처럼 읽는 법이 들어 있어서 못 들어도 배우는 데 지장이 없습니다.
@@ -251,6 +255,10 @@
     { id: 'quiz', name: '퀴즈',         icon: '❓', desc: '알아보기에서 배운 것을 물어봐요' }
   ];
 
+  // 폰이면 알아보기를 팝업 방식으로 (css 의 @media (max-width: 599px) 와 같은 기준)
+  var narrowMQ = window.matchMedia ? window.matchMedia('(max-width: 599px)') : null;
+  function isNarrow() { return narrowMQ ? narrowMQ.matches : window.innerWidth < 600; }
+
   var BEST_KEY = 'daniland.best.sweden';      // 카드에 보여 줄 기록 (놀이 중 제일 잘한 것)
   var ACT_KEY = 'daniland.swedenAct';         // 마지막에 고른 놀이
 
@@ -292,7 +300,8 @@
     locked: false,
     deck: [],                          // 이번 판에 아직 안 나온 문제들
     seen: {},                          // 알아보기에서 눌러 본 카드
-    fact: null                         // 알아보기에서 지금 읽고 있는 카드 (🔊 다시 가 이것을 읽습니다)
+    fact: null,                        // 알아보기에서 지금 읽고 있는 카드 (🔊 다시 가 이것을 읽습니다)
+    story: null                        // 폰의 이야기 팝업 (열려 있으면 그 요소)
   };
 
   if (!findAct(state.act)) state.act = 'look';
@@ -405,7 +414,7 @@
       fitCards();
     };
     im.onload = fitCards;
-    im.addEventListener('click', function () { zoomPhoto(im.src); });
+    im.addEventListener('click', function () { if (!state.story) zoomPhoto(im.src); });
     return im;
   }
 
@@ -466,6 +475,7 @@
     state.locked = false;
     state.seen = {};
     state.fact = null;
+    closeStory();
     el.bar.style.width = '0%';
     el.cards.innerHTML = '';
     el.speakBtn.hidden = true;
@@ -545,8 +555,19 @@
     updateScore();
     setLabel('카드를 눌러 스웨덴을 둘러봐요');
     showPanel('🇸🇪', '스웨덴', '유럽 북쪽에 있는 나라예요. 카드를 하나씩 눌러 보세요.', 'Sverige · 스베리예');
+    layoutLook();
     beginQuestion('스웨덴이에요. 카드를 하나씩 눌러 보세요.');
+    if (isNarrow()) el.speakBtn.hidden = true;   // 폰은 팝업 안에 🔊 가 있습니다
   }
+
+  // 폰이면 위 판을 감추고 카드가 화면을 다 씁니다. 창 크기가 바뀌어도 맞춥니다.
+  function layoutLook() {
+    if (state.act !== 'look') return;
+    el.panel.hidden = isNarrow();
+    fitCards();
+  }
+
+  window.addEventListener('resize', layoutLook);
 
   function lookAt(card, f) {
     if (window.SFX) SFX.tap();
@@ -559,10 +580,69 @@
     }
 
     var svLine = f.sv ? f.sv + ' · ' + f.svKo : '';
-    showPanel(f.emoji, f.title, f.text, svLine, f.img);
     state.fact = f;
-    el.speakBtn.hidden = !(window.TTS && TTS.supported);
+    if (isNarrow()) {
+      openStory(f, svLine);
+    } else {
+      showPanel(f.emoji, f.title, f.text, svLine, f.img);
+      el.speakBtn.hidden = !(window.TTS && TTS.supported);
+    }
     readFact(f);
+  }
+
+  /* 폰의 이야기 팝업 — 사진이 화면 폭 전체로 나오고, ✕ 를 누르면 카드로 돌아갑니다. */
+  function openStory(f, svLine) {
+    closeStory();
+    var box = document.createElement('div');
+    box.className = 'story-pop';
+
+    var art = document.createElement('div');
+    art.className = 'sp-art';
+    art.appendChild(artEl(f.emoji, f.img));
+    box.appendChild(art);
+
+    var title = document.createElement('div');
+    title.className = 'sp-title';
+    title.textContent = f.title;
+    box.appendChild(title);
+
+    if (svLine) {
+      var sv = document.createElement('div');
+      sv.className = 'sp-sv';
+      sv.textContent = svLine;
+      box.appendChild(sv);
+    }
+
+    var text = document.createElement('div');
+    text.className = 'sp-text';
+    text.textContent = f.text;
+    box.appendChild(text);
+
+    var btns = document.createElement('div');
+    btns.className = 'sp-btns';
+    if (window.TTS && TTS.supported) {
+      var again = document.createElement('button');
+      again.className = 'speak-btn small';
+      again.textContent = '🔊 다시';
+      again.addEventListener('click', function () { readFact(f); });
+      btns.appendChild(again);
+    }
+    var close = document.createElement('button');
+    close.className = 'big-btn ghost sp-close';
+    close.textContent = '✕ 닫기';
+    close.addEventListener('click', function () {
+      if (window.TTS) TTS.cancel();
+      closeStory();
+    });
+    btns.appendChild(close);
+    box.appendChild(btns);
+
+    document.body.appendChild(box);
+    state.story = box;
+  }
+
+  function closeStory() {
+    if (state.story) { state.story.remove(); state.story = null; }
   }
 
   // 이야기를 우리말로 읽고, 스웨덴 말이 있으면 이어서 읽습니다. 다 읽었는데 카드를 다 봤으면 끝냅니다.
@@ -576,6 +656,7 @@
   }
 
   function finishLook() {
+    closeStory();
     if (window.SFX) SFX.finish();
     el.endTitle.textContent = '스웨덴을 다 둘러봤어요!';
     el.endStars.textContent = '🇸🇪';

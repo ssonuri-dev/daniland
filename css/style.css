@@ -49,7 +49,8 @@ h1, h2, h3, h4,
 .panel h3,
 .draw-title,
 .xylo-title,
-.fact-title {
+.fact-title,
+.sp-title {
   font-family: 'Jua', 'Nanum Gothic', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
   font-weight: 400;
 }
@@ -2786,6 +2787,7 @@ button {
 }
 
 .fact-panel.pop { animation: pop 0.35s ease; }
+.fact-panel[hidden] { display: none; }   /* 폰의 알아보기는 판 없이 팝업으로 (js/sweden.js 의 layoutLook) */
 
 .fact-art {
   flex: none;
@@ -2928,6 +2930,50 @@ button {
 
 .overlay .sweden-intro { max-width: 520px; }
 
+/* 폰의 이야기 팝업 (js/sweden.js 의 openStory) — 사진이 화면 폭 전체, 글이 길면 안에서 스크롤 */
+.story-pop {
+  position: fixed;
+  inset: 0;
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  overflow-y: auto;
+  background: rgba(255, 250, 252, 0.97);
+  animation: fade-in 0.2s ease;
+}
+
+.story-pop .sp-art {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  font-size: 120px;
+  line-height: 1;
+  border-radius: 18px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #e3f0ff 0%, #fff8d6 100%);
+  box-shadow: var(--shadow);
+}
+
+.story-pop .sp-art img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.story-pop .sp-title { margin-top: 14px; font-size: 24px; line-height: 1.25; color: var(--ink); }
+.story-pop .sp-sv { margin-top: 2px; font-size: 15px; font-weight: 700; color: #2f7fcb; }
+.story-pop .sp-text { margin-top: 8px; font-size: 17px; line-height: 1.55; color: var(--ink); word-break: keep-all; }
+
+.story-pop .sp-btns {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.story-pop .sp-btns .speak-btn { margin-top: 0; }
+.story-pop .sp-close { min-width: 0; margin-top: 0; padding: 12px 22px; font-size: 18px; }
+
 /* 시작 화면 맨 아래 사진 출처 한 줄 */
 .overlay .credit { margin: 14px 0 0; font-size: 12px; color: var(--ink-soft); opacity: 0.8; }
 .overlay .credit a { color: inherit; }
@@ -2935,8 +2981,9 @@ button {
 @media (max-width: 599px) {
   .cards.sweden-cards.look-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .look-cards .fact-card { padding: 4px 3px; }
-  .look-cards .fact-card .art { font-size: 26px; }
-  .look-cards .fact-card .lbl { font-size: 11px; }
+  /* 위 판이 없어 카드가 커지면(--ch 는 js 가 넣습니다) 그림·이름도 같이 커집니다 */
+  .look-cards .fact-card .art { font-size: clamp(24px, calc(var(--ch, 78px) * 0.38), 48px); }
+  .look-cards .fact-card .lbl { font-size: clamp(11px, calc(var(--ch, 78px) * 0.13), 14px); }
   .fact-panel { gap: 10px; min-height: 96px; padding: 12px; }
   .fact-art { width: 56px; font-size: 44px; }
   .fact-panel.with-photo .fact-art { width: 112px; }
