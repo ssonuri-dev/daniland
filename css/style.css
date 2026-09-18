@@ -2829,16 +2829,33 @@ button {
 /* 알아보기 — 열여덟 장을 여섯 줄에 셋씩 (폰에서는 넷씩 다섯 줄) */
 .cards.sweden-cards.look-cards { grid-template-columns: repeat(6, minmax(0, 1fr)); }
 
-.look-cards .fact-card .art { font-size: 34px; line-height: 1.1; }
+/* 그림은 남는 자리를 쓰고 이름은 자리를 꼭 지킵니다(flex: none) — 폰의 이모지는 글자 상자가 PC 보다 훨씬 커서
+   그냥 쌓으면 이름이 카드 아래로 밀려 잘립니다 (실제로 그랬습니다). */
+.look-cards .fact-card .art {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  overflow: hidden;
+  font-size: 34px;
+  line-height: 1;
+}
 
+/* 이름은 두 줄까지 접습니다 — 폰은 카드 속이 66px 뿐이라 '토요일 사탕' 이 한 줄에 안 들어갑니다 */
 .look-cards .fact-card .lbl {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  flex: none;
   max-width: 100%;
   overflow: hidden;
   font-size: 13px;
   font-weight: 700;
+  line-height: 1.15;
   color: var(--ink-soft);
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  text-align: center;
+  word-break: keep-all;
 }
 
 .look-cards .fact-card.seen { border-color: var(--blue-soft); }
@@ -2873,7 +2890,8 @@ button {
 
 @media (max-width: 599px) {
   .cards.sweden-cards.look-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .look-cards .fact-card .art { font-size: 28px; }
+  .look-cards .fact-card { padding: 4px 3px; }
+  .look-cards .fact-card .art { font-size: 26px; }
   .look-cards .fact-card .lbl { font-size: 11px; }
   .fact-panel { gap: 10px; min-height: 96px; padding: 12px; }
   .fact-art { width: 56px; font-size: 44px; }
