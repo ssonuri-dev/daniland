@@ -175,7 +175,7 @@ window.BOOKS = [
         ko: '이제 둘은 친구예요. 함께 집으로 날아가요. 끝.',
         bg: 'bg-sky',
         actors: [{ art: '{monster}-nice', x: 60, w: 50, y: 78 }, { art: 'dani-fly', x: 28, w: 34, y: 62 }],
-        props: [{ emoji: '💕', x: 46, y: 30, size: 12 }, { emoji: '{home.emoji}', x: 88, y: 22, size: 9 }]
+        props: [{ emoji: '💕', x: 46, y: 30, size: 12 }] // 집은 bg-sky.jpg 오른쪽 아래에 그려져 있어 따로 안 띄웁니다
       }
     ]
   }
