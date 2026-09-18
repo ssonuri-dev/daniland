@@ -15,6 +15,8 @@
  *
  * 더하기·빼기·곱하기는 그림 밑에 숫자 식(formulaEl)을 같이 보여 주고, 맞히면 ❓ 자리에 답이 들어갑니다 —
  * 그림으로 세는 것과 기호로 적는 것이 같은 일이라는 걸 붙여 주려고요.
+ * 시작 화면에서 '그림 / 식 / 그림+식' 을 고를 수 있습니다 (SHOWS · daniland.numShow, 세 놀이가 같이 씁니다).
+ * 식만 볼 때는 그림 없이 식을 크게 놓고, 그림만 볼 때는 식을 뺍니다.
  *
  * 놀이는 수학 과목 페이지에서 카드로 고릅니다. 그래서 어떤 놀이를 할지는
  * 주소(act)로 정해져 오고, 이 페이지에서는 다시 고르지 않습니다.
@@ -65,6 +67,15 @@
   //   [0,1,1]   🍎🍌🍌…        [0,1,2]  🍎🍌🍇…        [0,1,0,2] 🍎🍌🍎🍇…
   var PATTERNS = [[0, 1], [0, 0, 1], [0, 1, 1], [0, 1, 2], [0, 1, 0, 2]];
 
+  // 더하기·빼기·곱하기의 보기 방식 — 그림만, 숫자 식만, 둘 다
+  var SHOWS = [
+    { id: 'pic',  name: '그림',      icon: '🍎' },
+    { id: 'eq',   name: '식',        icon: '🔢' },
+    { id: 'both', name: '그림 + 식', icon: '🍎🔢' }
+  ];
+  var SHOW_KEY = 'daniland.numShow';
+  var SHOW_ACTS = ['plus', 'minus', 'times'];
+
   var el = {
     cards: document.getElementById('cards'),
     stage: document.getElementById('stage'),
@@ -81,6 +92,8 @@
     startDesc: document.getElementById('startDesc'),
     levelHint: document.getElementById('levelHint'),
     levelRow: document.getElementById('levelRow'),
+    showHint: document.getElementById('showHint'),
+    showRow: document.getElementById('showRow'),
 
     endOverlay: document.getElementById('endOverlay'),
     endTitle: document.getElementById('endTitle'),
@@ -94,6 +107,7 @@
   var state = {
     act: UI.getParam('act') || 'count',
     max: 0,
+    show: loadShow(),                 // 'pic' | 'eq' | 'both' (더하기·빼기·곱하기만 씁니다)
     round: 0,
     stars: 0,
     answer: 0,
@@ -108,6 +122,7 @@
   if (!window.TTS || !TTS.supported) el.voiceBtn.hidden = true;
 
   buildLevelRow();
+  buildShowRow();
   showAct();
 
   el.startBtn.addEventListener('click', function () {
@@ -224,6 +239,63 @@
     });
   }
 
+  function loadShow() {
+    var v = UI.loadValue(SHOW_KEY);
+    for (var i = 0; i < SHOWS.length; i++) if (SHOWS[i].id === v) return v;
+    return 'both';
+  }
+
+  function usesShow() {
+    return SHOW_ACTS.indexOf(state.act) >= 0;
+  }
+
+  // 그림 / 식 / 그림+식 — 더하기·빼기·곱하기에서만 나옵니다.
+  function buildShowRow() {
+    if (!el.showRow) return;
+    el.showRow.innerHTML = '';
+
+    if (!usesShow()) {
+      el.showRow.hidden = true;
+      if (el.showHint) el.showHint.hidden = true;
+      return;
+    }
+
+    el.showRow.hidden = false;
+    if (el.showHint) el.showHint.hidden = false;
+
+    SHOWS.forEach(function (sh) {
+      var b = document.createElement('button');
+      b.className = 'level-btn' + (state.show === sh.id ? ' on' : '');
+      b.innerHTML = sh.icon + '<br>' + sh.name;
+      b.addEventListener('click', function () {
+        state.show = sh.id;
+        UI.saveValue(SHOW_KEY, sh.id);
+        Array.prototype.forEach.call(el.showRow.children, function (x) {
+          x.classList.toggle('on', x === b);
+        });
+      });
+      el.showRow.appendChild(b);
+    });
+  }
+
+  // 식만 볼 때는 '몇 개' 가 아니라 식을 읽어 줍니다 — "3 더하기 2는 얼마일까요?" (숫자는 삼·이로 읽힙니다)
+  function eqWords(reading, verb) {
+    if (state.show !== 'eq') return;
+    state.prompt = reading + '는 얼마일까요?';
+    el.questLabel.textContent = verb + ' 얼마일까요?' + step();
+  }
+
+  // 더하기·빼기·곱하기의 문제 그림과 식을 보기 방식에 맞춰 놓습니다.
+  // pictureEl 은 그림 줄, parts 는 식 ([3, '+', 2]). 식만 볼 때는 식을 크게 놓습니다.
+  function putProblem(pictureEl, parts) {
+    if (state.show !== 'eq') el.stage.appendChild(pictureEl);
+    if (state.show !== 'pic') {
+      var f = formulaEl(parts);
+      if (state.show === 'eq') f.classList.add('eq-only');
+      el.stage.appendChild(f);
+    }
+  }
+
   /* ---------- 게임 진행 ---------- */
 
   function resetBoard() {
@@ -314,14 +386,14 @@
     state.answer = a + b;
     state.prompt = koCount(a) + ' 개 더하기 ' + koCount(b) + ' 개는 몇 개일까요?';
     el.questLabel.textContent = '모두 몇 개일까요?' + step();
+    eqWords(a + ' 더하기 ' + b, '더하면');
 
-    el.stage.appendChild(eqRow([
+    putProblem(eqRow([
       boxEl(groupEl(a, emoji, true)),
       opEl('➕'),
       boxEl(groupEl(b, emoji, true)),
       opEl('= ❓')
-    ], true));
-    el.stage.appendChild(formulaEl([a, '+', b]));
+    ], true), [a, '+', b]);
     el.stage.appendChild(listenBtn());
 
     renderNumberCards(a + b, 1);
@@ -338,12 +410,12 @@
     state.answer = a - b;
     state.prompt = koCount(a) + ' 개에서 ' + koCount(b) + ' 개를 빼면 몇 개일까요?';
     el.questLabel.textContent = '몇 개가 남았을까요?' + step();
+    eqWords(a + ' 빼기 ' + b, '빼면');
 
-    el.stage.appendChild(eqRow([
+    putProblem(eqRow([
       boxEl(groupEl(a, emoji, true, a - b)),
       opEl('= ❓')
-    ]));
-    el.stage.appendChild(formulaEl([a, '−', b]));
+    ]), [a, '−', b]);
     el.stage.appendChild(listenBtn());
 
     // 하나도 안 남는 경우가 있으니 보기에 0 도 나올 수 있게 합니다.
@@ -365,13 +437,13 @@
     state.answer = per * groups;
     state.prompt = koCount(per) + ' 개씩 ' + koCount(groups) + ' 묶음이면 모두 몇 개일까요?';
     el.questLabel.textContent = '모두 몇 개일까요?' + step();
+    eqWords(per + ' 곱하기 ' + groups, '곱하면');
 
     var boxes = [];
     for (var i = 0; i < groups; i++) boxes.push(boxEl(groupEl(per, emoji, true)));
     var row = eqRow(boxes);
     row.classList.add('eq-times');
-    el.stage.appendChild(row);
-    el.stage.appendChild(formulaEl([per, '×', groups]));
+    putProblem(row, [per, '×', groups]);
     el.stage.appendChild(listenBtn());
 
     var ans = state.answer;
@@ -655,6 +727,7 @@
   function answerSay() {
     if (state.act === 'pattern') return '맞았어요!';
     if (state.act === 'order') return String(state.answer);
+    if (usesShow() && state.show === 'eq') return String(state.answer) + '!';   // 식만 볼 땐 '오!' 처럼 숫자로
     if (state.answer === 0) return '하나도 안 남았어요!';
     return koCount(state.answer) + ' 개!';
   }

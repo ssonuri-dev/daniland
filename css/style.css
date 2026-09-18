@@ -966,6 +966,9 @@ button {
   line-height: 1.2;
 }
 
+/* 식만 볼 때(시작 화면에서 '식' 을 고름) — 그림 자리가 비니 식을 크게 놓습니다 */
+.eq-formula.eq-only { gap: 16px; margin: 18px 0 10px; font-size: 56px; }
+
 .eq-formula .op { color: var(--ink-soft); }
 .eq-formula .q { color: var(--pink); }
 .eq-formula .q.filled { animation: formula-pop 0.4s ease; }
