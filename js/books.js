@@ -59,7 +59,9 @@ window.BOOKS = [
       'dani-red':     { emoji: '👸', tint: '#ff5252' },
       'dani-blue':    { emoji: '👸', tint: '#4f8dff' },
       'dani-pink':    { emoji: '👸', tint: '#ff7eb6' },
-      'dani-fly':     { emoji: '👸' },
+      'dani-red-fly':  { emoji: '👸', tint: '#ff5252' },   // 8장에서 나는 모습 — 드레스 색을 따라갑니다
+      'dani-blue-fly': { emoji: '👸', tint: '#4f8dff' },
+      'dani-pink-fly': { emoji: '👸', tint: '#ff7eb6' },
       'dragon-big':   { emoji: '🐉' },
       'dragon-nice':  { emoji: '🐲' },
       'giant-big':    { emoji: '🧌' },
@@ -115,7 +117,7 @@ window.BOOKS = [
         text: 'Oh no! A {monster}! It is scary!',
         ko: '어머나! {monster:이가} 나타났어요! 무서워요!',
         bg: '{place}',
-        actors: [{ art: '{monster}-big', x: 68, w: 52 }, { art: '{dress}', x: 24, w: 36 }],
+        actors: [{ art: '{monster}-big', x: 68, w: 58 }, { art: '{dress}', x: 24, w: 36 }],
         blank: {
           key: 'monster',
           options: [
@@ -129,7 +131,7 @@ window.BOOKS = [
         text: 'Princess Dani is not scared. She says, "{say}"',
         ko: '다니 공주는 무섭지 않아요. 공주가 말해요. "{say}"',
         bg: '{place}',
-        actors: [{ art: '{monster}-big', x: 68, w: 52 }, { art: '{dress}', x: 24, w: 36 }],
+        actors: [{ art: '{monster}-big', x: 68, w: 58 }, { art: '{dress}', x: 24, w: 36 }],
         props: [{ emoji: '{say.emoji}', x: 30, y: 34, size: 15, bubble: true }],
         blank: {
           key: 'say',
@@ -144,7 +146,7 @@ window.BOOKS = [
         text: 'The {monster} is not bad. The {monster} is {mood}.',
         ko: '{monster:은는} 나쁘지 않아요. {monster:은는} {mood}.',
         bg: '{place}',
-        actors: [{ art: '{monster}-nice', x: 66, w: 48 }, { art: '{dress}', x: 24, w: 36 }],
+        actors: [{ art: '{monster}-nice', x: 66, w: 54 }, { art: '{dress}', x: 24, w: 36 }],
         props: [{ emoji: '{mood.emoji}', x: 72, y: 26, size: 15, bubble: true }],
         blank: {
           key: 'mood',
@@ -159,7 +161,7 @@ window.BOOKS = [
         text: 'Dani gives the {monster} {gift}. "Thank you, Princess!"',
         ko: '다니는 {monster}에게 {gift}. "고마워요, 공주님!"',
         bg: '{place}',
-        actors: [{ art: '{monster}-nice', x: 66, w: 48 }, { art: '{dress}', x: 30, w: 36 }],
+        actors: [{ art: '{monster}-nice', x: 66, w: 54 }, { art: '{dress}', x: 30, w: 36 }],
         props: [{ emoji: '{gift.emoji}', x: 47, y: 62, size: 14 }],
         blank: {
           key: 'gift',
@@ -174,7 +176,7 @@ window.BOOKS = [
         text: 'Now they are friends. They fly home together. The end.',
         ko: '이제 둘은 친구예요. 함께 집으로 날아가요. 끝.',
         bg: 'bg-sky',
-        actors: [{ art: '{monster}-nice', x: 62, w: 50, y: 78 }, { art: 'dani-fly', x: 28, w: 44, y: 62 }],
+        actors: [{ art: '{monster}-nice', x: 62, w: 50, y: 78 }, { art: '{dress}-fly', x: 28, w: 44, y: 62 }],
         props: [{ emoji: '💕', x: 46, y: 30, size: 12 }] // 집은 bg-sky.jpg 오른쪽 아래에 그려져 있어 따로 안 띄웁니다
       }
     ]
