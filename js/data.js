@@ -738,6 +738,8 @@ window.LESSONS = [
  *  href    : 눌렀을 때 갈 주소
  *  bestKey : 최고 기록을 저장해 둔 이름 (없으면 ⭐ 를 안 보여줍니다)
  *  bestUnit: 최고 기록을 '3/5' 가 아니라 '3단계' 처럼 보여 주고 싶을 때의 단위
+ *  books   : true 면 이 카드 대신 js/books.js 의 책마다 카드가 한 장씩 나옵니다
+ *            (표지 이모지 · 영어 제목 · 우리말 제목, 누르면 book.html?book=<id>). 영어 그림책 카드가 씁니다.
  * ========================================================================= */
 
 window.PAGES = [
@@ -777,7 +779,8 @@ window.PAGES = [
     title: '영어 그림책',
     icon: '📚',
     meta: '읽어 주는 책 · 내가 만드는 책',
-    href: 'book.html'
+    href: 'book.html',
+    books: true          // 이 카드 한 장이 아니라, js/books.js 의 책마다 카드 한 장씩 펼쳐집니다
   },
 
   {

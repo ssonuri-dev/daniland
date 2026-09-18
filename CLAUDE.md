@@ -55,7 +55,7 @@ ES5 IIFE 로 감싸 `window` 에 전역을 붙이는 방식입니다. `import`/`
 | 전역 | 파일 | 하는 일 |
 |---|---|---|
 | `SUBJECTS` `LESSONS` `PAGES` | `js/data.js` | 콘텐츠 전부 (평소 손댈 파일은 여기뿐) |
-| `BOOKS` | `js/books.js` | 영어 그림책 — 책 한 권이 객체 하나, 그림은 `books/<id>/` (전집처럼 계속 늘어납니다) |
+| `BOOKS` | `js/books.js` | 영어 그림책 — 책 한 권이 객체 하나, 그림은 `books/<id>/` (전집처럼 계속 늘어납니다). 목록 페이지도 읽습니다(책마다 카드) |
 | `Catalog` | `js/catalog.js` | LESSONS+PAGES 를 과목별로 묶고 최고 기록을 붙임 |
 | `UI` | `js/ui.js` | 섞기·이모지 개수 세기·URL 파라미터·폭죽·localStorage |
 | `TTS` | `js/tts.js` | 브라우저 speechSynthesis 래퍼 (목소리 순위 매기기 포함) |
@@ -89,6 +89,8 @@ Jua 는 굵기가 400 하나뿐이라 제목 규칙에서 `font-weight: 400` 으
 카드가 바로 나옵니다. **게임 페이지 주소는 안 바뀌고** 목록 주소만 `subject.html?name=영어&group=…` 가 됩니다.
 게임 화면의 ← 는 `Catalog.href(subject, group)` 또는 `Catalog.backHref('make.html')` 로 **묶음 페이지**로 돌아갑니다 —
 새 페이지를 만들면 이 둘 중 하나를 쓰세요. `numbers.html` 은 놀이(`?act=`)마다 묶음이 달라 `href` 를 통째로 맞춥니다.
+'책 읽기' 묶음은 카드가 '영어 그림책' 한 장이 아니라 **책마다 한 장**입니다 — `PAGES` 의 그 카드에 `books: true` 가 있어
+`catalog.js` 가 `BOOKS` 로 펼칩니다(`book.html?book=<id>`). 그래서 `index.html`·`subject.html` 도 `books.js` 를 읽습니다.
 
 필드의 의미와 예시는 `js/data.js` 상단 주석과 README 의 "새 수업 추가하기"에 이미 정리돼 있습니다.
 

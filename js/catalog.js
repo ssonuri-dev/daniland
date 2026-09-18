@@ -38,6 +38,23 @@
     });
 
     (window.PAGES || []).forEach(function (page) {
+      // 영어 그림책 — 카드 한 장 대신 책마다 한 장씩 (책장이 곧 목록이 되게)
+      if (page.books && (window.BOOKS || []).length) {
+        window.BOOKS.forEach(function (book) {
+          out.push({
+            subject: page.subject || '기타',
+            group: page.group || '',
+            icon: book.coverEmoji || page.icon || '📚',
+            title: book.title,
+            meta: book.titleKo || '',
+            href: 'book.html?book=' + encodeURIComponent(book.id),
+            best: null,
+            bestUnit: ''
+          });
+        });
+        return;
+      }
+
       out.push({
         subject: page.subject || '기타',
         group: page.group || '',
