@@ -29,6 +29,9 @@
    *   title / text  : 누르면 위 판에 나오고 읽어 주는 제목과 이야기 (우리말)
    *   sv / svKo     : (없어도 됩니다) 스웨덴 말과 읽는 법 — 우리말 뒤에 붙여 읽어 줍니다
    *   find          : (없어도 됩니다) '무엇이 있을까' 에 보기로 나올 때의 이름
+   *   img           : (없어도 됩니다) 위 판에 크게 보여 줄 사진 — sweden/ 폴더의 파일 이름.
+   *                   파일이 없으면 emoji 로 대신 그리므로 사진이 오기 전에도 돌아갑니다 (artEl).
+   *                   사진의 출처는 sweden/CREDITS.md 에 적습니다.
    * ---------------------------------------------------------------------- */
   var FACTS = [
     { id: 'flag', emoji: '🇸🇪', label: '국기', title: '스웨덴 국기',
@@ -376,8 +379,11 @@
 
   /* ---------- 위 판 (이야기 · 문제) ---------- */
 
-  function showPanel(art, title, text, sv) {
-    el.panelArt.textContent = art || '';
+  // art 는 이모지, img 는 (있으면) 사진 파일 이름 — 사진을 못 읽으면 이모지로 돌아갑니다.
+  function showPanel(art, title, text, sv, img) {
+    el.panelArt.innerHTML = '';
+    el.panelArt.appendChild(artEl(art, img));
+    el.panel.classList.toggle('with-photo', !!img);
     el.panelTitle.textContent = title || '';
     el.panelText.textContent = text || '';
     el.panelSv.textContent = sv || '';
@@ -386,6 +392,20 @@
     void el.panel.offsetWidth;
     el.panel.classList.add('pop');
     fitCards();
+  }
+
+  function artEl(emoji, img) {
+    if (!img) return document.createTextNode(emoji || '');
+    var im = document.createElement('img');
+    im.src = 'sweden/' + img;
+    im.alt = '';
+    im.onerror = function () {
+      im.replaceWith(document.createTextNode(emoji || ''));
+      el.panel.classList.remove('with-photo');
+      fitCards();
+    };
+    im.onload = fitCards;
+    return im;
   }
 
   function setLabel(text) {
@@ -464,7 +484,7 @@
   }
 
   // 맞혔을 때 — 별을 주고 설명을 읽어 준 뒤 다음 문제로 갑니다.
-  function scoreQuestion(card, art, title, why) {
+  function scoreQuestion(card, art, title, why, img) {
     state.locked = true;
     if (window.SFX) SFX.correct();
     card.classList.add('correct');
@@ -474,7 +494,7 @@
     state.round += 1;
     el.bar.style.width = Math.round((state.round / state.deck.length) * 100) + '%';
 
-    showPanel(art, title, why);
+    showPanel(art, title, why, '', img);
     state.prompt = why;
     el.speakBtn.hidden = true;   // 설명을 읽고 나면 바로 다음 문제라, 여기서 끊으면 흐름이 멈춥니다
     speak(why, function () { setTimeout(nextRound, 500); });
@@ -526,7 +546,7 @@
     }
 
     var svLine = f.sv ? f.sv + ' · ' + f.svKo : '';
-    showPanel(f.emoji, f.title, f.text, svLine);
+    showPanel(f.emoji, f.title, f.text, svLine, f.img);
     state.fact = f;
     el.speakBtn.hidden = !(window.TTS && TTS.supported);
     readFact(f);
@@ -573,7 +593,7 @@
       b.addEventListener('click', function () {
         if (state.locked || b.classList.contains('dim')) return;
         if (!o.right) return missed(b, o.why);
-        scoreQuestion(b, f.emoji, f.title, f.text);
+        scoreQuestion(b, f.emoji, f.title, f.text, f.img);
       });
       el.cards.appendChild(b);
     });
