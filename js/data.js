@@ -980,5 +980,13 @@ window.PAGES = [
     meta: '수수께끼·넌센스 퀴즈를 풀어요',
     href: 'riddle.html',   // 문제는 js/riddles.js 에 있습니다
     bestKey: 'daniland.best.riddle'
+  },
+
+  {
+    subject: '놀이',
+    title: '코디 놀이',
+    icon: '👗',
+    meta: '배경·옷·소품을 골라 자유롭게 꾸며요',
+    href: 'dress.html'   // 옷·배경·소품은 js/outfits.js 에 있습니다. 점수 없는 자유 놀이라 bestKey 없음
   }
 ];
