@@ -2993,3 +2993,196 @@ button {
   .pick-cards .pick-card .lbl { font-size: 15px; }
   .ans-cards .ans-card .text { font-size: 16px; }
 }
+
+/* ---------- 유럽 (europe.html) ----------
+ * 지도(.eu-map)는 그림 파일이 아니라 나라 모양을 그린 svg 입니다 (js/europe-map.js). 나라 땅(.eu-land)과 그 위의
+ * 국기 핀(.eu-pin)이 둘 다 단추입니다 — 작은 나라는 땅만으로는 손가락에 안 잡혀서 핀이 있습니다.
+ * 이야기 판(.eu-panel)은 스웨덴의 .fact-panel 을 그대로 쓰고, 세로 화면에서는 지도 아래에, 가로가 넉넉하면
+ * (.eu-stage.wide — js/europe.js 의 fitMap() 이 붙입니다) 지도 오른쪽에 섭니다. 판 높이는 js 가 정하고 글이 길면
+ * 판 안에서 넘깁니다 — 나라를 누를 때마다 지도가 들썩이면 안 되니까요. */
+.europe-page { max-width: 1100px; padding-bottom: 14px; }
+
+/* 위 한 줄이 폰에서 두 줄로 접혀도 🔊 단추는 찌그러지지 않게 */
+.europe-page .world-quest .speak-btn { flex: none; }
+.europe-page .world-label { text-align: center; word-break: keep-all; }
+
+.eu-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.eu-stage.wide {
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.eu-map {
+  position: relative;
+  flex: none;
+  background: #bfe3f7;              /* 바다 */
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  touch-action: manipulation;
+}
+
+.eu-svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* 놀이에 안 나오는 땅 — 누를 수 없고 회색입니다 */
+.eu-other {
+  fill: #e4e0d8;
+  stroke: #fff;
+  stroke-width: 1.5;
+  pointer-events: none;
+}
+
+/* 나라 땅 — 이웃끼리 색이 다르게 js 의 SHADE 가 c0~c5 를 붙입니다 */
+.eu-land {
+  stroke: #fff;
+  stroke-width: 1.5;
+  cursor: pointer;
+  transition: fill 0.25s ease;
+}
+
+.eu-land.c0 { fill: #ffd6a5; }
+.eu-land.c1 { fill: #caffbf; }
+.eu-land.c2 { fill: #fdffb6; }
+.eu-land.c3 { fill: #ffb5c2; }
+.eu-land.c4 { fill: #c8beff; }
+.eu-land.c5 { fill: #a6ece9; }
+
+.eu-land.seen    { stroke: #2f7fcb; stroke-width: 2.5; }
+.eu-land.here    { fill: #fff0a8; stroke: #2f7fcb; stroke-width: 3; }
+.eu-land.correct { fill: #a5e8b0; stroke: var(--green); stroke-width: 3; }
+.eu-land.wrong   { fill: #ffb3c6; }
+.eu-land.dim     { fill: #b9b2ad; }   /* 틀린 나라는 지우지 않고 흐리게 남깁니다 */
+
+/* 다니는 발끝이 핀 위 가장자리에 닿게 — js 의 placeDani 가 핀보다 4% 위에 놓고, 여기서 발끝을 기준점에 맞춥니다 */
+.eu-map .world-dani { transform: translate(-50%, -100%); }
+
+.eu-pins { position: absolute; inset: 0; pointer-events: none; }
+
+/* 국기 핀 — 크기는 em 이라 지도 글자 크기(fitMap 의 w/20)를 따라갑니다: 540px 지도(태블릿 세로)에서 46px */
+.eu-pin {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.7em;
+  height: 1.7em;
+  padding: 0;
+  font-size: inherit;
+  line-height: 1;
+  background: #fff;
+  border: 0.1em solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0.1em 0.3em rgba(64, 50, 58, 0.35);
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  transition: box-shadow 0.25s ease, opacity 0.25s ease;
+}
+
+.eu-pin .flag { font-size: 0.8em; line-height: 1; }
+
+/* 국기 찾기 — 핀의 국기를 ❓ 로 가립니다. 맞힌 나라와 틀려서 흐려진 나라는 다시 보여 줍니다 ('거기는 포르투갈이에요') */
+.eu-map.hide-flags .eu-pin:not(.correct):not(.dim) .flag { display: none; }
+.eu-map.hide-flags .eu-pin:not(.correct):not(.dim)::before { content: '❓'; font-size: 0.7em; line-height: 1; }
+
+/* 나라 이름은 눌러 본 나라에만 붙습니다 — 처음부터 다 보이면 '찾아가기' 의 답이 되고, 작은 나라 쪽은 겹칩니다 */
+.eu-pin .name {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  display: none;
+  margin-top: 0.1em;
+  padding: 0.05em 0.35em;
+  font-size: 0.4em;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--ink);
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 0.6em;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.eu-pin.seen .name,
+.eu-pin.here .name,
+.eu-pin.correct .name { display: block; }
+
+.eu-pin.seen    { border-color: #2f7fcb; }
+.eu-pin.here    { border-color: #2f7fcb; box-shadow: 0 0 0 0.18em rgba(94, 177, 255, 0.5), 0 0.1em 0.3em rgba(64, 50, 58, 0.35); }
+.eu-pin.correct { border-color: var(--green); animation: pop 0.45s ease; }
+.eu-pin.wrong   { border-color: var(--pink); animation: shake 0.4s ease; }
+.eu-pin.dim     { opacity: 0.45; }
+
+.eu-pin .mark {
+  position: absolute;
+  top: -0.55em;
+  right: -0.6em;
+  font-size: 0.8em;
+  line-height: 1;
+}
+
+/* 이야기 판 — 판 바탕의 파랑·노랑은 스웨덴 것과 같은데 유럽기 색이기도 해서 그대로 씁니다 */
+.eu-panel {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 760px;
+  min-height: 0;
+  align-items: flex-start;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.eu-stage.wide .eu-panel { flex: 1 1 auto; max-width: none; min-width: 0; }
+
+.eu-panel .fact-art { position: sticky; top: 0; }
+
+/* 볼거리·인사 칩 — 누르면 그 문장을 읽어 줍니다. 스웨덴 '더 알아보기' 는 링크입니다 */
+.eu-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.eu-chips[hidden] { display: none; }
+
+.eu-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--ink);
+  text-decoration: none;
+  background: #fff;
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+}
+
+.eu-chip .ce { font-size: 20px; line-height: 1; }
+.eu-chip.hello { color: #2f7fcb; }
+.eu-chip.more { color: #fff; background: var(--blue); }
+
+@media (max-width: 599px) {
+  .europe-page .world-label { font-size: 15px; }
+  .eu-chip { min-height: 36px; padding: 4px 10px; font-size: 13px; }
+  .eu-chip .ce { font-size: 17px; }
+  .eu-panel .fact-art { width: 48px; font-size: 40px; }
+}

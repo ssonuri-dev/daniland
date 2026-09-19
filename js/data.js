@@ -794,6 +794,15 @@ window.PAGES = [
 
   {
     subject: '세계',
+    title: '유럽',
+    icon: '🇪🇺',
+    meta: '지도에서 나라 열여덟 곳 찾기 · 나라 이야기 · 국기',
+    href: 'europe.html',
+    bestKey: 'daniland.best.europe'
+  },
+
+  {
+    subject: '세계',
     title: '스웨덴',
     icon: '🇸🇪',
     meta: '알아보기 · 무엇이 있을까 · 퀴즈',

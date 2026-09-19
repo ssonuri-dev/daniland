@@ -112,6 +112,7 @@ index.html            과목 카드            home.js
       ├ dodge.html                          dodge.js    (장애물 피하기 — 흐르는 길을 캔버스에 그림, 단계·하트)
       ├ book.html                           book.js     (영어 그림책 — js/books.js 의 책을 book.jpg 위에, 읽기·만들기)
       ├ sweden.html                         sweden.js   (스웨덴 한 나라 — 이야기 카드 18장·퀴즈, 그림 파일 없음)
+      ├ europe.html                         europe.js   (유럽 — 나라 모양 svg 지도(europe-map.js) 위 국기 핀 18개, 놀이 4종)
       └ draw.html                           draw.js     (독립 — 다른 js 를 전혀 안 씀)
 ```
 
@@ -185,6 +186,17 @@ index.html            과목 카드            home.js
   세 배열만 바꾸는 것이 의도입니다 (한 화면에 여러 나라를 넣는 것은 아직 안 정했습니다).
   읽기는 `speak()` 의 `seq` 로 최신 것만 이어집니다 — 읽는 중에 다른 카드를 누르면 앞 사슬(우리말→스웨덴 말→끝 확인)이
   조용히 끊깁니다. 이게 없으면 TTS 가 cancel 될 때 앞 말의 onend 가 불려 끊긴 말이 이어서 또 나옵니다.
+  **유럽(`europe.html`)이 열 번째**입니다 (2026-09-19) — 세계 지도와 스웨덴의 가운데: 지도 한 장 위에서 나라 열여덟 곳을
+  찾아가되 나라마다 이야기·볼거리 셋·그 나라 말 인사가 붙어 있습니다 (`js/europe.js` 의 `COUNTRIES`). 지도는 그림 파일이 아니라
+  **나라 모양 svg** 입니다 — `js/europe-map.js` 는 Natural Earth 1:50m(퍼블릭 도메인)을 람베르트 정적 방위 도법으로 투영해
+  만들어 낸 것이라 **손으로 고치지 말고** 머리 주석대로 다시 만드세요 (생성 스크립트는 저장소에 없습니다 — 자료·투영·틀·단순화
+  값이 주석에 있으니 그대로 다시 짜면 됩니다). 나라 땅(`.eu-land`)과 국기 핀(`.eu-pin`)이 둘 다 단추입니다 — 작은 나라는 땅만으로는
+  손가락에 안 잡혀서요. 핀 좌표는 수도가 아니라 나라 가운데쯤이고 체코·오스트리아·노르웨이·스웨덴은 핀이 안 겹치게 손으로 옮긴
+  것이니 되돌리지 마세요. 땅 색은 `SHADE` 가 이웃끼리 다르게 손으로 맞춘 것입니다. 이야기 판(`.eu-panel`)은 스웨덴의 `.fact-panel`
+  을 그대로 쓰고, 세로 화면에서는 지도 아래(높이 고정 — 글이 길면 판 안에서 넘김), `fitMap()` 이 가로가 넉넉하다고 보면
+  (`≥900px` 이고 가로>세로) `.eu-stage.wide` 로 지도 오른쪽에 섭니다. **'무엇이 있을까' 의 볼거리는 나라마다 다른 것만** —
+  축구·왕·치즈처럼 두 나라에 있는 것을 넣으면 정답이 둘이 됩니다. **국기 찾기에서만 핀의 국기를 ❓ 로 가립니다**(`.hide-flags`)
+  — 안 가리면 같은 그림 찾기가 됩니다. 폰에서도 돌아가지만(핀 31px) 세계 지도처럼 태블릿이 제격입니다.
 
   ⚠️ **세계 지도는 태블릿 전용입니다 — 이것은 버그가 아니라 정한 것입니다.** (2026-09-06)
   지리적으로 정확한 지도에서 한국은 가로의 4.5% 라서 폰(390px)에서는 16×18px 이 됩니다
@@ -263,6 +275,8 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.ride` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.sweden.<act>` | 스웨덴 놀이별(무엇이 있을까·퀴즈) 최고 별 (알아보기는 점수가 없습니다) |
 | `daniland.best.sweden` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
+| `daniland.best.europe.<act>` | 유럽 놀이별(찾아가기·무엇이 있을까·국기 찾기) 최고 별 (구경하기는 점수가 없습니다) |
+| `daniland.best.europe` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.balloon.level` | 풍선 터뜨리기에서 도달한 최고 단계 |
 | `daniland.book.<id>.made` | 영어 그림책에서 아이가 만든 책 — `{ 빈칸이름: word }` (책마다 마지막 것 하나) |
 | `daniland.book.<id>.read` | 그 책을 끝까지 읽은 적 있음 (책장의 📖) |
@@ -272,7 +286,7 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.rank.dodge` | 장애물 피하기 순위표 — `[{ m, level, treats }, …]` 먼 순서로 다섯 개 (시작·결과 화면) |
 | `daniland.best.maze.<n>` | 미로 찾기 판 크기별(5·7·9·11) 한 번에 찾은 적 있음 (1/1) |
 | `daniland.best.maze` | 한 번에 찾은 것 중 제일 큰 판 — stars 가 칸 수(5~11)입니다 (카드의 ⭐ 는 이것을 `bestUnit: '칸 미로'` 로 읽습니다) |
-| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.townAct` `daniland.worldAct` `daniland.tripAct` `daniland.rideAct` `daniland.swedenAct` `daniland.numShow`(더하기·빼기·곱하기의 그림/식/둘 다) `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.mazeSize` | 마지막에 고른 설정 |
+| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.townAct` `daniland.worldAct` `daniland.tripAct` `daniland.rideAct` `daniland.swedenAct` `daniland.europeAct` `daniland.numShow`(더하기·빼기·곱하기의 그림/식/둘 다) `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.mazeSize` | 마지막에 고른 설정 |
 | `daniland.numMax` | 수학 놀이가 넷뿐이던 시절의 숫자 범위 — 읽기만 합니다 (`numbers.js` 의 `loadMax()`) |
 | `daniland.rate` `daniland.voice.<lang>` | 목소리·속도 |
 | `daniland.drawer` | 그림 그리기 도장 서랍 접힘 상태 |
