@@ -3149,6 +3149,13 @@ button {
 
 .eu-panel .fact-art { position: sticky; top: 0; }
 
+/* 사진(.with-photo — 스웨덴과 같은 4:3 칸)이 있을 때: 세로 화면에서는 판이 낮아 160px 로, 가로 화면(.wide)에서는 판이 높으니
+   사진을 위에 크게 놓고 글을 아래에 쌓습니다 */
+.eu-panel.with-photo .fact-art { width: 160px; position: static; }
+
+.eu-stage.wide .eu-panel.with-photo { flex-direction: column; align-items: stretch; }
+.eu-stage.wide .eu-panel.with-photo .fact-art { width: 100%; max-width: 280px; margin: 0 auto; }
+
 /* 볼거리·인사 칩 — 누르면 그 문장을 읽어 줍니다. 스웨덴 '더 알아보기' 는 링크입니다 */
 .eu-chips {
   display: flex;
@@ -3185,4 +3192,5 @@ button {
   .eu-chip { min-height: 36px; padding: 4px 10px; font-size: 13px; }
   .eu-chip .ce { font-size: 17px; }
   .eu-panel .fact-art { width: 48px; font-size: 40px; }
+  .eu-panel.with-photo .fact-art { width: 112px; }
 }

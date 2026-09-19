@@ -37,11 +37,14 @@
    *   intro     : 구경하기에서 읽어 주는 이야기 (우리말, 서너 문장)
    *   items     : 볼거리 셋 — emoji · label(짧은 이름) · say(문장, '무엇이 있을까' 의 문제이자 눌렀을 때 읽는 말)
    *               같은 그림·같은 볼거리가 두 나라에 있으면 '무엇이 있을까' 의 정답이 둘이 되니 나라마다 다른 것만 적습니다.
-   *   more      : (없어도 됩니다) 더 깊이 보는 페이지 — 스웨덴만 있습니다 (sweden.html)
+   *   img       : (없어도 됩니다) 이야기 판에 보여 줄 사진 — europe/ 폴더의 파일 이름 (가로 800px, 4:3).
+ *               파일이 없으면 국기 이모지로 대신 그리므로 사진이 오기 전에도 돌아갑니다 (artEl). 출처는 europe/CREDITS.md 에.
+ *   more      : (없어도 됩니다) 더 깊이 보는 페이지 — 스웨덴만 있습니다 (sweden.html)
    * ---------------------------------------------------------------------- */
   var COUNTRIES = [
     {
       id: 'IS', ko: '아이슬란드', en: 'Iceland', icon: '🇮🇸', capital: '레이캬비크', capitalEn: 'Reykjavik',
+      img: 'geysir.jpg',
       x: 12, y: 11,
       hello: { text: 'Halló', ko: '할로', lang: 'is-IS' },
       intro: '유럽 맨 북서쪽, 바다 한가운데 있는 섬나라예요. "얼음과 불의 나라" 라고 불러요 — 커다란 빙하도 있고, ' +
@@ -54,9 +57,11 @@
     },
     {
       id: 'IE', ko: '아일랜드', en: 'Ireland', icon: '🇮🇪', capital: '더블린', capitalEn: 'Dublin',
+      img: 'moher.jpg',
       x: 15.5, y: 47,
       hello: { text: 'Dia duit', ko: '디아 귓', lang: 'ga-IE' },
       intro: '영국 옆에 있는 초록 섬나라예요. 비가 자주 와서 들판이 일 년 내내 초록빛이라 "에메랄드 섬" 이라고도 불러요. ' +
+             '바다 앞에 깎아지른 모허 절벽이 있어요. ' +
              '세 잎 클로버 "샴록" 이 이 나라의 상징이고, 무지개 끝에 금단지를 숨겨 둔 요정 레프러콘 이야기가 있어요.',
       items: [
         { emoji: '☘️', label: '샴록',       say: '세 잎 클로버 샴록이 상징인 나라예요.' },
@@ -66,6 +71,7 @@
     },
     {
       id: 'GB', ko: '영국', en: 'the United Kingdom', icon: '🇬🇧', capital: '런던', capitalEn: 'London',
+      img: 'bigben.jpg',
       x: 27, y: 50,
       hello: { text: 'Hello', ko: '헬로', lang: 'en-GB' },
       intro: '섬나라예요. 잉글랜드·스코틀랜드·웨일스·북아일랜드 네 나라가 모여 한 나라를 이뤄요. ' +
@@ -78,6 +84,7 @@
     },
     {
       id: 'PT', ko: '포르투갈', en: 'Portugal', icon: '🇵🇹', capital: '리스본', capitalEn: 'Lisbon',
+      img: 'tram.jpg',
       x: 6.5, y: 84,
       hello: { text: 'Olá', ko: '올라', lang: 'pt-PT' },
       intro: '유럽 맨 서쪽 끝, 바다를 바라보는 나라예요. 아주 오래전 이 나라의 배들이 바다 건너 멀리까지 탐험을 떠났어요. ' +
@@ -90,10 +97,12 @@
     },
     {
       id: 'ES', ko: '스페인', en: 'Spain', icon: '🇪🇸', capital: '마드리드', capitalEn: 'Madrid',
+      img: 'guell.jpg',
       x: 17, y: 82,
       hello: { text: 'Hola', ko: '올라', lang: 'es-ES' },
       intro: '햇볕이 따뜻한 남쪽 나라예요. 손뼉을 치고 발을 구르며 추는 춤 플라멩코가 있고, ' +
-             '커다란 팬에 쌀과 해산물을 넣어 만든 파에야를 먹어요. 여름에는 토마토를 던지며 노는 축제도 열려요.',
+             '커다란 팬에 쌀과 해산물을 넣어 만든 파에야를 먹어요. 여름에는 토마토를 던지며 노는 축제도 열려요. ' +
+             '바르셀로나에는 건축가 가우디가 지은 과자집 같은 건물과 알록달록 타일 공원이 있어요.',
       items: [
         { emoji: '💃', label: '플라멩코',   say: '손뼉을 치고 발을 구르며 추는 춤, 플라멩코의 나라예요.' },
         { emoji: '🥘', label: '파에야',     say: '커다란 팬에 쌀과 해산물을 넣어 만든 파에야를 먹는 나라예요.' },
@@ -102,6 +111,7 @@
     },
     {
       id: 'FR', ko: '프랑스', en: 'France', icon: '🇫🇷', capital: '파리', capitalEn: 'Paris',
+      img: 'eiffel.jpg',
       x: 33, y: 66,
       hello: { text: 'Bonjour', ko: '봉주르', lang: 'fr-FR' },
       intro: '수도 파리에는 철로 만든 높은 탑, 에펠탑이 있어요. 아침에는 바삭한 크루아상과 긴 바게트 빵을 먹어요. ' +
@@ -114,6 +124,7 @@
     },
     {
       id: 'NL', ko: '네덜란드', en: 'the Netherlands', icon: '🇳🇱', capital: '암스테르담', capitalEn: 'Amsterdam',
+      img: 'kinderdijk.jpg',
       x: 39.5, y: 53.5,
       hello: { text: 'Hallo', ko: '할로', lang: 'nl-NL' },
       intro: '땅이 아주 평평하고 바다보다 낮은 곳도 많아요. 그래서 옛날부터 풍차로 물을 퍼내 땅을 만들었어요. ' +
@@ -126,6 +137,7 @@
     },
     {
       id: 'DE', ko: '독일', en: 'Germany', icon: '🇩🇪', capital: '베를린', capitalEn: 'Berlin',
+      img: 'neuschwanstein.jpg',
       x: 49.5, y: 56,
       hello: { text: 'Hallo', ko: '할로', lang: 'de-DE' },
       intro: '유럽 한가운데 있는 큰 나라예요. 소시지와 꽈배기 모양 빵 프레첼을 먹고, 자동차를 아주 잘 만들어요. ' +
@@ -138,10 +150,11 @@
     },
     {
       id: 'DK', ko: '덴마크', en: 'Denmark', icon: '🇩🇰', capital: '코펜하겐', capitalEn: 'Copenhagen',
+      img: 'nyhavn.jpg',
       x: 47.5, y: 42.5,
       hello: { text: 'Hej', ko: '하이', lang: 'da-DK' },
-      intro: '스웨덴 아래, 바다에 둘러싸인 작은 나라예요. "인어공주" 와 "미운 오리 새끼" 를 쓴 동화 작가 안데르센이 ' +
-             '이 나라 사람이에요. 알록달록 블록 장난감 레고도 여기서 만들었어요.',
+      intro: '스웨덴 아래, 바다에 둘러싸인 작은 나라예요. 수도 코펜하겐의 옛 항구에는 알록달록한 집들이 줄지어 서 있어요. ' +
+             '"인어공주" 와 "미운 오리 새끼" 를 쓴 동화 작가 안데르센이 이 나라 사람이에요. 알록달록 블록 장난감 레고도 여기서 만들었어요.',
       items: [
         { emoji: '🧜‍♀️', label: '인어공주 동상', say: '바닷가 바위에 앉은 인어공주 동상이 있는 나라예요.' },
         { emoji: '🧱', label: '레고',        say: '블록 장난감 레고를 만든 나라예요.' },
@@ -150,6 +163,7 @@
     },
     {
       id: 'NO', ko: '노르웨이', en: 'Norway', icon: '🇳🇴', capital: '오슬로', capitalEn: 'Oslo',
+      img: 'fjord.jpg',
       x: 48, y: 27,
       hello: { text: 'Hei', ko: '하이', lang: 'nb-NO' },
       intro: '높은 산과 바다가 만나는 나라예요. 바닷물이 산 사이로 깊이 들어온 좁고 긴 바다를 피오르라고 해요. ' +
@@ -162,6 +176,7 @@
     },
     {
       id: 'SE', ko: '스웨덴', en: 'Sweden', icon: '🇸🇪', capital: '스톡홀름', capitalEn: 'Stockholm',
+      img: 'stockholm.jpg',
       x: 58, y: 30,
       hello: { text: 'Hej', ko: '헤이', lang: 'sv-SE' },
       intro: '숲과 호수가 많은 나라예요. 수도 스톡홀름은 열네 개의 섬 위에 세워졌어요. ' +
@@ -175,6 +190,7 @@
     },
     {
       id: 'FI', ko: '핀란드', en: 'Finland', icon: '🇫🇮', capital: '헬싱키', capitalEn: 'Helsinki',
+      img: 'santa.jpg',
       x: 68, y: 22,
       hello: { text: 'Hei', ko: '헤이', lang: 'fi-FI' },
       intro: '호수가 십팔만 개나 되는 "천 개의 호수의 나라" 예요. 북쪽 로바니에미에는 산타클로스 마을이 있어서 ' +
@@ -187,9 +203,11 @@
     },
     {
       id: 'PL', ko: '폴란드', en: 'Poland', icon: '🇵🇱', capital: '바르샤바', capitalEn: 'Warsaw',
+      img: 'warsaw.jpg',
       x: 64.5, y: 54,
       hello: { text: 'Cześć', ko: '체시치', lang: 'pl-PL' },
-      intro: '독일 오른쪽에 있는 나라예요. 만두처럼 속을 채운 피에로기를 먹고, 아름다운 피아노곡을 지은 쇼팽이 이 나라 사람이에요. ' +
+      intro: '독일 오른쪽에 있는 나라예요. 수도 바르샤바의 옛 광장에는 알록달록한 집들이 둘러서 있어요. ' +
+             '만두처럼 속을 채운 피에로기를 먹고, 아름다운 피아노곡을 지은 쇼팽이 이 나라 사람이에요. ' +
              '땅속 깊은 소금 광산에는 소금으로 만든 방과 조각이 있어요.',
       items: [
         { emoji: '🥟', label: '피에로기',  say: '만두처럼 속을 채운 피에로기를 먹는 나라예요.' },
@@ -199,6 +217,7 @@
     },
     {
       id: 'CZ', ko: '체코', en: 'Czechia', icon: '🇨🇿', capital: '프라하', capitalEn: 'Prague',
+      img: 'prague.jpg',
       x: 58, y: 58.5,
       hello: { text: 'Ahoj', ko: '아호이', lang: 'cs-CZ' },
       intro: '수도 프라하는 오래된 성과 다리, 빨간 지붕이 가득한 동화 같은 도시예요. 광장에 있는 육백 년 된 천문시계는 ' +
@@ -211,6 +230,7 @@
     },
     {
       id: 'AT', ko: '오스트리아', en: 'Austria', icon: '🇦🇹', capital: '빈', capitalEn: 'Vienna',
+      img: 'riesenrad.jpg',
       x: 59.5, y: 67.5,
       hello: { text: 'Grüß Gott', ko: '그뤼스 곳', lang: 'de-AT' },
       intro: '알프스 산이 있는 나라예요. 어릴 때부터 피아노를 치고 곡을 지은 음악가 모차르트가 이 나라 사람이에요. ' +
@@ -223,9 +243,10 @@
     },
     {
       id: 'CH', ko: '스위스', en: 'Switzerland', icon: '🇨🇭', capital: '베른', capitalEn: 'Bern',
+      img: 'matterhorn.jpg',
       x: 43.5, y: 69,
       hello: { text: 'Grüezi', ko: '그뤼에치', lang: 'de-CH' },
-      intro: '높은 알프스 산이 나라의 절반이 넘어요. 산에서 키운 젖소의 우유로 부드러운 초콜릿을 만들고, ' +
+      intro: '높은 알프스 산이 나라의 절반이 넘어요. 뾰족한 삼각형 산 마터호른이 제일 유명해요. 산에서 키운 젖소의 우유로 부드러운 초콜릿을 만들고, ' +
              '작은 톱니바퀴를 아주 정확하게 맞추는 시계가 유명해요. 알프스 소녀 하이디 이야기가 이 나라에서 나왔어요.',
       items: [
         { emoji: '🏔️', label: '알프스', say: '높은 알프스 산이 나라의 절반이 넘는 나라예요.' },
@@ -235,6 +256,7 @@
     },
     {
       id: 'IT', ko: '이탈리아', en: 'Italy', icon: '🇮🇹', capital: '로마', capitalEn: 'Rome',
+      img: 'colosseum.jpg',
       x: 54, y: 79,
       hello: { text: 'Ciao', ko: '차오', lang: 'it-IT' },
       intro: '장화처럼 생긴 나라예요. 피자와 파스타, 젤라토가 모두 여기서 왔어요. 수도 로마에는 이천 년 된 커다란 경기장 ' +
@@ -247,6 +269,7 @@
     },
     {
       id: 'GR', ko: '그리스', en: 'Greece', icon: '🇬🇷', capital: '아테네', capitalEn: 'Athens',
+      img: 'parthenon.jpg',
       x: 77, y: 87,
       hello: { text: 'Γεια σου', ko: '야 수', lang: 'el-GR' },
       intro: '유럽 남쪽 끝, 파란 바다에 섬이 많은 나라예요. 아주 옛날 사람들이 지은 돌기둥 신전 파르테논이 아테네 언덕 위에 있어요. ' +
@@ -497,9 +520,10 @@
     } else {
       // 판이 아래에 누우니 판 높이를 먼저 떼어 두고 지도는 남는 높이에 맞춥니다.
       // 판 높이는 글 길이와 상관없이 고정입니다 — 안 그러면 나라를 누를 때마다 지도가 들썩입니다 (글이 길면 판 안에서 넘깁니다).
-      // 화면 높이의 22%(최대 210px)가 기본인데, 폰처럼 지도가 폭에 막혀 아래가 남으면 그 남는 높이를 판이 씁니다 (최대 260px).
+      // 화면 높이의 25%(최대 250px — 사진·글 넉 줄·칩 한 줄이 들어가는 높이)가 기본인데,
+      // 폰처럼 지도가 폭에 막혀 아래가 남으면 그 남는 높이를 판이 씁니다 (최대 260px).
       var leftover = availH - availW / MAP_RATIO - gap;
-      var panelH = Math.round(Math.max(Math.min(210, screenH * 0.22), Math.min(260, leftover), 120));
+      var panelH = Math.round(Math.max(Math.min(250, screenH * 0.25), Math.min(260, leftover), 120));
       el.panel.style.height = panelH + 'px';
       w = Math.min(availW, (availH - panelH - gap) * MAP_RATIO);
     }
@@ -556,8 +580,11 @@
 
   /* ---------- 이야기 판 ---------- */
 
-  function showPanel(art, title, sub, text) {
-    el.panelArt.textContent = art || '';
+  // art 는 이모지, img 는 (있으면) 사진 파일 이름 — 사진을 못 읽으면 이모지로 돌아갑니다.
+  function showPanel(art, title, sub, text, img) {
+    el.panelArt.innerHTML = '';
+    el.panelArt.appendChild(artEl(art, img));
+    el.panel.classList.toggle('with-photo', !!img);
     el.panelTitle.textContent = title || '';
     el.panelSub.textContent = sub || '';
     el.panelSub.hidden = !sub;
@@ -570,9 +597,34 @@
     el.panel.classList.add('pop');
   }
 
-  // 나라 하나를 판에 통째로 — 국기·이름·수도·이야기, 그리고 누르면 읽어 주는 볼거리 칩과 인사 칩
+  function artEl(emoji, img) {
+    if (!img) return document.createTextNode(emoji || '');
+    var im = document.createElement('img');
+    im.src = 'europe/' + img;
+    im.alt = '';
+    im.onerror = function () {
+      im.replaceWith(document.createTextNode(emoji || ''));
+      el.panel.classList.remove('with-photo');
+    };
+    im.addEventListener('click', function () { zoomPhoto(im.src); });
+    return im;
+  }
+
+  // 사진을 누르면 화면 가득 크게 — 판의 사진이 작아서요. 아무 데나 누르면 닫힙니다. (스웨덴과 같은 .photo-zoom)
+  function zoomPhoto(src) {
+    var box = document.createElement('div');
+    box.className = 'photo-zoom';
+    var big = document.createElement('img');
+    big.src = src;
+    big.alt = '';
+    box.appendChild(big);
+    box.addEventListener('click', function () { box.remove(); });
+    document.body.appendChild(box);
+  }
+
+  // 나라 하나를 판에 통째로 — 사진(없으면 국기)·이름·수도·이야기, 그리고 누르면 읽어 주는 볼거리 칩과 인사 칩
   function showCountry(c, withChips) {
-    showPanel(c.icon, c.ko + ' · ' + c.en, '수도 ' + c.capital + ' · ' + c.capitalEn, c.intro);
+    showPanel(c.icon, c.icon + ' ' + c.ko + ' · ' + c.en, '수도 ' + c.capital + ' · ' + c.capitalEn, c.intro, c.img);
     if (!withChips) return;
 
     c.items.forEach(function (it) {
