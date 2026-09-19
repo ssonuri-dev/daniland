@@ -5,8 +5,9 @@
  * 낱말 카드에 담기지 않는 내용이라 town.html · world.html 처럼 따로 만들었습니다.
  *
  * 놀이 3가지 (시작 화면에서 고릅니다)
- *   skip  : 뛰어 세기  - 몇씩(2~10, 아무 수나) 뛰며 다음 수를 고릅니다. 지나온 칸이 계속 칠해져서
- *                        5씩 뛰면 두 줄, 10씩 뛰면 한 줄로 서는 것이 눈에 보입니다.
+ *   skip  : 뛰어 세기  - 몇씩(2~20, 아무 수나) 뛰며 다음 수를 고릅니다. 판 끝(100)까지 가므로
+ *                        문제 수가 폭에 따라 다릅니다 (3씩이면 33문제, 20씩이면 5문제).
+ *                        지나온 칸이 계속 칠해져서 5씩 뛰면 두 줄, 10씩 뛰면 한 줄로 서는 것이 눈에 보입니다.
  *   where : 여기는 몇? - 깃발이 꽂힌 칸의 수를 맞힙니다. 어려운 단계에서는 줄 첫 수와
  *                        맨 윗줄만 남기고 지워서, 줄(십의 자리)과 칸(일의 자리)을 읽게 합니다.
  *   near  : 앞뒤 수    - 바로 앞·바로 뒤 수를 고릅니다. 49 → 50 처럼 줄이 바뀌는 자리가
@@ -18,7 +19,7 @@
  * ========================================================================= */
 
 (function () {
-  var ROUNDS = 10;
+  var ROUNDS = 10;                           // 여기는 몇·앞뒤 수의 문제 수 (뛰어 세기는 100 까지 — state.rounds)
   var LANG = 'ko-KR';
   var TOP = 100;
   var MAX_BOARD = 520;                       // 판 최대 폭 (css 의 .cards.hundred-cards 와 맞출 것)
@@ -26,10 +27,10 @@
   var PRAISE = ['참 잘했어요!', '멋져요!', '최고예요!', '대단해요!', '와, 다 맞혔어요!'];
 
   var ACTS = [
-    // 뛰어 세기는 2·5·10 단추 말고도 free 범위 안의 아무 수나 −/+ 로 고를 수 있습니다 (3씩, 4씩, 7씩 …).
-    // 위가 10 인 이유: 열 문제라 10씩이면 딱 100 에 닿고, 그보다 크면 판 밖으로 나갑니다.
-    { id: 'skip',  name: '뛰어 세기', icon: '👟', desc: '몇씩 뛰어서 세어요',
-      hint: '몇씩 뛸까요?', levels: [2, 5, 10], names: ['2씩', '5씩', '10씩'], def: 5, free: { min: 2, max: 10 } },
+    // 뛰어 세기는 단계 단추 없이 −/+ 로 free 범위 안의 아무 수나 고릅니다 (3씩, 7씩, 13씩 …).
+    // 몇씩이든 100 까지 가므로 문제 수는 floor(100 / 폭) 입니다 (startGame 의 state.rounds).
+    { id: 'skip',  name: '뛰어 세기', icon: '👟', desc: '몇씩 뛰어서 100까지 세어요',
+      hint: '몇씩 뛸까요?', levels: [], names: [], def: 5, free: { min: 2, max: 20 } },
     { id: 'where', name: '여기는 몇?', icon: '📍', desc: '깃발이 꽂힌 칸이 몇인지 찾아요',
       hint: '얼마나 어렵게 할까요?', levels: [0, 1], names: ['수가 다 보여요', '줄 첫 수만 보여요'], def: 0 },
     { id: 'near',  name: '앞뒤 수',   icon: '↔️', desc: '바로 앞·바로 뒤에 오는 수를 찾아요',
@@ -72,6 +73,7 @@
     act: UI.loadValue(ACT_KEY) || 'skip',
     level: 0,
     round: 0,
+    rounds: ROUNDS,      // 이번 판의 문제 수 (뛰어 세기는 폭에 따라 다릅니다)
     stars: 0,
     answer: 0,
     given: 0,            // 앞뒤 수에서 문제로 보여 준 수
@@ -217,7 +219,7 @@
       buttons.push({ value: value, el: b });
     });
 
-    // 아무 수나 고르는 −/+ (뛰어 세기). 단추에 있는 수(2·5·10)를 고르면 그 단추도 같이 켜집니다.
+    // 아무 수나 고르는 −/+ (뛰어 세기).
     var valEl = null;
     if (a.free) {
       var row = document.createElement('div');
@@ -332,13 +334,14 @@
 
   function startGame() {
     state.round = 0;
+    state.rounds = (state.act === 'skip') ? Math.floor(TOP / state.level) : ROUNDS;
     state.stars = 0;
     updateScore();
     nextRound();
   }
 
   function nextRound() {
-    if (state.round >= ROUNDS) return finish();
+    if (state.round >= state.rounds) return finish();
 
     if (window.TTS) TTS.cancel();
     el.cards.innerHTML = '';
@@ -350,13 +353,13 @@
     else makeNear();
 
     drawBoard();
-    el.bar.style.width = Math.round((state.round / ROUNDS) * 100) + '%';
+    el.bar.style.width = Math.round((state.round / state.rounds) * 100) + '%';
     setTimeout(speakPrompt, 400);
   }
 
-  function step() { return ' (' + (state.round + 1) + '/' + ROUNDS + ')'; }
+  function step() { return ' (' + (state.round + 1) + '/' + state.rounds + ')'; }
 
-  // 👟 뛰어 세기 — 2~10 중 고른 수씩. 열 번이면 10씩일 때 딱 100 에 닿습니다.
+  // 👟 뛰어 세기 — 2~20 중 고른 수씩, 판 끝(100 을 넘지 않는 마지막 수)까지.
   function makeSkip() {
     var by = state.level;
     var target = by * (state.round + 1);
@@ -367,10 +370,9 @@
       state.prompt = by + '씩 뛰어 세요. 처음은 몇일까요?';
       el.questLabel.textContent = by + '씩 뛰어 세기 — 처음은?' + step();
     } else {
-      var said = [];
-      for (var k = Math.max(by, target - by * 3); k < target; k += by) said.push(k);
-      state.prompt = said.join(', ') + ' 다음은?';
-      el.questLabel.textContent = by + '씩 뛰어 세기 — 다음은?' + step();
+      // 바로 앞 수 하나만 말합니다 — 앞의 셋을 다 읽어 주면 길어서 아이가 기다리다 지칩니다.
+      state.prompt = (target - by) + ' 다음은 무슨 숫자일까요?';
+      el.questLabel.textContent = by + '씩 뛰어 세기 — ' + (target - by) + ' 다음은?' + step();
     }
 
     // 한 칸 차이(찍기)와 한 번 더 뛴 수를 보기로 섞습니다.
@@ -475,7 +477,7 @@
       hit.classList.add('on', 'pop');
       hit.textContent = state.answer;
 
-      el.bar.style.width = Math.round(((state.round + 1) / ROUNDS) * 100) + '%';
+      el.bar.style.width = Math.round(((state.round + 1) / state.rounds) * 100) + '%';
       speak(String(state.answer));
 
       setTimeout(function () {
@@ -497,14 +499,17 @@
 
   function finish() {
     el.bar.style.width = '100%';
-    UI.saveBest('daniland.best.hundred.' + state.act, state.stars, ROUNDS);
-    UI.saveBest(BEST_KEY, state.stars, ROUNDS);
+    UI.saveBest('daniland.best.hundred.' + state.act, state.stars, state.rounds);
+    UI.saveBest(BEST_KEY, state.stars, state.rounds);
 
-    el.endStars.textContent = UI.starLine(state.stars, ROUNDS);
-    el.endTitle.textContent = (state.stars === ROUNDS)
+    // 뛰어 세기는 문제가 쉰 개까지 되므로 별을 줄줄이 늘어놓지 않고 수로 보여 줍니다.
+    el.endStars.textContent = (state.rounds <= 12)
+      ? UI.starLine(state.stars, state.rounds)
+      : '⭐ ' + state.stars + ' / ' + state.rounds;
+    el.endTitle.textContent = (state.stars === state.rounds)
       ? PRAISE[Math.floor(Math.random() * PRAISE.length)]
       : '잘했어요!';
-    el.endText.textContent = ROUNDS + '개 중에 ' + state.stars + '개를 한 번에 맞혔어요!';
+    el.endText.textContent = state.rounds + '개 중에 ' + state.stars + '개를 한 번에 맞혔어요!';
     el.endOverlay.hidden = false;
 
     if (window.SFX) SFX.finish();
