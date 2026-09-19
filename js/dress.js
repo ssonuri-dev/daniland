@@ -4,7 +4,8 @@
  * js/outfits.js 의 배경·옷·소품을 무대 위에 겹쳐서 보여 줍니다.
  * 점수 없는 자유 놀이라 정답도, 최고 기록도 없습니다 — 그림 그리기(draw.html)와 같은 성격입니다.
  *
- * 옷과 배경은 하나만 고르고(같은 자리를 바꿔 끼움), 소품은 여러 개를 동시에 걸칠 수 있습니다.
+ * 옷·배경·머리는 하나만 고르고(같은 자리를 바꿔 끼움), 소품은 여러 개를 동시에 걸칠 수 있습니다.
+ * 머리는 안 골라도 됩니다 — 옷 그림의 다니가 원래 짧은 머리라 그게 '기본' 입니다.
  *
  * ★ 이모지 대체 그림을 쓰지 않습니다 — 전부 dress/ 폴더의 그림 파일로만 그립니다 (outfits.js 머리 주석의
  *   파일 자리 참고). 그림이 아직 없으면 이름 글자가 든 빈 칸(artBox 의 .dress-missing)으로 보이고,
@@ -12,7 +13,8 @@
  * ========================================================================= */
 
 (function () {
-  var DATA = window.OUTFITS || { scenes: [], costumes: [], accessories: [] };
+  var DATA = window.OUTFITS || {};
+  ['scenes', 'costumes', 'hairs', 'accessories'].forEach(function (k) { if (!DATA[k]) DATA[k] = []; });
 
   var el = {
     scene: document.getElementById('scene'),
@@ -27,7 +29,8 @@
     tab: 'scene',
     sceneId: (DATA.scenes[0] || {}).id,
     costumeId: (DATA.costumes[0] || {}).id,
-    acc: {}   // 소품 id → true
+    hairId: null,   // null 이면 옷 그림의 짧은 머리 그대로
+    acc: {}         // 소품 id → true
   };
 
   bindGo(el.backBtn, Catalog.backHref('dress.html'));
@@ -37,6 +40,7 @@
     if (window.SFX) SFX.tap();
     state.sceneId = pickRandom(DATA.scenes).id;
     state.costumeId = pickRandom(DATA.costumes).id;
+    state.hairId = Math.random() < 0.25 || !DATA.hairs.length ? null : pickRandom(DATA.hairs).id;
     state.acc = {};
     randomAccessories();
     render();
@@ -48,6 +52,7 @@
     if (window.SFX) SFX.tap();
     state.sceneId = (DATA.scenes[0] || {}).id;
     state.costumeId = (DATA.costumes[0] || {}).id;
+    state.hairId = null;
     state.acc = {};
     render();
     renderChoices();
@@ -79,11 +84,9 @@
 
   /* ---------- 그림 (배경 · 옷 · 소품 공용) ---------- */
 
-  // kind: 'bg' | 'costume' | 'acc'
+  // kind: 'bg' | 'costume' | 'hair' | 'acc'  — 배경만 jpg, 나머지는 투명 png
   function artPath(kind, id) {
-    if (kind === 'bg') return 'dress/bg-' + id + '.jpg';
-    if (kind === 'costume') return 'dress/costume-' + id + '.png';
-    return 'dress/acc-' + id + '.png';
+    return 'dress/' + kind + '-' + id + (kind === 'bg' ? '.jpg' : '.png');
   }
 
   // 무대에 놓을 그림 한 칸 — 파일이 없으면 이름이 든 빈 칸을 대신 보여 줍니다
@@ -137,47 +140,66 @@
       el.scene.appendChild(actor);
     }
 
+    var hair = findById(DATA.hairs, state.hairId);
+    if (hair) el.scene.appendChild(propBox('hair', hair));
+
     DATA.accessories.forEach(function (a) {
-      if (!state.acc[a.id]) return;
-      var prop = artBox('acc', a.id, a.name);
-      prop.style.setProperty('--w', a.size || 16);
-      prop.style.left = a.x + '%';
-      prop.style.top = a.y + '%';
-      el.scene.appendChild(prop);
+      if (state.acc[a.id]) el.scene.appendChild(propBox('acc', a));
     });
+  }
+
+  // 머리·소품처럼 무대 위 한 자리(x·y·size)에 얹는 그림
+  function propBox(kind, item) {
+    var prop = artBox(kind, item.id, item.name);
+    prop.style.setProperty('--w', item.size || 16);
+    prop.style.left = item.x + '%';
+    prop.style.top = item.y + '%';
+    return prop;
   }
 
   /* ---------- 고르는 칸 ---------- */
 
   function renderChoices() {
     el.choices.innerHTML = '';
-    var kind = state.tab === 'scene' ? 'bg' : state.tab === 'costume' ? 'costume' : 'acc';
-    var list = state.tab === 'scene' ? DATA.scenes : state.tab === 'costume' ? DATA.costumes : DATA.accessories;
-    var multi = state.tab === 'accessory';
+    var tab = state.tab;
+    var kind = { scene: 'bg', costume: 'costume', hair: 'hair', accessory: 'acc' }[tab];
+    var list = { scene: DATA.scenes, costume: DATA.costumes, hair: DATA.hairs, accessory: DATA.accessories }[tab];
+    var multi = tab === 'accessory';
+
+    // 머리는 '기본'(옷 그림의 짧은 머리)도 고를 수 있게 맨 앞에 한 칸
+    if (tab === 'hair') el.choices.appendChild(choiceBtn(null, '기본', state.hairId === null, function () { state.hairId = null; }));
 
     list.forEach(function (item) {
       var on = multi ? !!state.acc[item.id]
-                     : (state.tab === 'scene' ? state.sceneId === item.id : state.costumeId === item.id);
-      var b = document.createElement('button');
-      b.className = 'book-choice dress-choice' + (on ? ' on' : '');
-      b.appendChild(thumbEl(kind, item.id));
-      var word = document.createElement('span');
-      word.className = 'word';
-      word.textContent = item.name;
-      b.appendChild(word);
-
-      b.addEventListener('click', function () {
-        unlock();
-        if (window.SFX) SFX.tap();
+             : tab === 'scene' ? state.sceneId === item.id
+             : tab === 'hair' ? state.hairId === item.id
+             : state.costumeId === item.id;
+      el.choices.appendChild(choiceBtn(thumbEl(kind, item.id), item.name, on, function () {
         if (multi) state.acc[item.id] = !state.acc[item.id];
-        else if (state.tab === 'scene') state.sceneId = item.id;
+        else if (tab === 'scene') state.sceneId = item.id;
+        else if (tab === 'hair') state.hairId = item.id;
         else state.costumeId = item.id;
-        render();
-        renderChoices();
-        speak(item.name);
-      });
-      el.choices.appendChild(b);
+      }));
     });
+  }
+
+  function choiceBtn(thumb, name, on, apply) {
+    var b = document.createElement('button');
+    b.className = 'book-choice dress-choice' + (on ? ' on' : '');
+    if (thumb) b.appendChild(thumb);
+    var word = document.createElement('span');
+    word.className = 'word';
+    word.textContent = name;
+    b.appendChild(word);
+    b.addEventListener('click', function () {
+      unlock();
+      if (window.SFX) SFX.tap();
+      apply();
+      render();
+      renderChoices();
+      speak(name);
+    });
+    return b;
   }
 
   function speak(name) {

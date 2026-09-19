@@ -3343,6 +3343,7 @@ button {
 
 .dress-tabs {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 8px;
   margin: 14px 0 10px;
@@ -3360,6 +3361,7 @@ button {
 .dress-choice {
   flex: none;
   width: 92px;
+  justify-content: center;   /* 미리보기가 없는 칸('기본')도 글자가 가운데 오게 */
 }
 
 .dress-thumb {
