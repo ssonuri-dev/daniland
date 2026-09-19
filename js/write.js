@@ -7,8 +7,9 @@
  * (자음 · 모음 · 숫자 · 낱말 · 알파벳 대문자 · 소문자).
  * 어느 묶음이든 획을 하나씩 안내합니다 (①번 획부터 차례대로).
  * 낱말은 글자를 자모로 풀어 그 획들을 이어 붙입니다 (아래 syllableStrokes).
- * 알파벳은 영어 과목 카드(write.html?lang=en)에서도 들어오는데, 그때는 ← 가 영어로 돌아가고
- * 기록도 daniland.best.write.en 에 따로 남습니다 (한글 카드의 ⭐ 와 섞이지 않게).
+ * 알파벳은 영어 과목 카드(write.html?lang=en)에서 들어옵니다 — 그때는 대문자·소문자 묶음만 보이고
+ * (한글 카드에서는 자음·모음·숫자·낱말만), ← 가 영어로 돌아가며 기록도 daniland.best.write.en 에
+ * 따로 남습니다 (한글 카드의 ⭐ 와 섞이지 않게). 화면 하나가 두 카드를 섬기는 셈입니다.
  *
  * 잘 썼는지는 '얼마나 덮었나' 로 봅니다. 눈에 안 보이는 캔버스 두 장에
  *   ① 안내 획   ② 아이가 그은 획
@@ -492,7 +493,13 @@
   };
 
   if (!findSet(state.set)) state.set = 'cons';
-  if (FROM_EN && !findSet(state.set).en) state.set = 'upper';
+  // 카드마다 자기 묶음만 보입니다 — 영어 카드는 대문자·소문자, 한글 카드는 자음·모음·숫자·낱말.
+  // 마지막에 고른 묶음이 다른 쪽 것이면 그 쪽 첫 묶음으로.
+  if (!!findSet(state.set).en !== FROM_EN) state.set = FROM_EN ? 'upper' : 'cons';
+  if (FROM_EN) {
+    document.title = '알파벳 쓰기 · 다니랜드 🔡';
+    document.querySelector('#startOverlay h2').textContent = '🔡 알파벳 쓰기';
+  }
   if (!window.TTS || !TTS.supported) { el.voiceBtn.hidden = true; el.soundBtn.hidden = true; }
 
   buildSetRow();
@@ -541,6 +548,7 @@
     el.setRow.innerHTML = '';
 
     SETS.forEach(function (s) {
+      if (!!s.en !== FROM_EN) return;     // 다른 카드의 묶음은 안 보입니다
       var best = UI.readBest('daniland.best.write.' + s.id);
       var b = document.createElement('button');
       b.className = 'mode-btn' + (s.id === state.set ? ' on' : '');
