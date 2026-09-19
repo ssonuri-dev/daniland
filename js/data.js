@@ -47,7 +47,7 @@ window.SUBJECTS = [
     groups: [
       { name: '단어 공부', icon: '📖', desc: '그림을 보고 낱말을 익혀요' },
       { name: '책 읽기',   icon: '📚', desc: '그림책을 읽고 만들어요' },
-      { name: '문장·놀이', icon: '💬', desc: '배운 문장으로 놀아요' }
+      { name: '문장·놀이', icon: '🎮', desc: '배운 문장으로 놀아요' }
     ] },
   { name: '수학', icon: '🔢', desc: '세고 더해요',
     groups: [
