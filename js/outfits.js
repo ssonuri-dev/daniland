@@ -50,12 +50,12 @@ window.OUTFITS = {
   ],
 
   hairs: [
-    { id: 'long',     name: '긴 생머리', x:  50.1, y:  55.3, size:  60.4 },
-    { id: 'wave',     name: '웨이브',   x:  49.9, y:  56.3, size:  61.7 },
-    { id: 'twin',     name: '양갈래',   x:  50.2, y:  56.9, size:  55.8 },
-    { id: 'pony',     name: '포니테일',  x:  54.0, y:  47.1, size:  45.9 },
-    { id: 'braid',    name: '땋은 머리', x:  49.9, y:  52.2, size:  57.7 },
-    { id: 'bun',      name: '똥머리',   x:  50.1, y:  41.4, size:  47.0 }
+    { id: 'long',     name: '긴 생머리', x:  50.2, y:  49.9, size:  55.3 },
+    { id: 'wave',     name: '웨이브',   x:  49.7, y:  50.3, size:  56.6 },
+    { id: 'twin',     name: '양갈래',   x:  50.1, y:  49.0, size:  51.1 },
+    { id: 'pony',     name: '포니테일',  x:  54.0, y:  42.8, size:  42.1 },
+    { id: 'braid',    name: '땋은 머리', x:  50.1, y:  49.2, size:  52.8 },
+    { id: 'bun',      name: '똥머리',   x:  49.9, y:  39.5, size:  43.1 }
   ],
 
   accessories: [
