@@ -18,7 +18,8 @@
  *   소품 : dress/acc-<accessories 의 id>.png  — 투명 배경, 정사각형(1:1) 권장
  *
  *  scenes      : 배경 목록 — 하나를 고릅니다 { id, name }
- *  costumes    : 옷(캐릭터 전체 모습) 목록 — 하나를 고릅니다 { id, name }
+ *  costumes    : 옷(캐릭터 전체 모습) 목록 — 하나를 고릅니다 { id, name, noHair }
+ *                noHair: true 면 그 옷을 입은 동안 머리 고르기를 숨깁니다 (모자가 든 옷 — 머리 그림이 모자 위에 덮여서)
  *                사람 캐릭터입니다 — 마스코트 강아지(dani.png) 아님. 모든 옷 그림의 다니는 같은 얼굴·같은 자세·
  *                같은 짧은 머리여야 머리·소품이 제자리에 얹힙니다.
  *  hairs       : 머리 목록 — 하나를 고르거나 안 고릅니다 { id, name, x, y, size }
@@ -43,27 +44,28 @@ window.OUTFITS = {
     { id: 'hero',     name: '슈퍼히어로' },
     { id: 'astro',    name: '우주비행사' },
     { id: 'doctor',   name: '의사' },
-    { id: 'witch',    name: '마녀' },
-    { id: 'dancer',   name: '무용수' }
+    { id: 'witch',    name: '마녀', noHair: true },   // 모자를 쓴 옷 — 머리 그림이 모자를 덮어서 머리 고르기를 숨깁니다
+    { id: 'dancer',   name: '무용수' },
+    { id: 'basic',    name: '평상복' }
   ],
 
   hairs: [
-    { id: 'long',   name: '긴 생머리', x: 50, y: 22, size: 34 },
-    { id: 'wave',   name: '웨이브',   x: 50, y: 22, size: 36 },
-    { id: 'twin',   name: '양갈래',   x: 50, y: 22, size: 36 },
-    { id: 'pony',   name: '포니테일', x: 50, y: 20, size: 34 },
-    { id: 'braid',  name: '땋은 머리', x: 50, y: 22, size: 34 },
-    { id: 'bun',    name: '똥머리',   x: 50, y: 18, size: 32 }
+    { id: 'long',     name: '긴 생머리', x:  50.1, y:  55.3, size:  60.4 },
+    { id: 'wave',     name: '웨이브',   x:  49.9, y:  56.3, size:  61.7 },
+    { id: 'twin',     name: '양갈래',   x:  50.2, y:  56.9, size:  55.8 },
+    { id: 'pony',     name: '포니테일',  x:  54.0, y:  47.1, size:  45.9 },
+    { id: 'braid',    name: '땋은 머리', x:  49.9, y:  52.2, size:  57.7 },
+    { id: 'bun',      name: '똥머리',   x:  50.1, y:  41.4, size:  47.0 }
   ],
 
   accessories: [
-    { id: 'crown',    name: '왕관',   x: 50, y: 8,  size: 20 },
-    { id: 'bow',      name: '리본',   x: 28, y: 13, size: 15 },
-    { id: 'glasses',  name: '선글라스', x: 50, y: 32, size: 18 },
-    { id: 'necklace', name: '목걸이', x: 50, y: 46, size: 14 },
-    { id: 'bag',      name: '가방',   x: 76, y: 64, size: 18 },
-    { id: 'wand',     name: '요술봉', x: 20, y: 58, size: 16 },
-    { id: 'flower',   name: '꽃다발', x: 24, y: 70, size: 16 },
-    { id: 'balloon',  name: '풍선',   x: 84, y: 36, size: 18 }
+    { id: 'crown',    name: '왕관',    x:  50.0, y:  30.5, size:  19.5 },
+    { id: 'bow',      name: '리본',    x:  61.3, y:  35.8, size:  10.7 },
+    { id: 'glasses',  name: '선글라스',  x:  50.0, y:  48.6, size:  25.8 },
+    { id: 'necklace', name: '목걸이',   x:  50.0, y:  58.9, size:  14.5 },
+    { id: 'bag',      name: '가방',    x:  32.2, y:  75.5, size:  15.4 },
+    { id: 'wand',     name: '요술봉',   x:  73.0, y:  64.7, size:  29.5 },
+    { id: 'flower',   name: '꽃다발',   x:  32.8, y:  67.7, size:  17.4 },
+    { id: 'balloon',  name: '풍선',    x:  67.8, y:  63.3, size:  24.5 }
   ]
 };

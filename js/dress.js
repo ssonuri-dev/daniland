@@ -136,11 +136,19 @@
 
     if (costume) {
       var actor = artBox('costume', costume.id, costume.name);
-      actor.style.setProperty('--w', 58);
+      actor.style.setProperty('--w', 66);   // 무대 너비의 66% — 머리·소품 좌표(outfits.js)가 이 값 기준이라 바꾸면 같이 다시 재야 합니다
       el.scene.appendChild(actor);
     }
 
-    var hair = findById(DATA.hairs, state.hairId);
+    // 모자 든 옷(noHair)은 머리 그림이 모자를 덮어 버려서 머리 층을 빼고 탭도 숨깁니다
+    var noHair = !!(costume && costume.noHair);
+    var hairTab = el.tabs.querySelector('[data-tab="hair"]');
+    hairTab.hidden = noHair;
+    if (noHair && state.tab === 'hair') {
+      state.tab = 'costume';
+      Array.prototype.forEach.call(el.tabs.children, function (b) { b.classList.toggle('on', b.dataset.tab === 'costume'); });
+    }
+    var hair = noHair ? null : findById(DATA.hairs, state.hairId);
     if (hair) el.scene.appendChild(propBox('hair', hair));
 
     DATA.accessories.forEach(function (a) {

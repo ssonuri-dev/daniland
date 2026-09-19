@@ -3282,14 +3282,15 @@ button {
 
 /* 화면 높이가 낮아도(가로로 눕힌 폰 등) 세로 스크롤이 안 생기게 화면 높이 기준으로도 줄어듭니다 */
 .dress-stage {
-  width: min(440px, 62vh, 92vw);
+  width: min(400px, 40vh, 92vw);
   margin: 0 auto;
 }
 
+/* 세로 2:3 — 배경 그림(dress/bg-*.jpg)과 같은 비율. 서 있는 다니라 정사각형보다 세로가 맞습니다. */
 .dress-scene {
   position: relative;
   width: 100%;
-  aspect-ratio: 1;
+  aspect-ratio: 2 / 3;
   overflow: hidden;
   border-radius: 12px;
   background: #f3ece2;
@@ -3346,8 +3347,10 @@ button {
   flex-wrap: wrap;
   justify-content: center;
   gap: 8px;
-  margin: 14px 0 10px;
+  margin: 12px 0 8px;
 }
+.dress-tabs .chip { padding: 8px 12px; }   /* 넷이 폰 한 줄(358px)에 들어가게 */
+.dress-tabs .chip[hidden] { display: none; }
 
 .dress-choices {
   display: flex;
@@ -3360,7 +3363,7 @@ button {
 
 .dress-choice {
   flex: none;
-  width: 92px;
+  width: 84px;
   justify-content: center;   /* 미리보기가 없는 칸('기본')도 글자가 가운데 오게 */
 }
 
@@ -3369,7 +3372,7 @@ button {
   aspect-ratio: 1;
   border-radius: 10px;
   overflow: hidden;
-  background: repeating-linear-gradient(45deg, #f3ece2, #f3ece2 8px, #e9ded0 8px, #e9ded0 16px);
+  background: #fbf6f0;
 }
-.dress-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.dress-thumb.missing img { display: none; }
+.dress-thumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.dress-thumb.missing { background: repeating-linear-gradient(45deg, #f3ece2, #f3ece2 8px, #e9ded0 8px, #e9ded0 16px); }
