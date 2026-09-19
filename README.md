@@ -397,7 +397,7 @@ index.html            🔤 영어   🔢 수학   🇰🇷 한글   🌍 세계 
 
 ---
 
-## 💬 탈것 타기
+## 🚏 탈것 타기
 
 홈에서 **🔤 영어** 안에 있습니다. 탈것 낱말을 배운 뒤 이어진 수업 — **탈것마다 '타다' 의 전치사가 다릅니다.**
 
@@ -416,7 +416,7 @@ on 이면 지붕 위에 올라타고, in 이면 안에 들어가 머리만 내�
 
 | 놀이 | 하는 법 | 연습되는 문장 |
 |---|---|---|
-| 💬 **타기** | `Get ___ the bus.` 를 보고 **on / in** 두 장 중 고릅니다 (8문제) | Get on the bus. / Get in the car. |
+| 🚏 **타기** | `Get ___ the bus.` 를 보고 **on / in** 두 장 중 고릅니다 (8문제) | Get on the bus. / Get in the car. |
 | 💬 **문장 고르기** | 탈것이 오면 문장 넉 장 중 맞는 것을 고릅니다 — `Get on the bus.` `Get in the bus.` `Get on the car.` `Get in the car.` (8문제) | 같은 문장, 이번엔 통째로 |
 | 🔁 **타고 내리기** | on / in 으로 타고, 다 오면 **off / out of** 로 내립니다 (4대 × 2 = 8문제) | Get off the bus. / Get out of the car. |
 

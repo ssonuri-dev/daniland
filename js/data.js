@@ -769,7 +769,7 @@ window.PAGES = [
     subject: '영어',
     group: '문장·놀이',
     title: '탈것 타기',
-    icon: '💬',
+    icon: '🚏',
     meta: 'get on 일까 get in 일까',
     href: 'ride.html',
     bestKey: 'daniland.best.ride'
