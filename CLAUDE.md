@@ -89,6 +89,8 @@ Jua 는 굵기가 400 하나뿐이라 제목 규칙에서 `font-weight: 400` 으
 카드가 바로 나옵니다. **게임 페이지 주소는 안 바뀌고** 목록 주소만 `subject.html?name=영어&group=…` 가 됩니다.
 게임 화면의 ← 는 `Catalog.href(subject, group)` 또는 `Catalog.backHref('make.html')` 로 **묶음 페이지**로 돌아갑니다 —
 새 페이지를 만들면 이 둘 중 하나를 쓰세요. `numbers.html` 은 놀이(`?act=`)마다 묶음이 달라 `href` 를 통째로 맞춥니다.
+카드에 `top: true` 를 적으면 묶음에 안 들어가고 **묶음 카드 옆**에 바로 놓입니다 (영어의 '알파벳 쓰기' — 낱말도 문장도
+아니라 어느 묶음에도 안 어울림). `catalog.js` 가 `subject.top` 으로 모으고 `subject.js` 가 묶음 카드 뒤에 붙입니다.
 '책 읽기' 묶음은 카드가 '영어 그림책' 한 장이 아니라 **책마다 한 장**입니다 — `PAGES` 의 그 카드에 `books: true` 가 있어
 `catalog.js` 가 `BOOKS` 로 펼칩니다(`book.html?book=<id>`). 그래서 `index.html`·`subject.html` 도 `books.js` 를 읽습니다.
 

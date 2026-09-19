@@ -497,8 +497,8 @@
   // 마지막에 고른 묶음이 다른 쪽 것이면 그 쪽 첫 묶음으로.
   if (!!findSet(state.set).en !== FROM_EN) state.set = FROM_EN ? 'upper' : 'cons';
   if (FROM_EN) {
-    document.title = '알파벳 쓰기 · 다니랜드 🔡';
-    document.querySelector('#startOverlay h2').textContent = '🔡 알파벳 쓰기';
+    document.title = '알파벳 쓰기 · 다니랜드 ✏️';
+    document.querySelector('#startOverlay h2').textContent = '✏️ 알파벳 쓰기';
   }
   if (!window.TTS || !TTS.supported) { el.voiceBtn.hidden = true; el.soundBtn.hidden = true; }
 

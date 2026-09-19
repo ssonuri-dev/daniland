@@ -58,6 +58,7 @@
       out.push({
         subject: page.subject || '기타',
         group: page.group || '',
+        top: !!page.top,          // 묶음 안이 아니라 묶음 카드 옆에 (subject.js)
         icon: page.icon || '🎲',
         title: page.title,
         meta: page.meta || '',
@@ -94,6 +95,8 @@
       list.forEach(function (s) {
         s.cards = cards.filter(function (card) { return card.subject === s.name; });
         s.groups = groupsOf(s, s.cards);
+        // top 카드는 묶음에 안 들어가고 과목 페이지에서 묶음 카드 옆에 놓입니다 (묶음이 없는 과목은 어차피 바로 나옵니다)
+        s.top = s.groups.length ? s.cards.filter(function (card) { return card.top; }) : [];
       });
 
       return list.filter(function (s) { return s.cards.length > 0; });
@@ -143,13 +146,16 @@
 
   /* 과목의 카드를 SUBJECTS[].groups 순서대로 묶습니다. groups 가 없는 과목은 빈 배열 —
    * 과목 페이지가 카드를 바로 보여 줍니다. groups 에 없는 이름을 쓴 카드는 맨 뒤에 묶음이
-   * 새로 생기고, group 을 안 적은 카드는 '그 밖에' 로 갑니다 (과목이 없을 때와 같은 규칙). */
+   * 새로 생기고, group 을 안 적은 카드는 '그 밖에' 로 갑니다 (과목이 없을 때와 같은 규칙).
+   * top 카드는 어느 묶음에도 안 들어갑니다 (subjects() 가 따로 s.top 에 모읍니다). */
   function groupsOf(subject, cards) {
     var defs = null;
     (window.SUBJECTS || []).forEach(function (s) {
       if (s.name === subject.name && s.groups && s.groups.length) defs = s.groups;
     });
     if (!defs) return [];
+
+    cards = cards.filter(function (card) { return !card.top; });
 
     var list = [];
     var seen = {};

@@ -55,8 +55,9 @@
     el.desc.textContent = subject.desc;
 
     if (subject.groups.length) {
-      // 묶음 카드 — 누르면 그 묶음의 카드가 나옵니다
+      // 묶음 카드 — 누르면 그 묶음의 카드가 나옵니다. 그 옆에 top 카드(어느 묶음에도 안 넣은 것)가 바로 놓입니다.
       subject.groups.forEach(function (g) { grid.appendChild(makeGroupCard(g)); });
+      subject.top.forEach(function (card) { grid.appendChild(makeCard(card)); });
     } else {
       subject.cards.forEach(function (card) { grid.appendChild(makeCard(card)); });
     }

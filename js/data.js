@@ -740,6 +740,8 @@ window.LESSONS = [
  *  bestUnit: 최고 기록을 '3/5' 가 아니라 '3단계' 처럼 보여 주고 싶을 때의 단위
  *  books   : true 면 이 카드 대신 js/books.js 의 책마다 카드가 한 장씩 나옵니다
  *            (표지 이모지 · 영어 제목 · 우리말 제목, 누르면 book.html?book=<id>). 영어 그림책 카드가 씁니다.
+ *  top     : true 면 묶음(group) 안이 아니라 과목 페이지의 **묶음 카드 옆**에 바로 놓입니다
+ *            (groups 가 있는 과목에서만 뜻이 있습니다). 어느 묶음에도 안 어울리는 카드에 씁니다 — 알파벳 쓰기.
  * ========================================================================= */
 
 window.PAGES = [
@@ -820,13 +822,14 @@ window.PAGES = [
     bestKey: 'daniland.best.write'
   },
 
-  // 같은 글자 쓰기 화면을 영어 과목에서도 엽니다 — ?lang=en 이면 알파벳 묶음이 먼저 골라지고
+  // 같은 글자 쓰기 화면을 영어 과목에서도 엽니다 — ?lang=en 이면 알파벳 묶음만 보이고
   // ← 가 영어로 돌아갑니다. 위 한글 카드보다 뒤에 있어야 합니다 (Catalog.backHref 가 앞에서부터 찾음).
+  // 어느 묶음에도 안 어울려서(낱말도 문장도 아님) 묶음 카드 옆에 바로 둡니다 (top).
   {
     subject: '영어',
-    group: '단어 공부',
+    top: true,
     title: '알파벳 쓰기',
-    icon: '🔡',
+    icon: '✏️',
     meta: 'A 부터 z 까지 획순대로 따라 써요',
     href: 'write.html?lang=en',
     bestKey: 'daniland.best.write.en'
