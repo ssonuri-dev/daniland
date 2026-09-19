@@ -56,6 +56,7 @@ ES5 IIFE 로 감싸 `window` 에 전역을 붙이는 방식입니다. `import`/`
 |---|---|---|
 | `SUBJECTS` `LESSONS` `PAGES` | `js/data.js` | 콘텐츠 전부 (평소 손댈 파일은 여기뿐) |
 | `BOOKS` | `js/books.js` | 영어 그림책 — 책 한 권이 객체 하나, 그림은 `books/<id>/` (전집처럼 계속 늘어납니다). 목록 페이지도 읽습니다(책마다 카드) |
+| `RIDDLES` | `js/riddles.js` | 수수께끼·넌센스 문제 — 문제 하나가 객체 하나 (계속 늘어납니다). `riddle.html` 만 읽습니다 |
 | `Catalog` | `js/catalog.js` | LESSONS+PAGES 를 과목별로 묶고 최고 기록을 붙임 |
 | `UI` | `js/ui.js` | 섞기·이모지 개수 세기·URL 파라미터·폭죽·localStorage |
 | `TTS` | `js/tts.js` | 브라우저 speechSynthesis 래퍼 (목소리 순위 매기기 포함) |
@@ -115,6 +116,7 @@ index.html            과목 카드            home.js
       ├ book.html                           book.js     (영어 그림책 — js/books.js 의 책을 book.jpg 위에, 읽기·만들기)
       ├ sweden.html                         sweden.js   (스웨덴 한 나라 — 이야기 카드 18장·퀴즈, 그림 파일 없음)
       ├ europe.html                         europe.js   (유럽 — 나라 모양 svg 지도(europe-map.js) 위 국기 핀 18개, 놀이 4종)
+      ├ riddle.html                         riddle.js   (수수께끼·넌센스 — js/riddles.js 의 문제를 열 개씩, 보기 넉 장)
       └ draw.html                           draw.js     (독립 — 다른 js 를 전혀 안 씀)
 ```
 
@@ -203,6 +205,11 @@ index.html            과목 카드            home.js
   (CC BY / CC BY-SA / CC0)이고 `europe/CREDITS.md` 가 출처 표, 바꾸면 그 표도 같이.** 고를 때 피한 것: 조각상(덴마크 인어공주 동상은
   조각이라 뉘하운으로), 밤의 에펠탑 조명(조명이 저작물), 사람 얼굴. 가로 화면(`.wide`)에서는 판이 세로로 쌓여 사진이 위에 280px,
   세로 화면에서는 사진이 왼쪽 160px(폰 112px)이고 판 높이는 화면의 25%(최대 250px) — 사진·글 넉 줄·칩 한 줄이 들어가는 높이입니다.
+  **수수께끼(`riddle.html`)가 열한 번째**입니다 (2026-09-19) — 놀이 과목. 스웨덴 퀴즈(`askQuiz`)의 얼개를 그대로 떼어 온 것이고
+  (위 판 `.fact-panel` 재사용, 보기 넉 장, 첫 보기가 정답), 다른 점은 **문제가 `js/riddles.js` 로 따로 있다**는 것입니다 — 그림책처럼
+  부모가 계속 더할 것이라서요. 수수께끼와 넌센스를 나누지 않고 한 통에 섞습니다(정한 것). 풀어 본 문제는 `daniland.riddle.done` 에
+  문제 글(`q`)로 기억해 두고 **안 풀어 본 것부터** 냅니다 — 문제에 id 가 없으니 `q` 를 고치면 그 문제는 새 문제가 됩니다 (의도된 것).
+  문제는 소리로도 읽어 주므로 글로만 통하는 문제(글자 모양 말장난 등)는 안 됩니다. `why` 는 맞혔을 때 읽는 풀이라 넌센스에는 꼭 필요합니다.
 
   ⚠️ **세계 지도는 태블릿 전용입니다 — 이것은 버그가 아니라 정한 것입니다.** (2026-09-06)
   지리적으로 정확한 지도에서 한국은 가로의 4.5% 라서 폰(390px)에서는 16×18px 이 됩니다
@@ -284,6 +291,8 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.sweden` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.europe.<act>` | 유럽 놀이별(찾아가기·무엇이 있을까·국기 찾기) 최고 별 (구경하기는 점수가 없습니다) |
 | `daniland.best.europe` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
+| `daniland.best.riddle` | 수수께끼 최고 별 (카드의 ⭐ 는 이것을 읽습니다) |
+| `daniland.riddle.done` | 수수께끼에서 맞혀 본 문제의 `q` 목록 — 안 풀어 본 문제부터 내는 데 씁니다 |
 | `daniland.best.balloon.level` | 풍선 터뜨리기에서 도달한 최고 단계 |
 | `daniland.book.<id>.made` | 영어 그림책에서 아이가 만든 책 — `{ 빈칸이름: word }` (책마다 마지막 것 하나) |
 | `daniland.book.<id>.read` | 그 책을 끝까지 읽은 적 있음 (책장의 📖) |

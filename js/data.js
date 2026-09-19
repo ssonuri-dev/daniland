@@ -971,5 +971,14 @@ window.PAGES = [
     href: 'dodge.html',
     bestKey: 'daniland.best.dodge.m',   // 제일 멀리 간 거리 (순위표 1등)
     bestUnit: 'm'
+  },
+
+  {
+    subject: '놀이',
+    title: '수수께끼',
+    icon: '🤔',
+    meta: '수수께끼·넌센스 퀴즈를 풀어요',
+    href: 'riddle.html',   // 문제는 js/riddles.js 에 있습니다
+    bestKey: 'daniland.best.riddle'
   }
 ];
