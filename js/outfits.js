@@ -46,7 +46,31 @@ window.OUTFITS = {
     { id: 'doctor',   name: '의사' },
     { id: 'witch',    name: '마녀', noHair: true },   // 모자를 쓴 옷 — 머리 그림이 모자를 덮어서 머리 고르기를 숨깁니다
     { id: 'dancer',   name: '무용수' },
-    { id: 'basic',    name: '평상복' }
+    { id: 'basic',    name: '평상복' },
+    // 드레스 — 옷만 그린 시트(3×4)를 잘라 맨어깨 다니(인어공주 그림의 머리·팔 + 공주 그림의 구두) 위에 얹은 것
+    { id: 'blue',      name: '하늘색 드레스' },
+    { id: 'yellow',    name: '노란 드레스' },
+    { id: 'dot',       name: '물방울 드레스' },
+    { id: 'snow',      name: '백설공주' },
+    { id: 'snowflake', name: '눈꽃 드레스' },
+    { id: 'ladybug',   name: '무당벌레' },
+    { id: 'green',     name: '초록 드레스' },
+    { id: 'rainbow',   name: '무지개 드레스' },
+    { id: 'navy',      name: '남색 드레스' },
+    // 아이돌 옷 — 윗옷·치마·부츠 시트를 잘라 다리 있는 다니(평상복 그림의 다리) 위에 얹은 것.
+    // 시트에 같이 그려진 머리 장식은 옷에 붙이지 않고 소품(accessories 의 idol 묶음)으로 뺐습니다.
+    { id: 'pinkidol',    name: '분홍 아이돌' },
+    { id: 'sailor',      name: '세일러 아이돌' },
+    { id: 'lavender',    name: '보라 아이돌' },
+    { id: 'rock',        name: '빨강 체크 아이돌' },
+    { id: 'yellowidol',  name: '노랑 아이돌' },
+    { id: 'mint',        name: '민트 아이돌' },
+    { id: 'pinkblack',   name: '핑크 블랙 아이돌' },
+    { id: 'angel',       name: '천사 아이돌' },
+    { id: 'violet',      name: '자주 아이돌' },
+    { id: 'rainbowidol', name: '무지개 아이돌' },
+    { id: 'navyidol',    name: '제복 아이돌' },
+    { id: 'pinkplaid',   name: '분홍 체크 아이돌' }
   ],
 
   hairs: [
@@ -66,6 +90,19 @@ window.OUTFITS = {
     { id: 'bag',      name: '가방',    x:  32.2, y:  75.5, size:  15.4 },
     { id: 'wand',     name: '요술봉',   x:  73.0, y:  64.7, size:  29.5 },
     { id: 'flower',   name: '꽃다발',   x:  32.8, y:  67.7, size:  17.4 },
-    { id: 'balloon',  name: '풍선',    x:  67.8, y:  63.3, size:  24.5 }
+    { id: 'balloon',  name: '풍선',    x:  67.8, y:  63.3, size:  24.5 },
+    // 아이돌 시트의 머리 장식 — 머리띠·리본은 정수리(y 33.8), 모자는 조금 내려 머리에 씌움(y 36.4)
+    { id: 'pinkidol',    name: '하트 리본 머리띠', x:  50.4, y:  33.8, size:  18.2 },
+    { id: 'sailor',      name: '베레모',       x:  51.6, y:  36.4, size:  17.7 },
+    { id: 'lavender',    name: '보라 리본',     x:  51.1, y:  33.8, size:  16.6 },
+    { id: 'rock',        name: '검정 모자',     x:  52.5, y:  36.4, size:  16.6 },
+    { id: 'yellowidol',  name: '노랑 리본',     x:  51.2, y:  33.8, size:  16.5 },
+    { id: 'mint',        name: '꽃 머리띠',     x:  52.6, y:  33.8, size:  17.4 },
+    { id: 'pinkblack',   name: '분홍 리본',     x:  48.9, y:  33.8, size:  17.0 },
+    { id: 'angel',       name: '날개 머리핀',    x:  50.4, y:  33.8, size:  17.1 },
+    { id: 'violet',      name: '장미 머리띠',    x:  49.9, y:  33.8, size:  17.5 },
+    { id: 'rainbowidol', name: '무지개 리본',    x:  50.8, y:  33.8, size:  18.0 },
+    { id: 'navyidol',    name: '제복 모자',     x:  52.6, y:  36.4, size:  17.5 },
+    { id: 'pinkplaid',   name: '검정 리본',     x:  50.2, y:  33.8, size:  16.1 }
   ]
 };
