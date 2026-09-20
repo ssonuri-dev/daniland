@@ -988,5 +988,15 @@ window.PAGES = [
     icon: '👗',
     meta: '배경·옷·소품을 골라 자유롭게 꾸며요',
     href: 'dress.html'   // 옷·배경·소품은 js/outfits.js 에 있습니다. 점수 없는 자유 놀이라 bestKey 없음
+  },
+
+  {
+    subject: '놀이',
+    title: '낚시',
+    icon: '🎣',
+    meta: '배를 몰고 바늘을 내려 물고기를 잡아요',
+    href: 'fish.html',
+    bestKey: 'daniland.best.fish.level',
+    bestUnit: '단계'
   }
 ];

@@ -1481,7 +1481,8 @@ button {
 
 /* 몇 단계인지 · 하트가 몇 개 남았는지 (놀이판 바로 위 한 줄 — 장애물 피하기도 같이 씁니다) */
 .balloon-status,
-.dodge-status {
+.dodge-status,
+.fish-status {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2265,6 +2266,65 @@ button {
 }
 
 .dodge-btn.down {
+  color: #ffffff;
+  background: var(--pink);
+  transform: translateY(3px);
+  box-shadow: 0 3px 0 rgba(64, 50, 58, 0.10);
+}
+
+/* ---------- 낚시 (fish.html) ----------
+ * 장애물 피하기와 같은 얼개 — 하늘·바다·배·물고기를 캔버스에 그리고(js/fish.js 의 draw()),
+ * 아래 단추 셋(◀ · 🎣 · ▶)만큼 빼고 fit() 이 높이를 정합니다. 가운데 🎣 단추가 넓습니다. */
+
+.fish-page { padding-bottom: 14px; }
+
+.fish-field {
+  position: relative;
+  max-width: 520px;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.fish-field canvas { display: block; }
+
+.fish-controls {
+  display: flex;
+  gap: 12px;
+  max-width: 520px;
+  margin: 12px auto 0;
+}
+
+.fish-btn {
+  flex: 1;
+  height: 72px;
+  font-size: 34px;
+  line-height: inherit;
+  color: var(--ink);
+  background: var(--card);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.fish-btn.cast {
+  flex: 1.7;
+  font-size: 24px;
+  font-weight: 800;
+  color: #ffffff;
+  background: var(--pink);
+}
+
+/* 바늘이 올라오는 동안은 눌러도 아무 일이 없어 살짝 흐리게 */
+.fish-btn.cast.busy { opacity: 0.6; }
+
+.fish-btn.down {
   color: #ffffff;
   background: var(--pink);
   transform: translateY(3px);
