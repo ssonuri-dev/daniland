@@ -3410,7 +3410,40 @@ button {
   margin: 12px 0 8px;
 }
 .dress-tabs .chip { padding: 8px 12px; }   /* 넷이 폰 한 줄(358px)에 들어가게 */
-.dress-tabs .chip[hidden] { display: none; }
+
+/* 머리색 단추 — 동그란 색 견본 + 이름. 머리 탭에서만 보입니다 */
+.dress-colors {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px 4px;
+  max-width: 640px;
+  margin: 0 auto 8px;
+}
+.dress-colors[hidden] { display: none; }
+.dress-color {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 52px;
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 12px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.dress-color .dot {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 6px rgba(64, 50, 58, 0.25);
+}
+.dress-color.on .dot { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(155, 110, 230, 0.35); }
+.dress-color.on { color: var(--purple); font-weight: 700; }
 
 .dress-choices {
   display: flex;

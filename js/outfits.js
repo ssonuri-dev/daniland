@@ -19,10 +19,14 @@
  *
  *  scenes      : 배경 목록 — 하나를 고릅니다 { id, name }
  *  costumes    : 옷(캐릭터 전체 모습) 목록 — 하나를 고릅니다 { id, name, noHair }
- *                noHair: true 면 그 옷을 입은 동안 머리 고르기를 숨깁니다 (모자가 든 옷 — 머리 그림이 모자 위에 덮여서)
+ *                noHair: true 면 그 옷을 입은 동안 머리 모양을 못 고릅니다 (모자가 든 옷 — 머리 그림이 모자 위에 덮여서). 머리색은 됩니다
  *                사람 캐릭터입니다 — 마스코트 강아지(dani.png) 아님. 모든 옷 그림의 다니는 같은 얼굴·같은 자세·
  *                같은 짧은 머리여야 머리·소품이 제자리에 얹힙니다.
  *  hairs       : 머리 목록 — 하나를 고르거나 안 고릅니다 { id, name, x, y, size }
+ *  hairColors  : 머리색 목록 — 그림 파일이 따로 없습니다. dress.js 가 옷·머리 그림의 갈색 머리카락 픽셀을 찾아
+ *                화면에서 바로 물들입니다(canvas). { id, name, swatch, h, s, lo, hi }
+ *                swatch 는 고르는 단추 색, h(0~360)·s(0~1) 는 물들일 색, lo·hi 는 밝기 범위(0~1, 원래 머리의
+ *                어두운 곳→lo, 밝은 곳→hi). 첫 번째(갈색)는 그림 그대로라 h·s 가 없습니다.
  *  accessories : 소품 목록 — 여러 개를 동시에 걸칠 수 있습니다 { id, name, x, y, size }
  *                x·y 는 무대 기준 위치(%), size 는 무대 너비 대비 크기(%). 그림이 오면 자리를 다시 맞춥니다.
  * ========================================================================= */
@@ -44,7 +48,7 @@ window.OUTFITS = {
     { id: 'hero',     name: '슈퍼히어로' },
     { id: 'astro',    name: '우주비행사' },
     { id: 'doctor',   name: '의사' },
-    { id: 'witch',    name: '마녀', noHair: true },   // 모자를 쓴 옷 — 머리 그림이 모자를 덮어서 머리 고르기를 숨깁니다
+    { id: 'witch',    name: '마녀', noHair: true },   // 모자를 쓴 옷 — 머리 그림이 모자를 덮어서 머리 모양을 못 고릅니다
     { id: 'dancer',   name: '무용수' },
     { id: 'basic',    name: '평상복' },
     // 드레스 — 옷만 그린 시트(3×4)를 잘라 맨어깨 다니(인어공주 그림의 머리·팔 + 공주 그림의 구두) 위에 얹은 것
@@ -80,6 +84,17 @@ window.OUTFITS = {
     { id: 'pony',     name: '포니테일',  x:  54.0, y:  42.8, size:  42.1 },
     { id: 'braid',    name: '땋은 머리', x:  50.1, y:  49.2, size:  52.8 },
     { id: 'bun',      name: '똥머리',   x:  49.9, y:  39.5, size:  43.1 }
+  ],
+
+  hairColors: [
+    { id: 'brown',  name: '갈색', swatch: '#6b4226' },                                   // 그림 그대로
+    { id: 'black',  name: '검정', swatch: '#2b2328', h: 330, s: 0.08, lo: 0.06, hi: 0.30 },
+    { id: 'blonde', name: '금발', swatch: '#f4cf5c', h:  44, s: 0.85, lo: 0.52, hi: 0.86 },
+    { id: 'red',    name: '빨강', swatch: '#d9432e', h:   8, s: 0.80, lo: 0.30, hi: 0.58 },
+    { id: 'pink',   name: '분홍', swatch: '#ff8fc6', h: 335, s: 0.85, lo: 0.55, hi: 0.84 },
+    { id: 'sky',    name: '하늘', swatch: '#6fc3f0', h: 200, s: 0.80, lo: 0.50, hi: 0.82 },
+    { id: 'purple', name: '보라', swatch: '#a97be0', h: 272, s: 0.65, lo: 0.42, hi: 0.74 },
+    { id: 'mint',   name: '민트', swatch: '#6fd8b8', h: 160, s: 0.60, lo: 0.50, hi: 0.82 }
   ],
 
   accessories: [
