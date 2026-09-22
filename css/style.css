@@ -2816,13 +2816,13 @@ button {
 .jamo-btn.dim   { opacity: 0.35; }
 .jamo-btn.wrong { animation: shake 0.4s; border-color: var(--pink); }
 
-/* ---------- 스웨덴 (sweden.html) ----------
- * 나라 한 곳을 깊이 보는 화면. 그림 파일 없이 이모지와 글뿐입니다.
- * 위 판(.fact-panel)에 이야기·문제가 나오고, 아래 카드(.sweden-cards)의 높이는 js/sweden.js 의
+/* ---------- 나라 알아보기 (country.html — 스웨덴·그리스…) ----------
+ * 나라 한 곳을 깊이 보는 화면. 화면 하나를 모든 나라가 함께 씁니다 (js/country.js + js/countries/<id>.js).
+ * 위 판(.fact-panel)에 이야기·문제가 나오고, 아래 카드(.country-cards)의 높이는 js/country.js 의
  * fitCards() 가 --ch 로 넘겨줍니다 — 알아보기 열여덟 장이 스크롤 없이 한 화면에 들어가야 해서요. */
-.sweden-page { padding-bottom: 14px; }
+.country-page { padding-bottom: 14px; }
 
-.sweden-quest {
+.country-quest {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2831,11 +2831,11 @@ button {
   margin: 0 0 8px;
 }
 
-.sweden-label { font-size: 16px; color: var(--ink-soft); text-align: center; }
-.sweden-quest .speak-btn { margin-top: 0; flex: none; }
-.sweden-quest .speak-btn[hidden] { display: none; }
+.country-label { font-size: 16px; color: var(--ink-soft); text-align: center; }
+.country-quest .speak-btn { margin-top: 0; flex: none; }
+.country-quest .speak-btn[hidden] { display: none; }
 
-/* 판의 바탕은 스웨덴 국기 색(파랑·노랑)을 연하게 섞은 것입니다 */
+/* 판의 바탕 — 기본은 파랑·노랑인데 나라 데이터의 panel 이 있으면 js 가 그 색으로 덮습니다 */
 .fact-panel {
   display: flex;
   align-items: center;
@@ -2848,7 +2848,7 @@ button {
 }
 
 .fact-panel.pop { animation: pop 0.35s ease; }
-.fact-panel[hidden] { display: none; }   /* 폰의 알아보기는 판 없이 팝업으로 (js/sweden.js 의 layoutLook) */
+.fact-panel[hidden] { display: none; }   /* 폰의 알아보기는 판 없이 팝업으로 (js/country.js 의 layoutLook) */
 
 .fact-art {
   flex: none;
@@ -2876,7 +2876,7 @@ button {
 
 .fact-art img { cursor: zoom-in; }
 
-/* 사진을 눌렀을 때 화면 가득 (js/sweden.js 의 zoomPhoto) */
+/* 사진을 눌렀을 때 화면 가득 (js/country.js 의 zoomPhoto) */
 .photo-zoom {
   position: fixed;
   inset: 0;
@@ -2919,9 +2919,9 @@ button {
   word-break: keep-all;
 }
 
-.cards.sweden-cards { gap: 10px; margin-top: 12px; }
+.cards.country-cards { gap: 10px; margin-top: 12px; }
 
-.sweden-cards .choice {
+.country-cards .choice {
   aspect-ratio: auto;
   height: var(--ch, 96px);
   padding: 6px 8px;
@@ -2930,7 +2930,7 @@ button {
 }
 
 /* 알아보기 — 열여덟 장을 여섯 줄에 셋씩 (폰에서는 넷씩 다섯 줄) */
-.cards.sweden-cards.look-cards { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.cards.country-cards.look-cards { grid-template-columns: repeat(6, minmax(0, 1fr)); }
 
 /* 그림은 남는 자리를 쓰고 이름은 자리를 꼭 지킵니다(flex: none) — 폰의 이모지는 글자 상자가 PC 보다 훨씬 커서
    그냥 쌓으면 이름이 카드 아래로 밀려 잘립니다 (실제로 그랬습니다). */
@@ -2965,8 +2965,8 @@ button {
 .look-cards .choice .mark { top: 2px; right: 4px; font-size: 16px; }
 
 /* 무엇이 있을까 · 퀴즈 — 보기 넉 장을 둘씩 두 줄로 */
-.cards.sweden-cards.pick-cards,
-.cards.sweden-cards.ans-cards {
+.cards.country-cards.pick-cards,
+.cards.country-cards.ans-cards {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
   max-width: 640px;
@@ -2989,9 +2989,9 @@ button {
 
 .ans-cards .ans-card.flag .art { font-size: 64px; line-height: 1.1; }
 
-.overlay .sweden-intro { max-width: 520px; }
+.overlay .country-intro { max-width: 520px; }
 
-/* 폰의 이야기 팝업 (js/sweden.js 의 openStory) — 사진이 화면 폭 전체, 글이 길면 안에서 스크롤 */
+/* 폰의 이야기 팝업 (js/country.js 의 openStory) — 사진이 화면 폭 전체, 글이 길면 안에서 스크롤 */
 .story-pop {
   position: fixed;
   inset: 0;
@@ -3040,7 +3040,7 @@ button {
 .overlay .credit a { color: inherit; }
 
 @media (max-width: 599px) {
-  .cards.sweden-cards.look-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .cards.country-cards.look-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .look-cards .fact-card { padding: 4px 3px; }
   /* 위 판이 없어 카드가 커지면(--ch 는 js 가 넣습니다) 그림·이름도 같이 커집니다 */
   .look-cards .fact-card .art { font-size: clamp(24px, calc(var(--ch, 78px) * 0.38), 48px); }

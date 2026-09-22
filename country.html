@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <meta name="theme-color" content="#ff8fab">
-  <title>유럽 · 다니랜드 🇪🇺</title>
+  <title>나라 알아보기 · 다니랜드 🌍</title>
   <link rel="icon" href="dani.png">
   <!-- 구글 웹폰트: 제목은 Jua, 본문은 나눔고딕 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,60 +13,47 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <!-- 이 화면 하나가 모든 나라를 씁니다 — 어느 나라인지는 주소의 ?country=sweden 처럼 고릅니다 (js/country.js) -->
   <!-- 들어올 때 비밀번호 (문패입니다 — js/gate.js 주석 참고) -->
   <script src="js/gate.js"></script>
 
-  <div class="wrap europe-page">
+  <div class="wrap country-page">
     <div class="topbar">
       <button class="icon-btn" id="backBtn" title="뒤로">←</button>
       <div class="progress"><div class="progress-bar" id="bar"></div></div>
       <div class="score" id="score">⭐ 0</div>
     </div>
 
-    <!-- 지금 무엇을 찾아야 하는지 — 한 줄로만 나옵니다 (지도가 커야 하니까) -->
-    <div class="world-quest">
-      <div class="world-item" id="questItem" hidden></div>
-      <div class="world-label" id="questLabel"></div>
+    <!-- 지금 할 일 한 줄 -->
+    <div class="country-quest">
+      <div class="country-label" id="questLabel"></div>
       <button class="speak-btn small" id="speakBtn" hidden>🔊 다시</button>
     </div>
 
-    <!-- 지도와 이야기 판. 세로 화면에서는 위아래로, 가로가 넉넉하면(.wide) 나란히 — js/europe.js 의 fitMap() 이 정합니다 -->
-    <div class="eu-stage" id="stage">
-      <!-- 지도 — 나라 모양은 js/europe-map.js, 국기 핀은 js/europe.js 의 COUNTRIES -->
-      <div class="eu-map" id="map">
-        <svg class="eu-svg" id="svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"></svg>
-        <div class="eu-pins" id="pins"></div>
-        <div class="world-dani" id="dani">
-          <span class="plane">✈️</span>
-          <img src="dani.png" alt="다니">
-        </div>
-      </div>
-
-      <!-- 이야기 판: 구경하기에서는 누른 나라의 이야기와 볼거리, 놀이에서는 문제 (js/europe.js 의 showPanel) -->
-      <div class="fact-panel eu-panel" id="panel">
-        <div class="fact-art" id="panelArt">🇪🇺</div>
-        <div class="fact-body">
-          <div class="fact-title" id="panelTitle"></div>
-          <div class="fact-sv" id="panelSub" hidden></div>
-          <div class="fact-text" id="panelText"></div>
-          <div class="eu-chips" id="panelChips" hidden></div>
-        </div>
+    <!-- 위 판: 알아보기에서는 누른 카드의 이야기, 퀴즈에서는 문제와 설명 (js/country.js 의 showPanel) -->
+    <div class="fact-panel" id="panel">
+      <div class="fact-art" id="panelArt">🌍</div>
+      <div class="fact-body">
+        <div class="fact-title" id="panelTitle"></div>
+        <div class="fact-sv" id="panelSv" hidden></div>
+        <div class="fact-text" id="panelText"></div>
       </div>
     </div>
+
+    <!-- 카드 — 알아보기 열여덟 장, 또는 보기 넉 장. 높이는 js/country.js 의 fitCards() 가 정합니다. -->
+    <div class="cards country-cards" id="cards"></div>
 
     <div class="tools">
       <button class="chip" id="voiceBtn">🎤 목소리</button>
     </div>
   </div>
 
-  <!-- 다 구경했을 때 잠깐 뜨는 안내 -->
-  <div class="banner" id="banner" hidden></div>
-
   <!-- 시작 화면 -->
   <div class="overlay" id="startOverlay">
     <img src="dani.png" alt="다니">
-    <h2>🇪🇺 유럽</h2>
-    <p class="hint country-intro">나라 열여덟 곳을 지도에서 찾아가고, 그 나라 이야기를 들어요</p>
+    <!-- 나라 이름과 한 줄 소개는 js/country.js 가 데이터에서 채웁니다 -->
+    <h2 id="startTitle">🌍 나라 알아보기</h2>
+    <p class="hint country-intro" id="startTagline"></p>
 
     <p class="hint">무엇을 하고 놀까요?</p>
     <div class="mode-row" id="modeRow"></div>
@@ -74,8 +61,8 @@
 
     <button class="big-btn" id="startBtn">시작하기 ▶</button>
     <button class="big-btn ghost" id="startHome">← 다른 공부 고르기</button>
-    <!-- 사진은 위키미디어 공용(CC BY / CC BY-SA)이라 출처를 밝혀야 합니다 — 목록은 europe/CREDITS.md. 지도 자료는 퍼블릭 도메인입니다 -->
-    <p class="credit">사진: 위키미디어 공용 · <a href="https://github.com/ssonuri-dev/daniland/blob/main/europe/CREDITS.md" target="_blank" rel="noopener">출처 보기</a> · 지도: Natural Earth (퍼블릭 도메인)</p>
+    <!-- 사진은 위키미디어 공용(CC BY / CC BY-SA)이라 출처를 밝혀야 합니다 — 목록은 <나라 id>/CREDITS.md (링크는 js/country.js 가 채웁니다) -->
+    <p class="credit">사진: 위키미디어 공용 · <a id="creditLink" href="#" target="_blank" rel="noopener">출처 보기</a></p>
   </div>
 
   <!-- 결과 화면 -->
@@ -95,7 +82,9 @@
   <script src="js/tts.js"></script>
   <script src="js/sfx.js"></script>
   <script src="js/voicepicker.js"></script>
-  <script src="js/europe-map.js"></script>
-  <script src="js/europe.js"></script>
+  <!-- 나라 데이터 — 새 나라를 더하면 여기 한 줄 (주소의 ?country=<id> 로 고릅니다) -->
+  <script src="js/countries/sweden.js"></script>
+  <script src="js/countries/greece.js"></script>
+  <script src="js/country.js"></script>
 </body>
 </html>

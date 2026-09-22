@@ -114,7 +114,7 @@ index.html            과목 카드            home.js
       ├ maze.html                           maze.js     (미로를 매번 생성, 캔버스에 그림)
       ├ dodge.html                          dodge.js    (장애물 피하기 — 흐르는 길을 캔버스에 그림, 단계·하트)
       ├ book.html                           book.js     (영어 그림책 — js/books.js 의 책을 book.jpg 위에, 읽기·만들기)
-      ├ sweden.html                         sweden.js   (스웨덴 한 나라 — 이야기 카드 18장·퀴즈, 그림 파일 없음)
+      ├ country.html?country=sweden         country.js  (나라 한 곳 깊이 — 이야기 카드 18장·퀴즈. 데이터는 js/countries/<id>.js: 스웨덴·그리스. sweden.html 은 옛 주소 → 넘김)
       ├ europe.html                         europe.js   (유럽 — 나라 모양 svg 지도(europe-map.js) 위 국기 핀 18개, 놀이 4종)
       ├ riddle.html                         riddle.js   (수수께끼·넌센스 — js/riddles.js 의 문제를 열 개씩, 보기 넉 장)
       ├ fish.html                           fish.js     (낚시 — 하늘·바다·배·물고기를 캔버스에 그림, 단계·하트. 장애물 피하기와 같은 얼개)
@@ -178,7 +178,11 @@ index.html            과목 카드            home.js
   (on 은 지붕 위 `.aboard-on`, in 은 안에 들어가 머리만 `.aboard-in`) — 전치사 뜻이 그림으로 보이는 것이 핵심이니
   두 자세를 같게 만들지 마세요. boat 는 크기에 따라 on/in 이 갈려 일부러 뺐고, 한 판은 on·in 을 넉 대씩 뽑습니다
   (in 이 드물어 그냥 섞으면 on 만 눌러도 거의 맞습니다).
-  **스웨덴(`sweden.html`)이 아홉 번째**입니다 (2026-09-18) — 세계 과목에서 **나라 한 곳을 깊이** 보는 첫 사례.
+  **스웨덴(`sweden.html` → 지금은 `country.html?country=sweden`)이 아홉 번째**입니다 (2026-09-18) — 세계 과목에서 **나라 한 곳을 깊이** 보는 첫 사례.
+  **2026-09-22 그리스가 더해지면서 화면(`js/country.js`)과 데이터(`js/countries/<id>.js`, `window.COUNTRY_PAGES[id]`)를 갈랐습니다** —
+  화면 하나가 모든 나라를 쓰고 주소의 `?country=` 로 고릅니다. 나라를 더할 땐 데이터 파일 하나 + `country.html` 의 `<script>` 한 줄 +
+  `PAGES` 카드 한 장. 기록 키는 `daniland.best.<id>`(스웨덴은 옛 키 그대로), 사진 폴더는 `<id>/`. 우리말 조사는 `josa()` 가 받침을 보고
+  붙입니다('스웨덴을'·'그리스를'). 아래 스웨덴 설명의 `js/sweden.js`·`FACTS` 등은 이제 `js/countries/sweden.js` 안에 있습니다.
   세계 지도(`world.js`)가 열두 나라를 얕게 훑는 것과 달리 이야기 카드 18장(`FACTS`)·다른 나라 것(`OTHERS`)·퀴즈(`QUIZ`)가
   `js/sweden.js` 위쪽에 있습니다. 위 판의 사진은 `sweden/<id>.jpg`(800px, 4:3) 이고 `FACTS[].img` 로 잇습니다 — 파일이 없으면
   이모지로 대신 그립니다(`artEl`). **사진은 전부 위키미디어 공용(CC BY / CC BY-SA / PD)이고 `sweden/CREDITS.md` 가 출처 표입니다.
@@ -290,6 +294,7 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.ride` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.sweden.<act>` | 스웨덴 놀이별(무엇이 있을까·퀴즈) 최고 별 (알아보기는 점수가 없습니다) |
 | `daniland.best.sweden` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
+| `daniland.best.greece.<act>` `daniland.best.greece` | 그리스 — 스웨덴과 같은 규칙 (나라 페이지는 `daniland.best.<id>`) |
 | `daniland.best.europe.<act>` | 유럽 놀이별(찾아가기·무엇이 있을까·국기 찾기) 최고 별 (구경하기는 점수가 없습니다) |
 | `daniland.best.europe` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.riddle` | 수수께끼 최고 별 (카드의 ⭐ 는 이것을 읽습니다) |
@@ -304,7 +309,7 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.rank.dodge` | 장애물 피하기 순위표 — `[{ m, level, treats }, …]` 먼 순서로 다섯 개 (시작·결과 화면) |
 | `daniland.best.maze.<n>` | 미로 찾기 판 크기별(5·7·9·11) 한 번에 찾은 적 있음 (1/1) |
 | `daniland.best.maze` | 한 번에 찾은 것 중 제일 큰 판 — stars 가 칸 수(5~11)입니다 (카드의 ⭐ 는 이것을 `bestUnit: '칸 미로'` 로 읽습니다) |
-| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.fishStart` `daniland.townAct` `daniland.worldAct` `daniland.tripAct` `daniland.rideAct` `daniland.swedenAct` `daniland.europeAct` `daniland.numShow`(더하기·빼기·곱하기의 그림/식/둘 다) `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.mazeSize` | 마지막에 고른 설정 |
+| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.fishStart` `daniland.townAct` `daniland.worldAct` `daniland.tripAct` `daniland.rideAct` `daniland.swedenAct` `daniland.greeceAct` `daniland.europeAct` `daniland.numShow`(더하기·빼기·곱하기의 그림/식/둘 다) `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.mazeSize` | 마지막에 고른 설정 |
 | `daniland.numMax` | 수학 놀이가 넷뿐이던 시절의 숫자 범위 — 읽기만 합니다 (`numbers.js` 의 `loadMax()`) |
 | `daniland.rate` `daniland.voice.<lang>` | 목소리·속도 |
 | `daniland.drawer` | 그림 그리기 도장 서랍 접힘 상태 |

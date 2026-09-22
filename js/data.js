@@ -808,8 +808,17 @@ window.PAGES = [
     title: '스웨덴',
     icon: '🇸🇪',
     meta: '알아보기 · 무엇이 있을까 · 퀴즈',
-    href: 'sweden.html',
+    href: 'country.html?country=sweden',
     bestKey: 'daniland.best.sweden'
+  },
+
+  {
+    subject: '세계',
+    title: '그리스',
+    icon: '🇬🇷',
+    meta: '알아보기 · 무엇이 있을까 · 퀴즈',
+    href: 'country.html?country=greece',
+    bestKey: 'daniland.best.greece'
   },
 
   {
