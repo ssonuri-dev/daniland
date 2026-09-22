@@ -831,6 +831,15 @@ window.PAGES = [
   },
 
   {
+    subject: '세계',
+    title: '프랑스',
+    icon: '🇫🇷',
+    meta: '알아보기 · 무엇이 있을까 · 퀴즈',
+    href: 'country.html?country=france',
+    bestKey: 'daniland.best.france'
+  },
+
+  {
     subject: '한글',
     group: '글자 쓰기·만들기',
     title: '글자 쓰기',
