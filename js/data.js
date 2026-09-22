@@ -822,6 +822,15 @@ window.PAGES = [
   },
 
   {
+    subject: '세계',
+    title: '독일',
+    icon: '🇩🇪',
+    meta: '알아보기 · 무엇이 있을까 · 퀴즈',
+    href: 'country.html?country=germany',
+    bestKey: 'daniland.best.germany'
+  },
+
+  {
     subject: '한글',
     group: '글자 쓰기·만들기',
     title: '글자 쓰기',
