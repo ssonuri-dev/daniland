@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#05060f">
+  <title>태양계 · 다니랜드 🪐</title>
+  <link rel="icon" href="dani.png">
+  <!-- 구글 웹폰트: 제목은 Jua, 본문은 나눔고딕 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Gothic:wght@400;700;800&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="space-body">
+  <!-- 들어올 때 비밀번호 (문패입니다 — js/gate.js 주석 참고) -->
+  <script src="js/gate.js"></script>
+
+  <div class="wrap space-page">
+    <div class="topbar">
+      <button class="icon-btn" id="backBtn" title="뒤로">←</button>
+      <div class="progress"><div class="progress-bar" id="bar"></div></div>
+      <div class="score" id="score">🔭</div>
+    </div>
+
+    <!-- 지금 할 일 한 줄 (구경하기에서는 안내, 놀이에서는 문제) -->
+    <div class="space-quest">
+      <div class="space-label" id="questLabel"></div>
+      <button class="speak-btn small" id="speakBtn" hidden>🔊 다시</button>
+    </div>
+
+    <!-- 우주 — 별·태양·행성·고리를 모두 캔버스에 그립니다 (js/space.js).
+         끌면 보는 자리가 돌고, 두 손가락으로 벌리면 커집니다. 행성을 누르면 그 행성 이야기로 넘어가요. -->
+    <div class="space-sky" id="sky">
+      <canvas id="canvas"></canvas>
+
+      <div class="sky-btns">
+        <button class="sky-btn" id="zoomIn" title="크게">＋</button>
+        <button class="sky-btn" id="zoomOut" title="작게">－</button>
+        <button class="sky-btn" id="resetBtn" title="처음 자리로">🎯</button>
+      </div>
+
+      <div class="sky-hint" id="skyHint">손가락으로 끌면 우주가 돌아가요 🌌</div>
+    </div>
+
+    <!-- 퀴즈 보기 넉 장 (퀴즈 놀이에서만 나옵니다) -->
+    <div class="cards space-cards" id="cards" hidden></div>
+
+    <div class="tools">
+      <button class="chip" id="speedBtn">🚶 보통</button>
+      <button class="chip" id="voiceBtn">🎤 목소리</button>
+    </div>
+  </div>
+
+  <!-- 시작 화면 -->
+  <div class="overlay space-overlay" id="startOverlay">
+    <img src="dani.png" alt="다니">
+    <h2>🪐 태양계</h2>
+    <p class="hint">까만 우주에서 행성 여덟 개가 태양을 돌고 있어요.<br>손가락으로 끌면 위에서도, 옆에서도 볼 수 있어요.</p>
+
+    <p class="hint">무엇을 하고 놀까요?</p>
+    <div class="mode-row" id="modeRow"></div>
+    <p class="hint" id="modeDesc"></p>
+
+    <button class="big-btn" id="startBtn">시작하기 ▶</button>
+    <button class="big-btn ghost" id="startHome">← 다른 공부 고르기</button>
+    <!-- 사진은 거의 다 NASA 퍼블릭 도메인이지만 달 사진이 CC BY-SA 라 출처를 밝힙니다 -->
+    <p class="credit">사진: NASA · 위키미디어 공용 · <a id="creditLink" href="https://github.com/ssonuri-dev/daniland/blob/main/planet/CREDITS.md" target="_blank" rel="noopener">출처 보기</a></p>
+  </div>
+
+  <!-- 결과 화면 -->
+  <div class="overlay space-overlay" id="endOverlay" hidden>
+    <img src="dani.png" alt="다니">
+    <h2 id="endTitle">참 잘했어요!</h2>
+    <div class="stars" id="endStars"></div>
+    <p id="endText"></p>
+    <button class="big-btn" id="againBtn">한 번 더 🔁</button>
+    <button class="big-btn ghost" id="endModes">← 다른 놀이 고르기</button>
+    <button class="big-btn ghost" id="endHome">🏠 처음으로</button>
+  </div>
+
+  <script src="js/ui.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/catalog.js"></script>
+  <script src="js/tts.js"></script>
+  <script src="js/sfx.js"></script>
+  <script src="js/voicepicker.js"></script>
+  <script src="js/planets.js"></script>
+  <script src="js/space.js"></script>
+</body>
+</html>

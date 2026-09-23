@@ -51,7 +51,10 @@ h1, h2, h3, h4,
 .xylo-title,
 .dress-title,
 .fact-title,
-.sp-title {
+.sp-title,
+.planet-title,
+.story-title,
+.planet-name {
   font-family: 'Jua', 'Nanum Gothic', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
   font-weight: 400;
 }
@@ -3469,3 +3472,308 @@ button {
 }
 .dress-thumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .dress-thumb.missing { background: repeating-linear-gradient(45deg, #f3ece2, #f3ece2 8px, #e9ded0 8px, #e9ded0 16px); }
+
+/* =========================================================================
+ * 우주 — 태양계(space.html)와 행성 한 곳(planet.html)
+ *
+ * 다니랜드에서 유일한 까만 화면입니다. <body class="space-body"> 가 밝은 바탕을 덮고,
+ * 공용 부품(topbar · chip · overlay · big-btn)도 여기서 어두운 쪽으로 다시 칠합니다.
+ * 새 우주 페이지를 만들면 <body> 에 space-body 를 꼭 붙이세요 — 안 붙이면 흰 바탕 위에
+ * 흰 글씨가 됩니다.
+ * ========================================================================= */
+
+.space-body {
+  color: #e8edff;
+  background: #04050c;
+  background-image: radial-gradient(130% 95% at 50% 0%, #1a2450 0%, #0a0d20 46%, #04050c 100%);
+  background-attachment: fixed;
+}
+
+.space-body .icon-btn {
+  color: #e8edff;
+  background: rgba(255, 255, 255, 0.11);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+}
+
+.space-body .progress { background: rgba(255, 255, 255, 0.13); box-shadow: none; }
+.space-body .score { color: var(--yellow); }
+
+.space-body .chip {
+  color: #cfd8ff;
+  background: rgba(255, 255, 255, 0.11);
+  box-shadow: none;
+}
+
+.space-body .tools { margin-top: 10px; }
+
+/* 시작·결과 덮개 */
+.space-body .overlay { background: rgba(5, 7, 18, 0.95); }
+.space-body .overlay h2 { color: var(--yellow); }
+.space-body .overlay p { color: #a9b6e0; }
+.space-body .overlay .credit { color: #7f8bb5; }
+
+.space-body .big-btn.ghost {
+  color: #cfd8ff;
+  background: rgba(255, 255, 255, 0.11);
+  box-shadow: none;
+}
+
+.space-body .mode-btn {
+  color: #dbe3ff;
+  background: rgba(255, 255, 255, 0.09);
+  box-shadow: none;
+}
+
+.space-body .mode-btn.on { border-color: var(--yellow); color: var(--yellow); }
+
+/* ---------- 태양계 화면 ----------
+ * 세로로 쌓고 우주(.space-sky)가 남는 높이를 다 먹습니다. 전체 높이는 js/space.js 의 fit() 이
+ * 화면 높이로 못 박습니다 (폰의 주소창 때문에 100vh 만으로는 아래가 잘립니다). */
+.space-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding-bottom: 12px;
+}
+
+.space-page .topbar { padding-bottom: 8px; }
+
+.space-quest {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 40px;
+  margin-bottom: 8px;
+}
+
+.space-label { font-size: 17px; font-weight: 700; text-align: center; word-break: keep-all; }
+.space-quest .speak-btn { margin-top: 0; flex: none; }
+.space-quest .speak-btn[hidden] { display: none; }
+
+.space-sky {
+  position: relative;
+  flex: 1;
+  min-height: 200px;
+  overflow: hidden;
+  border-radius: 24px;
+  background: #04050c;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+  touch-action: none;      /* 끌어서 돌리는 화면이라 브라우저 기본 스크롤·확대를 끕니다 */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.space-sky canvas { display: block; }
+
+.sky-btns {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sky-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  font-size: 20px;
+  font-weight: 800;
+  color: #e8edff;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.sky-btn:active { transform: translateY(2px); }
+
+.sky-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  padding: 7px 16px;
+  font-size: 13px;
+  color: #c3cdf0;
+  white-space: nowrap;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.sky-hint[hidden] { display: none; }
+
+/* 퀴즈 보기 넉 장 — 글자라서 두 칸씩 (넉 칸이면 폰에서 글자가 줄줄이 끊깁니다) */
+.cards.space-cards {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.cards.space-cards[hidden] { display: none; }
+
+.space-body .choice.space-card {
+  aspect-ratio: 5 / 2;
+  padding: 8px;
+  color: #e8edff;
+  background: rgba(255, 255, 255, 0.10);
+  border: 3px solid rgba(255, 255, 255, 0.14);
+  border-radius: 20px;
+  box-shadow: none;
+}
+
+.space-card .text {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
+  word-break: keep-all;
+}
+
+.space-body .choice.space-card.correct { border-color: var(--green); background: rgba(109, 212, 126, 0.22); }
+.space-body .choice.space-card.wrong { border-color: var(--pink); background: rgba(255, 143, 171, 0.22); }
+
+/* ---------- 행성 한 곳 ---------- */
+
+.planet-page { padding-bottom: 20px; }
+
+.planet-name {
+  flex: 1;
+  font-size: 22px;
+  text-align: center;
+  color: var(--yellow);
+}
+
+.planet-hero {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.planet-photo {
+  flex: none;
+  width: 300px;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 22px;
+  background: #000;
+  box-shadow: 0 0 50px rgba(90, 120, 255, 0.20);
+}
+
+.planet-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+.planet-emoji {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 110px;
+}
+
+.planet-head { flex: 1; min-width: 0; }
+.planet-title { font-size: 36px; line-height: 1.1; color: var(--yellow); }
+.planet-tagline { margin-top: 4px; font-size: 16px; color: #aebae4; word-break: keep-all; }
+
+.planet-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.p-chip {
+  padding: 7px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.p-chip .k { display: block; font-size: 11px; color: #8e9cc9; }
+.p-chip .v { display: block; font-size: 15px; font-weight: 800; color: #e8edff; }
+
+.planet-story {
+  min-height: 104px;
+  margin-top: 16px;
+  padding: 14px 18px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.planet-story.pop { animation: pop 0.35s ease; }
+
+.story-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.story-title { font-size: 22px; color: var(--yellow); }
+.planet-story .speak-btn { margin-top: 0; flex: none; }
+.planet-story .speak-btn[hidden] { display: none; }
+.story-text { margin-top: 6px; font-size: 16px; line-height: 1.6; color: #dbe3ff; word-break: keep-all; }
+
+.planet-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(98px, 1fr));
+  gap: 9px;
+  margin-top: 14px;
+}
+
+.planet-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 88px;
+  padding: 8px 4px;
+  color: #dbe3ff;
+  background: rgba(255, 255, 255, 0.07);
+  border: 2px solid rgba(255, 255, 255, 0.10);
+  border-radius: 18px;
+  transition: transform 0.12s ease, border-color 0.2s ease;
+}
+
+.planet-card:active { transform: translateY(2px); }
+.planet-card .pc-art { font-size: 30px; line-height: 1; }
+.planet-card .pc-label { font-size: 13px; font-weight: 700; text-align: center; word-break: keep-all; }
+.planet-card.seen { border-color: rgba(109, 212, 126, 0.45); }
+.planet-card.on { border-color: var(--yellow); color: var(--yellow); }
+
+.planet-nav {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.nav-btn {
+  flex: 1;
+  padding: 14px 6px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #dbe3ff;
+  background: rgba(255, 255, 255, 0.09);
+  border-radius: 16px;
+}
+
+.nav-btn.wide { flex: 1.15; color: var(--yellow); }
+.nav-btn:active { transform: translateY(2px); }
+
+@media (max-width: 599px) {
+  .planet-hero { flex-direction: column; align-items: stretch; gap: 12px; }
+  .planet-photo { width: 100%; }
+  .planet-title { font-size: 28px; }
+  .planet-cards { grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); }
+  .planet-card { min-height: 78px; }
+  .planet-card .pc-art { font-size: 26px; }
+  .planet-card .pc-label { font-size: 12px; }
+  .nav-btn { font-size: 13px; padding: 13px 4px; }
+  .space-label { font-size: 15px; }
+  .space-card .text { font-size: 16px; }
+  .space-page .topbar { gap: 8px; padding-bottom: 6px; }
+}

@@ -56,6 +56,7 @@ ES5 IIFE 로 감싸 `window` 에 전역을 붙이는 방식입니다. `import`/`
 |---|---|---|
 | `SUBJECTS` `LESSONS` `PAGES` | `js/data.js` | 콘텐츠 전부 (평소 손댈 파일은 여기뿐) |
 | `BOOKS` | `js/books.js` | 영어 그림책 — 책 한 권이 객체 하나, 그림은 `books/<id>/` (전집처럼 계속 늘어납니다). 목록 페이지도 읽습니다(책마다 카드) |
+| `PLANETS` `SPACE_QUIZ` | `js/planets.js` | 태양계 — 태양·행성 여덟·달이 객체 하나씩 (이야기 카드·숫자 칩·퀴즈). `space.html` 과 `planet.html` 이 같이 읽습니다 |
 | `RIDDLES` | `js/riddles.js` | 수수께끼·넌센스 문제 — 문제 하나가 객체 하나 (계속 늘어납니다). `riddle.html` 만 읽습니다 |
 | `Catalog` | `js/catalog.js` | LESSONS+PAGES 를 과목별로 묶고 최고 기록을 붙임 |
 | `UI` | `js/ui.js` | 섞기·이모지 개수 세기·URL 파라미터·폭죽·localStorage |
@@ -116,6 +117,8 @@ index.html            과목 카드            home.js
       ├ book.html                           book.js     (영어 그림책 — js/books.js 의 책을 book.jpg 위에, 읽기·만들기)
       ├ country.html?country=sweden         country.js  (나라 한 곳 깊이 — 이야기 카드 18장·퀴즈. 데이터는 js/countries/<id>.js: 스웨덴·그리스·독일·프랑스·노르웨이·스페인. sweden.html 은 옛 주소 → 넘김)
       ├ europe.html                         europe.js   (유럽 — 나라 모양 svg 지도(europe-map.js) 위 국기 핀 18개, 놀이 4종)
+      ├ space.html                          space.js    (태양계 — 까만 화면에 3D 로 공전. 행성을 누르면 아래로)
+      │  └ planet.html?planet=jupiter       planet.js   (행성 한 곳 — 사진·숫자 칩·이야기 카드. 데이터는 js/planets.js)
       ├ riddle.html                         riddle.js   (수수께끼·넌센스 — js/riddles.js 의 문제를 열 개씩, 보기 넉 장)
       ├ fish.html                           fish.js     (낚시 — 하늘·바다·배·물고기를 캔버스에 그림, 단계·하트. 장애물 피하기와 같은 얼개)
       └ draw.html                           draw.js     (독립 — 다른 js 를 전혀 안 씀)
@@ -216,6 +219,23 @@ index.html            과목 카드            home.js
   문제 글(`q`)로 기억해 두고 **안 풀어 본 것부터** 냅니다 — 문제에 id 가 없으니 `q` 를 고치면 그 문제는 새 문제가 됩니다 (의도된 것).
   문제는 소리로도 읽어 주므로 글로만 통하는 문제(글자 모양 말장난 등)는 안 됩니다. `why` 는 맞혔을 때 읽는 풀이라 넌센스에는 꼭 필요합니다.
 
+  **태양계(`space.html`)가 열두 번째**입니다 (2026-09-23) — **우주 과목을 새로 만든 첫 화면이자, 다니랜드에서 유일한 까만 화면**입니다.
+  `<body class="space-body">` 가 밝은 바탕과 공용 부품(topbar·chip·overlay·big-btn)을 어두운 쪽으로 덮습니다 — 우주 페이지를 새로 만들면
+  이 클래스부터 붙이세요. 별·태양·행성·고리를 **캔버스에 직접 3D 로 그립니다**. three.js 같은 라이브러리는 **쓰지 않습니다** —
+  의존성 없음이 이 저장소의 원칙이고, 그래야 인터넷 없이 `file://` 로도 돕니다. `project()` 가 y축 yaw → x축 pitch → 원근의
+  세 걸음으로 한 점을 화면에 찍고, 깊이가 먼 것부터 그립니다(화가 알고리즘). 토성 고리는 행성보다 뒤쪽 반 → 행성 → 앞쪽 반
+  순서로 나눠 그려야 감싸 보입니다. 고리 띠는 실제 자리 그대로라(C·B·A 고리와 카시니 간극) 옆에서 보면 선으로 납작해집니다.
+  **크기와 거리는 일부러 진짜 비율이 아닙니다** — 진짜대로면 해왕성이 수성보다 77배 멀어 한 화면에 안 들어오고 수성은 1픽셀입니다.
+  궤도는 차례대로 고르게(화성-목성 사이만 넓게 — 소행성대), 크기는 실제 반지름의 0.36 제곱, 도는 빠르기는 실제 공전 주기의
+  세제곱근입니다 ('먼 행성일수록 느리다' 는 진짜와 같습니다). **진짜 숫자는 `planet.html` 의 칩과 이야기 카드에 정확히 적혀 있으니
+  그쪽을 흐리게 고치지 마세요.** 행성을 누르면 `planet.html?planet=<id>` 로 갑니다 — 나라 페이지처럼 화면 하나가
+  태양·행성 여덟·달을 다 쓰고, 데이터는 `js/planets.js` 한 파일입니다 (행성을 더하려면 거기 객체 하나).
+  '행성 찾기' 에서 **정답 궤도는 한 번 틀린 뒤에만 밝힙니다** — 처음부터 밝히면 그 고리만 따라가면 돼서 놀이가 안 됩니다.
+  같은 놀이에서 `zoomFor()` 가 찾아야 할 행성의 궤도가 다 보일 만큼 배율을 줄입니다 (구경하기는 안 줄입니다 — 크게 보는 재미가 먼저고,
+  밖으로 나가면 끌어서 따라가면 됩니다). 사진은 `planet/<id>.jpg` 로 **자르지 않고 검은 바탕 800×600 가운데에 얹은 것**입니다
+  (행성은 동그라미라 4:3 으로 자르면 위아래가 잘립니다). 거의 다 NASA 퍼블릭 도메인이고 달 사진만 CC BY-SA 라
+  `planet/CREDITS.md` 가 출처 표입니다 — 사진을 바꾸면 그 표도 같이.
+
   ⚠️ **세계 지도는 태블릿 전용입니다 — 이것은 버그가 아니라 정한 것입니다.** (2026-09-06)
   지리적으로 정확한 지도에서 한국은 가로의 4.5% 라서 폰(390px)에서는 16×18px 이 됩니다
   (손가락 최소 64px). 태블릿 세로 35×39px, 태블릿 가로 39×43px.
@@ -297,6 +317,10 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.greece.<act>` `daniland.best.greece` `daniland.best.germany.<act>` `daniland.best.germany` `daniland.best.france.<act>` `daniland.best.france` `daniland.best.norway.*` `daniland.best.spain.*` | 그리스·독일·프랑스·노르웨이·스페인 — 스웨덴과 같은 규칙 (나라 페이지는 `daniland.best.<id>`) |
 | `daniland.best.europe.<act>` | 유럽 놀이별(찾아가기·무엇이 있을까·국기 찾기) 최고 별 (구경하기는 점수가 없습니다) |
 | `daniland.best.europe` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
+| `daniland.best.space.<act>` | 태양계 놀이별(행성 찾기·퀴즈) 최고 별 (구경하기는 점수가 없습니다) |
+| `daniland.best.space` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
+| `daniland.space.seen` | 들어가 본 행성 id 목록 — 태양계 화면의 👀 n/10 과 이름 앞 ✓ 가 이것을 읽습니다 |
+| `daniland.planet.read.<id>` | 그 행성의 이야기 카드를 다 읽은 적 있음 |
 | `daniland.best.riddle` | 수수께끼 최고 별 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.riddle.done` | 수수께끼에서 맞혀 본 문제의 `q` 목록 — 안 풀어 본 문제부터 내는 데 씁니다 |
 | `daniland.best.balloon.level` | 풍선 터뜨리기에서 도달한 최고 단계 |
@@ -309,7 +333,7 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.rank.dodge` | 장애물 피하기 순위표 — `[{ m, level, treats }, …]` 먼 순서로 다섯 개 (시작·결과 화면) |
 | `daniland.best.maze.<n>` | 미로 찾기 판 크기별(5·7·9·11) 한 번에 찾은 적 있음 (1/1) |
 | `daniland.best.maze` | 한 번에 찾은 것 중 제일 큰 판 — stars 가 칸 수(5~11)입니다 (카드의 ⭐ 는 이것을 `bestUnit: '칸 미로'` 로 읽습니다) |
-| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.fishStart` `daniland.townAct` `daniland.worldAct` `daniland.tripAct` `daniland.rideAct` `daniland.swedenAct` `daniland.greeceAct` `daniland.germanyAct` `daniland.franceAct` `daniland.norwayAct` `daniland.spainAct` `daniland.europeAct` `daniland.numShow`(더하기·빼기·곱하기의 그림/식/둘 다) `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.mazeSize` | 마지막에 고른 설정 |
+| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.fishStart` `daniland.townAct` `daniland.worldAct` `daniland.tripAct` `daniland.rideAct` `daniland.swedenAct` `daniland.greeceAct` `daniland.germanyAct` `daniland.franceAct` `daniland.norwayAct` `daniland.spainAct` `daniland.europeAct` `daniland.spaceAct` `daniland.spaceSpeed` `daniland.numShow`(더하기·빼기·곱하기의 그림/식/둘 다) `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.mazeSize` | 마지막에 고른 설정 |
 | `daniland.numMax` | 수학 놀이가 넷뿐이던 시절의 숫자 범위 — 읽기만 합니다 (`numbers.js` 의 `loadMax()`) |
 | `daniland.rate` `daniland.voice.<lang>` | 목소리·속도 |
 | `daniland.drawer` | 그림 그리기 도장 서랍 접힘 상태 |

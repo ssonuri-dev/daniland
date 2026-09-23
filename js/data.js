@@ -61,6 +61,7 @@ window.SUBJECTS = [
       { name: '글자 쓰기·만들기', icon: '✏️', desc: '획을 긋고 자모를 붙여요' }
     ] },
   { name: '세계', icon: '🌍', desc: '나라를 만나요' },
+  { name: '우주', icon: '🪐', desc: '별과 행성을 봐요' },
   { name: '놀이', icon: '🎨', desc: '자유롭게 놀아요' }
 ];
 
@@ -855,6 +856,17 @@ window.PAGES = [
     meta: '알아보기 · 무엇이 있을까 · 퀴즈',
     href: 'country.html?country=spain',
     bestKey: 'daniland.best.spain'
+  },
+
+  /* 우주 — 까만 화면에 태양계를 3D 로 그리고, 행성을 누르면 planet.html 로 넘어갑니다.
+     행성 하나하나는 PAGES 에 안 적습니다 — 태양계 화면이 곧 목록이라서요. */
+  {
+    subject: '우주',
+    title: '태양계',
+    icon: '🪐',
+    meta: '3D 우주 구경 · 행성 찾기 · 퀴즈',
+    href: 'space.html',
+    bestKey: 'daniland.best.space'
   },
 
   {

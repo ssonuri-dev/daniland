@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#05060f">
+  <title>행성 · 다니랜드 🪐</title>
+  <link rel="icon" href="dani.png">
+  <!-- 구글 웹폰트: 제목은 Jua, 본문은 나눔고딕 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Gothic:wght@400;700;800&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="space-body">
+  <!-- 이 화면 하나가 태양·행성 여덟·달을 다 씁니다 — 주소의 ?planet=jupiter 로 고릅니다 (js/planet.js) -->
+  <!-- 들어올 때 비밀번호 (문패입니다 — js/gate.js 주석 참고) -->
+  <script src="js/gate.js"></script>
+
+  <div class="wrap planet-page">
+    <div class="topbar">
+      <button class="icon-btn" id="backBtn" title="태양계로">←</button>
+      <div class="planet-name" id="planetName"></div>
+      <div class="score" id="score">📖 0/0</div>
+    </div>
+
+    <!-- 사진 한 장 + 이름·한 줄 소개·숫자 칩 -->
+    <div class="planet-hero">
+      <div class="planet-photo" id="photo"></div>
+      <div class="planet-head">
+        <div class="planet-title" id="title"></div>
+        <div class="planet-tagline" id="tagline"></div>
+        <div class="planet-chips" id="chips"></div>
+      </div>
+    </div>
+
+    <!-- 누른 카드의 이야기 -->
+    <div class="planet-story" id="story">
+      <div class="story-head">
+        <div class="story-title" id="storyTitle"></div>
+        <button class="speak-btn small" id="speakBtn" hidden>🔊 다시</button>
+      </div>
+      <div class="story-text" id="storyText"></div>
+    </div>
+
+    <!-- 이야기 카드 — 누르면 읽어 줍니다 -->
+    <div class="planet-cards" id="cards"></div>
+
+    <!-- 태양계 차례대로 앞뒤로 넘기기 -->
+    <div class="planet-nav">
+      <button class="nav-btn" id="prevBtn">◀</button>
+      <button class="nav-btn wide" id="mapBtn">🪐 태양계로</button>
+      <button class="nav-btn" id="nextBtn">▶</button>
+    </div>
+
+    <div class="tools">
+      <button class="chip" id="voiceBtn">🎤 목소리</button>
+    </div>
+  </div>
+
+  <script src="js/ui.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/catalog.js"></script>
+  <script src="js/tts.js"></script>
+  <script src="js/sfx.js"></script>
+  <script src="js/voicepicker.js"></script>
+  <script src="js/planets.js"></script>
+  <script src="js/planet.js"></script>
+</body>
+</html>
