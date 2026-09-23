@@ -19,3 +19,5 @@
 | `saturn.jpg` | 토성과 고리 (카시니 탐사선) | NASA / JPL / Space Science Institute | Public domain | [Saturn-cassini-March-27-2004.jpg](https://commons.wikimedia.org/wiki/File:Saturn-cassini-March-27-2004.jpg) |
 | `uranus.jpg` | 천왕성 (보이저 2호) | NASA/JPL-Caltech | Public domain | [Uranus2.jpg](https://commons.wikimedia.org/wiki/File:Uranus2.jpg) |
 | `neptune.jpg` | 해왕성 (보이저 2호) | NASA | Public domain | [Neptune Full.jpg](https://commons.wikimedia.org/wiki/File:Neptune_Full.jpg) |
+| `pluto.jpg` | 명왕성 (뉴호라이즌스) | NASA / Johns Hopkins University Applied Physics Laboratory / Southwest Research Institute | Public domain | [Nh-pluto-in-true-color 2x JPEG-edit-frame.jpg](https://commons.wikimedia.org/wiki/File:Nh-pluto-in-true-color_2x_JPEG-edit-frame.jpg) |
+| `halley.jpg` | 핼리 혜성 (1986년) | NASA/W. Liller | Public domain | [Lspn comet halley.jpg](https://commons.wikimedia.org/wiki/File:Lspn_comet_halley.jpg) |
