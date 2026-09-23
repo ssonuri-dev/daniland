@@ -111,7 +111,27 @@ window.LESSONS = [
       { emoji: '🐸', word: 'frog',     ko: '개구리' },
       { emoji: '🐵', word: 'monkey',   ko: '원숭이' },
       { emoji: '🐷', word: 'pig',      ko: '돼지' },
-      { emoji: '🐔', word: 'chicken',  ko: '닭' }
+      { emoji: '🐔', word: 'chicken',  ko: '닭' },
+      { emoji: '🦁', word: 'lion',     ko: '사자' },
+      { emoji: '🦒', word: 'giraffe',  ko: '기린' },
+      { emoji: '🦓', word: 'zebra',    ko: '얼룩말' },
+      { emoji: '🐴', word: 'horse',    ko: '말' },
+      { emoji: '🐮', word: 'cow',      ko: '소' },
+      { emoji: '🐑', word: 'sheep',    ko: '양' },
+      { emoji: '🦆', word: 'duck',     ko: '오리' },
+      { emoji: '🦉', word: 'owl',      ko: '부엉이' },
+      { emoji: '🐧', word: 'penguin',  ko: '펭귄' },
+      { emoji: '🐟', word: 'fish',     ko: '물고기' },
+      { emoji: '🐢', word: 'turtle',   ko: '거북이' },
+      { emoji: '🐍', word: 'snake',    ko: '뱀' },
+      { emoji: '🐝', word: 'bee',      ko: '벌' },
+      { emoji: '🦋', word: 'butterfly', ko: '나비' },
+      { emoji: '🐌', word: 'snail',    ko: '달팽이' },
+      { emoji: '🦊', word: 'fox',      ko: '여우' },
+      { emoji: '🐺', word: 'wolf',     ko: '늑대' },
+      { emoji: '🐨', word: 'koala',    ko: '코알라' },
+      { emoji: '🐼', word: 'panda',    ko: '판다' },
+      { emoji: '🦘', word: 'kangaroo', ko: '캥거루' }
     ]
   },
 
