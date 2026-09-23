@@ -7,9 +7,12 @@
  * (자음 · 모음 · 숫자 · 낱말 · 알파벳 대문자 · 소문자).
  * 어느 묶음이든 획을 하나씩 안내합니다 (①번 획부터 차례대로).
  * 낱말은 글자를 자모로 풀어 그 획들을 이어 붙입니다 (아래 syllableStrokes).
- * 알파벳은 영어 과목 카드(write.html?lang=en)에서 들어옵니다 — 그때는 대문자·소문자 묶음만 보이고
- * (한글 카드에서는 자음·모음·숫자·낱말만), ← 가 영어로 돌아가며 기록도 daniland.best.write.en 에
- * 따로 남습니다 (한글 카드의 ⭐ 와 섞이지 않게). 화면 하나가 두 카드를 섬기는 셈입니다.
+ *
+ * 화면 하나가 카드 셋을 섬깁니다 (아래 CARDS) — 들어온 카드의 묶음만 시작 화면에 보이고
+ * ← 도 그 카드의 묶음 페이지로 돌아가며, ⭐ 기록도 카드마다 따로 남습니다.
+ *   한글 '글자 쓰기'(write.html)                  자음 · 모음 · 숫자 · 낱말
+ *   영어 '알파벳 쓰기'(write.html?lang=en)         대문자 · 소문자
+ *   영어 '단어 쓰기'(write.html?lang=en&kind=word) 세 글자 · 네 글자 (수업 낱말을 소문자 획으로)
  *
  * 잘 썼는지는 '얼마나 덮었나' 로 봅니다. 눈에 안 보이는 캔버스 두 장에
  *   ① 안내 획   ② 아이가 그은 획
@@ -24,7 +27,19 @@
 (function () {
   var ROUNDS = 8;          // 한 판에 쓸 글자 수 (묶음에서 rounds 로 덮어쓸 수 있습니다)
   var LANG = 'ko-KR';      // 묶음에 lang 이 없으면 이것으로 읽습니다 (알파벳은 en-US)
-  var FROM_EN = UI.getParam('lang') === 'en';   // 영어 과목 카드에서 들어왔나
+
+  // 이 화면을 여는 카드는 셋입니다 — 어느 카드로 들어왔는지에 따라 보이는 묶음이 갈립니다.
+  //   ko  : 한글 '글자 쓰기'   (write.html)                 자음 · 모음 · 숫자 · 낱말
+  //   abc : 영어 '알파벳 쓰기' (write.html?lang=en)          대문자 · 소문자
+  //   enw : 영어 '단어 쓰기'   (write.html?lang=en&kind=word) 세 글자 · 네 글자
+  var CARD = UI.getParam('lang') !== 'en' ? 'ko'
+           : (UI.getParam('kind') === 'word' ? 'enw' : 'abc');
+
+  var CARDS = {
+    ko:  { first: 'cons', best: 'daniland.best.write',     title: '글자 쓰기',   icon: '✏️', href: 'write.html' },
+    abc: { first: 'upper', best: 'daniland.best.write.en',  title: '알파벳 쓰기', icon: '✏️', href: 'write.html?lang=en' },
+    enw: { first: 'enw3', best: 'daniland.best.write.enw', title: '단어 쓰기',   icon: '✏️', href: 'write.html?lang=en&kind=word' }
+  };
   var CELL_MIN = 120;      // 칸이 이보다 작아지면 손가락으로 못 씁니다
   var CELL_MAX = 420;
   var BORDER = 4;          // css 의 .write-cell 테두리 두께
@@ -325,6 +340,9 @@
   UPPER.forEach(function (it, i) { it.name = ABC_NAMES[i]; it.speak = it.ch; });
   LOWER.forEach(function (it, i) { it.name = ABC_NAMES[i]; it.speak = it.ch.toUpperCase(); });
 
+  var LETTERS = {};   // 'a' → 획 목록 (영어 낱말은 이 소문자 획을 이어 붙입니다)
+  LOWER.forEach(function (it) { LETTERS[it.ch] = it.strokes; });
+
   /* =======================================================================
    * 낱말 — 글자를 자모 획으로 조립합니다
    *
@@ -421,17 +439,52 @@
     return w.word.split('').every(function (ch) { return !!syllableStrokes(ch); });
   });
 
+  /* =======================================================================
+   * 영어 낱말 — 소문자 획을 이어 붙입니다
+   *
+   * 낱말은 여기에 적지 않고 **영어 수업(LESSONS)에서 그대로 읽어 옵니다.**
+   * 글자 만들기(make.js)가 한글 수업의 낱말을 읽는 것과 같은 규칙이라, 수업에 낱말을
+   * 더하면 쓸 낱말도 같이 늘어납니다 — 여기에 낱말 배열을 새로 만들지 마세요.
+   *
+   * 글자 수가 곧 칸 수라, 세 글자와 네 글자만 씁니다 (다섯 글자는 칸이 손가락보다 작아집니다).
+   * 국기 수업은 나라 이름이라 뺍니다 (wordKo — 우리말로 익히는 수업).
+   * ===================================================================== */
+
+  function enWords(len) {
+    var seen = {};
+    var out = [];
+
+    (window.LESSONS || []).forEach(function (lesson) {
+      if (lesson.lang !== 'en-US' || lesson.wordKo) return;
+
+      (lesson.items || []).forEach(function (it) {
+        var w = (it.word || '').toLowerCase();
+        if (!it.emoji || w.length !== len || seen[w]) return;
+        if (!w.split('').every(function (c) { return !!LETTERS[c]; })) return;
+        seen[w] = true;
+        out.push({ emoji: it.emoji, word: w, ko: it.ko });
+      });
+    });
+
+    return out;
+  }
+
   var SETS = [
     { id: 'cons',  name: '자음', icon: 'ㄱ',  hint: 'ㄱ 부터 ㅎ 까지 열네 자를 획순대로 써요', items: CONSONANTS },
     { id: 'vowel', name: '모음', icon: 'ㅏ',  hint: 'ㅏ 부터 ㅣ 까지 열 자를 획순대로 써요',   items: VOWELS },
     { id: 'num',   name: '숫자', icon: '1',   hint: '1 부터 0 까지 획순대로 써요',            items: NUMBERS },
     // 낱말은 글자마다 획이 대여섯이라 한 판을 짧게 잡습니다 (다섯 낱말이면 예순 획쯤).
     { id: 'word',  name: '낱말', icon: '✏️', hint: '그림을 보고 낱말을 획순대로 써요',            items: WORDS, rounds: 5 },
-    // 알파벳은 영어로 읽고, 칸에 십자 대신 영어 공책 가로줄을 긋습니다 (en 은 영어 카드의 ⭐ 묶음).
+    // 알파벳은 영어로 읽고, 칸에 십자 대신 영어 공책 가로줄을 긋습니다.
     { id: 'upper', name: '대문자', icon: 'A', hint: 'A 부터 Z 까지 큰 글자를 획순대로 써요',    items: UPPER,
-      lang: 'en-US', lines: [0.14, 0.46, 0.78], en: true },
+      lang: 'en-US', lines: [0.14, 0.46, 0.78], card: 'abc' },
     { id: 'lower', name: '소문자', icon: 'a', hint: 'a 부터 z 까지 작은 글자를 획순대로 써요',   items: LOWER,
-      lang: 'en-US', lines: [0.14, 0.46, 0.78], en: true }
+      lang: 'en-US', lines: [0.14, 0.46, 0.78], card: 'abc' },
+    // 영어 낱말 — letters 가 붙은 묶음은 글자를 소문자 획으로 풀어 씁니다 (한글은 자모로).
+    { id: 'enw3', name: '세 글자', icon: '🐱', hint: 'cat · dog 처럼 세 글자 낱말을 써요',   items: enWords(3),
+      lang: 'en-US', lines: [0.14, 0.46, 0.78], card: 'enw', letters: LETTERS, rounds: 5 },
+    { id: 'enw4', name: '네 글자', icon: '🐻', hint: 'bear · fish 처럼 네 글자 낱말을 써요', items: enWords(4),
+      lang: 'en-US', lines: [0.14, 0.46, 0.78], card: 'enw', letters: LETTERS, rounds: 4 }
   ];
 
   /* ---------- 통과 기준 ----------
@@ -492,13 +545,12 @@
     pointerId: null
   };
 
-  if (!findSet(state.set)) state.set = 'cons';
-  // 카드마다 자기 묶음만 보입니다 — 영어 카드는 대문자·소문자, 한글 카드는 자음·모음·숫자·낱말.
-  // 마지막에 고른 묶음이 다른 쪽 것이면 그 쪽 첫 묶음으로.
-  if (!!findSet(state.set).en !== FROM_EN) state.set = FROM_EN ? 'upper' : 'cons';
-  if (FROM_EN) {
-    document.title = '알파벳 쓰기 · 다니랜드 ✏️';
-    document.querySelector('#startOverlay h2').textContent = '✏️ 알파벳 쓰기';
+  if (!findSet(state.set)) state.set = CARDS[CARD].first;
+  // 카드마다 자기 묶음만 보입니다. 마지막에 고른 묶음이 다른 카드 것이면 이 카드의 첫 묶음으로.
+  if (cardOf(findSet(state.set)) !== CARD) state.set = CARDS[CARD].first;
+  if (CARD !== 'ko') {
+    document.title = CARDS[CARD].title + ' · 다니랜드 ✏️';
+    document.querySelector('#startOverlay h2').textContent = CARDS[CARD].icon + ' ' + CARDS[CARD].title;
   }
   if (!window.TTS || !TTS.supported) { el.voiceBtn.hidden = true; el.soundBtn.hidden = true; }
 
@@ -530,7 +582,7 @@
 
   el.voiceBtn.addEventListener('click', function () {
     var set = findSet(state.set);
-    VoicePicker.open({ lang: set.lang || LANG, sample: function () { return state.item ? state.item.speak : (set.en ? 'ABC' : '가나다'); } });
+    VoicePicker.open({ lang: set.lang || LANG, sample: function () { return state.item ? state.item.speak : (set.lang === 'en-US' ? 'ABC' : '가나다'); } });
   });
 
   window.addEventListener('resize', function () {
@@ -544,11 +596,13 @@
     return null;
   }
 
+  function cardOf(set) { return set.card || 'ko'; }
+
   function buildSetRow() {
     el.setRow.innerHTML = '';
 
     SETS.forEach(function (s) {
-      if (!!s.en !== FROM_EN) return;     // 다른 카드의 묶음은 안 보입니다
+      if (cardOf(s) !== CARD) return;     // 다른 카드의 묶음은 안 보입니다
       var best = UI.readBest('daniland.best.write.' + s.id);
       var b = document.createElement('button');
       b.className = 'mode-btn' + (s.id === state.set ? ' on' : '');
@@ -621,14 +675,17 @@
       };
     }
 
+    // 낱말은 글자마다 칸 하나입니다 — 한글은 자모 획으로 풀고(syllableStrokes),
+    // 영어는 묶음의 letters 에서 소문자 획을 가져옵니다.
     var chars = raw.word.split('');
     return {
-      label: raw.word,
+      label: raw.word + (raw.ko ? ' · ' + raw.ko : ''),
       speak: raw.word,
       lang: set.lang || LANG,
       emoji: raw.emoji || '',
       cells: chars.map(function (ch) {
-        var parts = syllableStrokes(ch).map(function (pts) { return { pts: pts }; });
+        var strokes = set.letters ? set.letters[ch] : syllableStrokes(ch);
+        var parts = strokes.map(function (pts) { return { pts: pts }; });
         return makeCell(ch, parts);
       })
     };
@@ -641,10 +698,9 @@
   function finish() {
     updateBar(state.total);
 
-    // 묶음별 기록과, 그중 제일 잘한 기록(카드의 ⭐ 가 읽는 것)을 함께 남깁니다.
-    // 알파벳은 영어 과목 카드가 읽는 .en 에, 나머지는 한글 카드가 읽는 곳에.
+    // 묶음별 기록과, 그중 제일 잘한 기록(들어온 카드의 ⭐ 가 읽는 것)을 함께 남깁니다.
     UI.saveBest('daniland.best.write.' + state.set, state.stars, state.total);
-    UI.saveBest('daniland.best.write' + (findSet(state.set).en ? '.en' : ''), state.stars, state.total);
+    UI.saveBest(CARDS[CARD].best, state.stars, state.total);
 
     el.endStars.textContent = UI.starLine(state.stars, state.total);
     el.endTitle.textContent = (state.stars === state.total)
@@ -681,17 +737,32 @@
 
   // 칸은 스크롤 없이 한 화면에 들어와야 합니다.
   // 가로는 칸 수로 나누고, 세로는 도구 줄까지 빼고 남는 만큼만 씁니다.
+  //
+  // 한 줄에 다 놓으면 칸이 CELL_MIN 보다 작아지는 경우(영어 네 글자 낱말 × 폰 세로)에는
+  // 줄을 나눕니다 — 폰에서 82px 칸에 글자를 쓰는 것보다 두 줄로 크게 쓰는 편이 낫습니다.
+  // 태블릿은 한 줄에 여섯 칸까지 들어가므로 낱말이 접히지 않습니다.
   function fitCells() {
     var n = state.cells.length || 1;
     var gap = 10;
+
+    el.cells.style.maxWidth = '';   // 지난번에 접느라 좁혀 둔 폭을 먼저 풀고 잽니다
     var wide = el.cells.clientWidth || (document.documentElement.clientWidth - 32);
 
     var top = el.cells.getBoundingClientRect().top;
     var below = outerHeight(el.hint) + outerHeight(document.querySelector('.tools')) + 28;
     var tall = window.innerHeight - top - below;
 
-    var size = Math.floor(Math.min((wide - gap * (n - 1)) / n, tall, CELL_MAX));
+    var perRow = Math.max(1, Math.floor((wide + gap) / (CELL_MIN + gap)));
+    var rows = Math.max(1, Math.ceil(n / perRow));
+    var cols = Math.ceil(n / rows);          // 줄마다 고르게 나눕니다 (네 글자면 2 + 2)
+
+    var size = Math.floor(Math.min((wide - gap * (cols - 1)) / cols,
+                                   (tall - gap * (rows - 1)) / rows,
+                                   CELL_MAX));
     if (!(size > 0) || size < CELL_MIN) size = CELL_MIN;
+
+    // 줄을 나눈 만큼만 접히도록 폭을 잡아 둡니다 (칸이 셋이면 2 + 1 로).
+    el.cells.style.maxWidth = rows > 1 ? (size * cols + gap * (cols - 1)) + 'px' : '';
 
     state.cells.forEach(function (cell) {
       // 칸 테두리(css 의 .write-cell) 두께만큼 캔버스가 작습니다.
@@ -1141,10 +1212,9 @@
     return marks[n - 1] || (n + '번');
   }
 
-  // ← 는 들어온 카드의 묶음 페이지로 돌아갑니다 (한글, 또는 ?lang=en 이면 영어).
+  // ← 는 들어온 카드의 묶음 페이지로 돌아갑니다 (한글 · 알파벳 · 단어 쓰기).
   function bindHome() {
-    var file = 'write.html' + (FROM_EN ? '?lang=en' : '');
-    var back = window.Catalog ? Catalog.backHref(file) : 'index.html';
+    var back = window.Catalog ? Catalog.backHref(CARDS[CARD].href) : 'index.html';
 
     [el.backBtn, el.startHome, el.endHome].forEach(function (btn) {
       if (!btn) return;

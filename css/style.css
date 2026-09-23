@@ -2667,12 +2667,15 @@ button {
 
 .write-page { padding-bottom: 14px; }
 
+/* 칸이 한 줄에 다 안 들어가면 접힙니다 — 줄 수와 maxWidth 는 write.js 의 fitCells() 가 정합니다. */
 .write-row {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: flex-start;
   gap: 10px;
   margin-top: 6px;
+  margin-inline: auto;
 }
 
 /* 칸 크기(가로·세로)는 js/write.js 의 fitCells() 가 화면에 맞춰 정합니다.

@@ -921,6 +921,18 @@ window.PAGES = [
     bestKey: 'daniland.best.write.en'
   },
 
+  // 같은 화면의 세 번째 카드 — 영어 수업의 낱말을 소문자 획으로 씁니다.
+  // 위 '알파벳 쓰기' 카드보다 뒤에 있어야 합니다 (Catalog.backHref 가 href 앞머리로 앞에서부터 찾음).
+  {
+    subject: '영어',
+    group: '단어 공부',
+    title: '단어 쓰기',
+    icon: '✏️',
+    meta: '배운 낱말을 획순대로 써요',
+    href: 'write.html?lang=en&kind=word',
+    bestKey: 'daniland.best.write.enw'
+  },
+
   {
     subject: '한글',
     group: '글자 쓰기·만들기',
