@@ -840,6 +840,24 @@ window.PAGES = [
   },
 
   {
+    subject: '세계',
+    title: '노르웨이',
+    icon: '🇳🇴',
+    meta: '알아보기 · 무엇이 있을까 · 퀴즈',
+    href: 'country.html?country=norway',
+    bestKey: 'daniland.best.norway'
+  },
+
+  {
+    subject: '세계',
+    title: '스페인',
+    icon: '🇪🇸',
+    meta: '알아보기 · 무엇이 있을까 · 퀴즈',
+    href: 'country.html?country=spain',
+    bestKey: 'daniland.best.spain'
+  },
+
+  {
     subject: '한글',
     group: '글자 쓰기·만들기',
     title: '글자 쓰기',

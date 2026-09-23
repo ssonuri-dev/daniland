@@ -39,7 +39,7 @@
    *               같은 그림·같은 볼거리가 두 나라에 있으면 '무엇이 있을까' 의 정답이 둘이 되니 나라마다 다른 것만 적습니다.
    *   img       : (없어도 됩니다) 이야기 판에 보여 줄 사진 — europe/ 폴더의 파일 이름 (가로 800px, 4:3).
  *               파일이 없으면 국기 이모지로 대신 그리므로 사진이 오기 전에도 돌아갑니다 (artEl). 출처는 europe/CREDITS.md 에.
- *   more      : (없어도 됩니다) 더 깊이 보는 나라 페이지 (country.html?country=<id>) — 스웨덴·그리스·독일·프랑스
+ *   more      : (없어도 됩니다) 더 깊이 보는 나라 페이지 (country.html?country=<id>) — 스웨덴·그리스·독일·프랑스·노르웨이·스페인
    * ---------------------------------------------------------------------- */
   var COUNTRIES = [
     {
@@ -107,7 +107,8 @@
         { emoji: '💃', label: '플라멩코',   say: '손뼉을 치고 발을 구르며 추는 춤, 플라멩코의 나라예요.' },
         { emoji: '🥘', label: '파에야',     say: '커다란 팬에 쌀과 해산물을 넣어 만든 파에야를 먹는 나라예요.' },
         { emoji: '🍅', label: '토마토 축제', say: '토마토를 던지며 노는 축제 "라 토마티나" 가 열리는 나라예요.' }
-      ]
+      ],
+      more: 'country.html?country=spain'
     },
     {
       id: 'FR', ko: '프랑스', en: 'France', icon: '🇫🇷', capital: '파리', capitalEn: 'Paris',
@@ -174,7 +175,8 @@
         { emoji: '🏞️', label: '피오르', say: '산 사이로 바닷물이 깊이 들어온 피오르가 있는 나라예요.' },
         { emoji: '⛷️', label: '스키',   say: '스키를 세계에서 제일 잘 타는 나라예요.' },
         { emoji: '🧌', label: '트롤',   say: '산속에 트롤이 산다는 옛이야기가 있는 나라예요.' }
-      ]
+      ],
+      more: 'country.html?country=norway'
     },
     {
       id: 'SE', ko: '스웨덴', en: 'Sweden', icon: '🇸🇪', capital: '스톡홀름', capitalEn: 'Stockholm',
