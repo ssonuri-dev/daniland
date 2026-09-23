@@ -57,6 +57,7 @@ ES5 IIFE 로 감싸 `window` 에 전역을 붙이는 방식입니다. `import`/`
 | `SUBJECTS` `LESSONS` `PAGES` | `js/data.js` | 콘텐츠 전부 (평소 손댈 파일은 여기뿐) |
 | `BOOKS` | `js/books.js` | 영어 그림책 — 책 한 권이 객체 하나, 그림은 `books/<id>/` (전집처럼 계속 늘어납니다). 목록 페이지도 읽습니다(책마다 카드) |
 | `PLANETS` `SPACE_QUIZ` | `js/planets.js` | 태양계 — 태양·행성 여덟·달·명왕성·핼리 혜성이 객체 하나씩 (이야기 카드·숫자 칩·퀴즈). `space.html` 과 `planet.html` 이 같이 읽습니다 |
+| `STAR_STAGES` `STAR_PATHS` `STAR_QUIZ` | `js/stars.js` | 별의 일생 — 단계(성운~블랙홀) 하나가 객체 하나, 무게 네 가지가 그 단계를 차례로 엮습니다. `star.html` 만 읽습니다 |
 | `RIDDLES` | `js/riddles.js` | 수수께끼·넌센스 문제 — 문제 하나가 객체 하나 (계속 늘어납니다). `riddle.html` 만 읽습니다 |
 | `Catalog` | `js/catalog.js` | LESSONS+PAGES 를 과목별로 묶고 최고 기록을 붙임 |
 | `UI` | `js/ui.js` | 섞기·이모지 개수 세기·URL 파라미터·폭죽·localStorage |
@@ -119,6 +120,7 @@ index.html            과목 카드            home.js
       ├ europe.html                         europe.js   (유럽 — 나라 모양 svg 지도(europe-map.js) 위 국기 핀 18개, 놀이 4종)
       ├ space.html                          space.js    (태양계 — 까만 화면에 3D 로 공전. 행성을 누르면 아래로)
       │  └ planet.html?planet=jupiter       planet.js   (행성 한 곳 — 사진·숫자 칩·이야기 카드. 데이터는 js/planets.js)
+      ├ star.html                           star.js     (별의 일생 — 무게를 고르면 성운에서 블랙홀까지. 데이터는 js/stars.js)
       ├ riddle.html                         riddle.js   (수수께끼·넌센스 — js/riddles.js 의 문제를 열 개씩, 보기 넉 장)
       ├ fish.html                           fish.js     (낚시 — 하늘·바다·배·물고기를 캔버스에 그림, 단계·하트. 장애물 피하기와 같은 얼개)
       └ draw.html                           draw.js     (독립 — 다른 js 를 전혀 안 씀)
@@ -242,6 +244,16 @@ index.html            과목 카드            home.js
   (행성은 동그라미라 4:3 으로 자르면 위아래가 잘립니다). 거의 다 NASA 퍼블릭 도메인이고 달 사진만 CC BY-SA 라
   `planet/CREDITS.md` 가 출처 표입니다 — 사진을 바꾸면 그 표도 같이.
 
+  **별의 일생(`star.html`)이 열세 번째**입니다 (2026-09-23) — 우주 과목 둘째 화면. 핵심은 **별의 무게가 그 별의 끝을 정한다**는
+  것이라, 시작 화면에서 무게 넷(태양의 ⅓·1배·10배·25배) 중 하나를 고르면 그 별이 성운에서 끝까지 한 걸음씩 흘러갑니다.
+  **별 → 적색거성 → 백색왜성이 모두 같은 그림(`art: 'star'`)이고 반지름만 스르르 바뀝니다** — '부풀었다 쪼그라든다' 가
+  글이 아니라 눈으로 보여야 하므로 `js/stars.js` 의 `r` 비율을 보기 좋으라고 고르게 맞추지 마세요. 초신성 번쩍임은
+  **처음 한 번만** 합니다 (되풀이하면 눈이 아픕니다). 자동으로 다음 걸음으로 넘어가는데, 기기에 우리말 목소리가 없으면
+  읽기가 곧바로 끝나므로 **글자 수만큼(`dwell`)은 무조건 머무릅니다** — 이게 없으면 일생이 십몇 초 만에 지나갑니다.
+  색을 섞어 쓰기 때문에 `hex()` 가 `#rrggbb` 와 `rgb(r,g,b)` 를 **둘 다** 읽어야 합니다 (안 그러면 색이 NaN 이 되고
+  `addColorStop` 이 예외를 던져 그림이 통째로 멈춥니다 — 실제로 한 번 겪었습니다). `frame()` 이 맨 앞에서 다음 프레임을
+  예약하는 것도 같은 이유입니다. 사진은 `star/` 이고 '별' 단계만 `planet/sun.jpg` 를 그대로 씁니다 (우리 태양이 그 단계라서).
+
   ⚠️ **세계 지도는 태블릿 전용입니다 — 이것은 버그가 아니라 정한 것입니다.** (2026-09-06)
   지리적으로 정확한 지도에서 한국은 가로의 4.5% 라서 폰(390px)에서는 16×18px 이 됩니다
   (손가락 최소 64px). 태블릿 세로 35×39px, 태블릿 가로 39×43px.
@@ -327,6 +339,9 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.space` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.space.seen` | 들어가 본 곳의 id 목록 — 태양계 화면의 👀 n/12 와 이름 앞 ✓ 가 이것을 읽습니다 |
 | `daniland.planet.read.<id>` | 그 행성의 이야기 카드를 다 읽은 적 있음 |
+| `daniland.best.star.<act>` | 별의 일생 놀이별(순서 맞추기·퀴즈) 최고 별 (별 키우기는 점수가 없습니다) |
+| `daniland.best.star` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
+| `daniland.star.grown` | 끝까지 키워 본 별의 무게 목록 — 별 키우기의 👀 n/4 가 이것을 읽습니다 |
 | `daniland.best.riddle` | 수수께끼 최고 별 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.riddle.done` | 수수께끼에서 맞혀 본 문제의 `q` 목록 — 안 풀어 본 문제부터 내는 데 씁니다 |
 | `daniland.best.balloon.level` | 풍선 터뜨리기에서 도달한 최고 단계 |
@@ -339,7 +354,7 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.rank.dodge` | 장애물 피하기 순위표 — `[{ m, level, treats }, …]` 먼 순서로 다섯 개 (시작·결과 화면) |
 | `daniland.best.maze.<n>` | 미로 찾기 판 크기별(5·7·9·11) 한 번에 찾은 적 있음 (1/1) |
 | `daniland.best.maze` | 한 번에 찾은 것 중 제일 큰 판 — stars 가 칸 수(5~11)입니다 (카드의 ⭐ 는 이것을 `bestUnit: '칸 미로'` 로 읽습니다) |
-| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.fishStart` `daniland.townAct` `daniland.worldAct` `daniland.tripAct` `daniland.rideAct` `daniland.swedenAct` `daniland.greeceAct` `daniland.germanyAct` `daniland.franceAct` `daniland.norwayAct` `daniland.spainAct` `daniland.europeAct` `daniland.spaceAct` `daniland.spaceSpeed` `daniland.numShow`(더하기·빼기·곱하기의 그림/식/둘 다) `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.mazeSize` | 마지막에 고른 설정 |
+| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.fishStart` `daniland.townAct` `daniland.worldAct` `daniland.tripAct` `daniland.rideAct` `daniland.swedenAct` `daniland.greeceAct` `daniland.germanyAct` `daniland.franceAct` `daniland.norwayAct` `daniland.spainAct` `daniland.europeAct` `daniland.spaceAct` `daniland.spaceSpeed` `daniland.starAct` `daniland.starMass` `daniland.numShow`(더하기·빼기·곱하기의 그림/식/둘 다) `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.mazeSize` | 마지막에 고른 설정 |
 | `daniland.numMax` | 수학 놀이가 넷뿐이던 시절의 숫자 범위 — 읽기만 합니다 (`numbers.js` 의 `loadMax()`) |
 | `daniland.rate` `daniland.voice.<lang>` | 목소리·속도 |
 | `daniland.drawer` | 그림 그리기 도장 서랍 접힘 상태 |

@@ -54,7 +54,8 @@ h1, h2, h3, h4,
 .sp-title,
 .planet-title,
 .story-title,
-.planet-name {
+.planet-name,
+.star-title {
   font-family: 'Jua', 'Nanum Gothic', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
   font-weight: 400;
 }
@@ -3508,6 +3509,14 @@ button {
 
 /* 시작·결과 덮개 */
 .space-body .overlay { background: rgba(5, 7, 18, 0.95); }
+
+/* 우주 과목의 시작 화면은 고를 것이 많아(놀이 셋 + 무게 넷) 폰에서 화면보다 길어집니다.
+   그냥 두면 위아래가 잘려 '← 다른 공부 고르기' 에 손이 안 닿아요 — 넘치면 스크롤되게 합니다.
+   safe center 는 '들어가면 가운데, 넘치면 위에서부터' 라는 뜻입니다. */
+.space-overlay {
+  justify-content: safe center;
+  overflow-y: auto;
+}
 .space-body .overlay h2 { color: var(--yellow); }
 .space-body .overlay p { color: #a9b6e0; }
 .space-body .overlay .credit { color: #7f8bb5; }
@@ -3776,4 +3785,163 @@ button {
   .space-label { font-size: 15px; }
   .space-card .text { font-size: 16px; }
   .space-page .topbar { gap: 8px; padding-bottom: 6px; }
+}
+
+/* =========================================================================
+ * 별의 일생 (star.html) — 까만 화면이라 <body class="space-body"> 를 같이 씁니다.
+ * 위에서부터 하늘(캔버스) · 단계 띠 · 이야기(사진+글) 순서이고, 전체 높이는
+ * js/star.js 의 fit() 이 화면 높이로 못 박습니다 (태양계 화면과 같은 규칙).
+ * ========================================================================= */
+
+.star-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding-bottom: 12px;
+}
+
+.star-page .topbar { padding-bottom: 8px; }
+.star-page .space-sky { min-height: 140px; }
+
+/* 퀴즈에서는 보기 넉 장이 커야 해서 하늘을 줄입니다 */
+.star-page .space-sky.small-sky { flex: none; height: 150px; }
+
+/* 단계 띠 — 지금 어디쯤인지. 누르면 그 단계로 되돌아갑니다. */
+.star-steps {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.star-steps[hidden] { display: none; }
+
+.step-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 11px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #9fabd4;
+  background: rgba(255, 255, 255, 0.07);
+  border: 2px solid transparent;
+  border-radius: 999px;
+}
+
+.step-chip .sc-art { font-size: 15px; line-height: 1; }
+.step-chip.done { color: #8fd8a2; }
+.step-chip.on { color: var(--yellow); border-color: var(--yellow); background: rgba(255, 207, 92, 0.12); }
+.step-chip:active { transform: translateY(2px); }
+
+/* 이야기 — 사진 · 글 · 다음 단추 */
+.star-story {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 10px;
+  padding: 12px 14px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.star-story[hidden] { display: none; }
+
+.star-photo {
+  flex: none;
+  width: 150px;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #000;
+}
+
+.star-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+.star-emoji {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 54px;
+}
+
+.star-body { flex: 1; min-width: 0; }
+.star-title { font-size: 20px; color: var(--yellow); line-height: 1.2; }
+.star-text { margin-top: 5px; font-size: 15px; line-height: 1.55; color: #dbe3ff; word-break: keep-all; }
+
+.star-next {
+  flex: none;
+  align-self: stretch;
+  padding: 0 18px;
+  font-size: 16px;
+  font-weight: 800;
+  color: #10131f;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffe08a, var(--yellow));
+}
+
+.star-next:active { transform: translateY(2px); }
+
+/* 순서 맞추기 카드 */
+.cards.star-cards {
+  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+  gap: 9px;
+  margin-top: 10px;
+}
+
+.cards.star-cards[hidden] { display: none; }
+.cards.star-cards.ans-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+
+.space-body .choice.star-card {
+  aspect-ratio: auto;
+  min-height: 86px;
+  gap: 5px;
+  padding: 8px 4px;
+  color: #dbe3ff;
+  background: rgba(255, 255, 255, 0.08);
+  border: 3px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  box-shadow: none;
+}
+
+.star-card .art { font-size: 30px; line-height: 1; }
+.star-card .lbl { font-size: 13px; font-weight: 700; text-align: center; word-break: keep-all; }
+.space-body .choice.star-card.done { border-color: var(--green); background: rgba(109, 212, 126, 0.18); }
+.space-body .choice.star-card.wrong { border-color: var(--pink); background: rgba(255, 143, 171, 0.20); }
+
+/* 순서 맞추기에서 몇 번째로 눌렀는지 (UI.addMark 가 붙입니다) */
+.star-card .mark {
+  top: 4px;
+  right: 6px;
+  font-size: 15px;
+  color: var(--green);
+}
+
+@media (max-width: 599px) {
+  /* 폰에서는 사진·글 옆에 단추까지 나란히 두면 글이 한 줄에 열 자도 안 들어갑니다 —
+     단추를 아래 한 줄로 내려 글 폭을 넓힙니다. */
+  .star-story { flex-wrap: wrap; gap: 10px; padding: 10px; }
+  .star-photo { width: 92px; }
+  .star-body { flex: 1 1 150px; }
+  .star-next { flex: 1 0 100%; order: 3; align-self: auto; padding: 11px; font-size: 15px; }
+  .star-title { font-size: 17px; }
+  .star-text { font-size: 13px; line-height: 1.45; }
+  .step-chip { padding: 5px 8px; font-size: 11px; }
+  .step-chip .sc-art { font-size: 13px; }
+  .cards.star-cards { grid-template-columns: repeat(auto-fit, minmax(76px, 1fr)); gap: 7px; }
+  .space-body .choice.star-card { min-height: 74px; }
+  .star-card .art { font-size: 25px; }
+  .star-card .lbl { font-size: 11px; }
+}
+
+/* 아주 좁은 폰에서는 단계 띠가 두 줄이 되어 하늘을 먹습니다 —
+   지금 단계만 이름을 보이고 나머지는 그림만 둡니다 (이름은 위 안내 줄에도 있습니다). */
+@media (max-width: 480px) {
+  .step-chip { padding: 7px 10px; }
+  .step-chip .sc-name { display: none; }
+  .step-chip.on .sc-name { display: inline; }
 }

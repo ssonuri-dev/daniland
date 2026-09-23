@@ -870,6 +870,15 @@ window.PAGES = [
   },
 
   {
+    subject: '우주',
+    title: '별의 일생',
+    icon: '⭐',
+    meta: '별 키우기 · 순서 맞추기 · 퀴즈',
+    href: 'star.html',
+    bestKey: 'daniland.best.star'
+  },
+
+  {
     subject: '한글',
     group: '글자 쓰기·만들기',
     title: '글자 쓰기',
