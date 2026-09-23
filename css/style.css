@@ -1631,19 +1631,22 @@ button {
 }
 
 /* ---------- 마을 지도 ----------
- * 마을 지도(town.html)와 세계 지도(world.html)가 같은 규칙을 씁니다.
+ * 마을 지도(town.html)·세계 지도(world.html)·몸 이름(body.html)이 같은 규칙을 씁니다.
  * 지도는 그림 한 장이고, 그 위에 투명한 단추(.town-spot / .world-spot)를 얹어 놓았습니다.
  * 자리는 모두 백분율이라 지도가 커지고 작아져도 그대로 따라갑니다.
  * 지도 크기는 각 페이지의 fitMap() 이 화면에 맞춰 정합니다
- * (마을 지도는 정사각형, 세계 지도는 3:2 — 비율은 각 js 의 MAP_RATIO).
+ * (마을 지도는 정사각형, 세계 지도는 3:2, 몸 그림은 3:5 — 비율은 각 js 의 MAP_RATIO / FIG_RATIO).
+ * 몸 이름에는 다니가 따로 없습니다 — 누를 곳이 곧 다니 자신이라 걸어갈 데가 없습니다.
  * ------------------------------------------------------------------------ */
 
 .town-page,
-.world-page { padding-bottom: 14px; }
+.world-page,
+.body-page { padding-bottom: 14px; }
 
 /* 무엇을 찾아야 하는지 — 지도를 크게 두려고 한 줄로만 씁니다 */
 .town-quest,
-.world-quest {
+.world-quest,
+.body-quest {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1653,24 +1656,30 @@ button {
 }
 
 .town-item,
-.world-item { font-size: 40px; line-height: 1; }
+.world-item,
+.body-item { font-size: 40px; line-height: 1; }
 .town-item[hidden],
-.world-item[hidden] { display: none; }
+.world-item[hidden],
+.body-item[hidden] { display: none; }
 
 .town-label,
-.world-label {
+.world-label,
+.body-label {
   font-size: 18px;
   font-weight: 700;
   color: var(--ink);
 }
 
 .town-quest .speak-btn,
-.world-quest .speak-btn { margin-top: 0; }
+.world-quest .speak-btn,
+.body-quest .speak-btn { margin-top: 0; }
 .town-quest .speak-btn[hidden],
-.world-quest .speak-btn[hidden] { display: none; }
+.world-quest .speak-btn[hidden],
+.body-quest .speak-btn[hidden] { display: none; }
 
 .town-map,
-.world-map {
+.world-map,
+.body-fig {
   position: relative;
   margin: 0 auto;
   background-position: center;
@@ -1684,12 +1693,17 @@ button {
 
 .town-map  { background-color: #cdeb8b; background-image: url('../town.jpg'); }
 .world-map { background-color: #29a8ec; background-image: url('../world.jpg'); }
+/* 몸 그림은 코디 놀이의 평상복 다니를 그대로 씁니다 (dress/costume-basic.png).
+   바탕이 흰 그림이라 배경색도 흰색이어야 테두리에서 색이 안 비칩니다. */
+.body-fig  { background-color: #fff;    background-image: url('../dress/costume-basic.png'); }
 
 .town-spots,
-.world-spots { position: absolute; inset: 0; }
+.world-spots,
+.body-spots { position: absolute; inset: 0; }
 
 .town-spot,
-.world-spot {
+.world-spot,
+.body-spot {
   position: absolute;
   padding: 0;
   background: transparent;
@@ -1698,29 +1712,36 @@ button {
 }
 
 .town-spot.correct,
-.world-spot.correct {
+.world-spot.correct,
+.body-spot.correct {
   background: rgba(109, 212, 126, 0.30);
   box-shadow: inset 0 0 0 5px var(--green);
   animation: pop 0.45s ease;
 }
 
 .town-spot.wrong,
-.world-spot.wrong {
+.world-spot.wrong,
+.body-spot.wrong {
   box-shadow: inset 0 0 0 5px var(--pink);
   animation: shake 0.4s ease;
 }
 
 /* 틀린 곳은 지우지 않고 흐리게 남깁니다 */
 .town-spot.dim,
-.world-spot.dim { background: rgba(64, 50, 58, 0.45); }
+.world-spot.dim,
+.body-spot.dim { background: rgba(64, 50, 58, 0.45); }
 
 .town-spot .mark,
-.world-spot .mark {
+.world-spot .mark,
+.body-spot .mark {
   position: absolute;
   top: 4px;
   right: 8px;
   font-size: 28px;
 }
+
+/* 얼굴 쪽 칸은 작아서 ⭕ ❌ 가 칸보다 커 보입니다 — 몸에서는 한 치수 줄입니다. */
+.body-spot .mark { top: 2px; right: 4px; font-size: 20px; }
 
 /* 다니 — 발끝이 길에 닿도록 아래쪽을 기준으로 놓습니다 */
 .town-dani {

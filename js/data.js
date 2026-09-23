@@ -921,6 +921,18 @@ window.PAGES = [
     bestKey: 'daniland.best.write.en'
   },
 
+  // 몸의 부위는 '어디인지' 가 곧 뜻이라 낱말 카드에 안 담깁니다 — 마을 지도처럼
+  // 그림 한 장 위에 단추를 얹었습니다 (js/body.js 머리 주석).
+  {
+    subject: '영어',
+    group: '단어 공부',
+    title: '몸 이름',
+    icon: '🧍',
+    meta: '누르면 이름을 알려 줘요',
+    href: 'body.html',
+    bestKey: 'daniland.best.body'
+  },
+
   // 같은 화면의 세 번째 카드 — 영어 수업의 낱말을 소문자 획으로 씁니다.
   // 위 '알파벳 쓰기' 카드보다 뒤에 있어야 합니다 (Catalog.backHref 가 href 앞머리로 앞에서부터 찾음).
   {

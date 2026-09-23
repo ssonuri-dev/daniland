@@ -111,6 +111,7 @@ index.html            과목 카드            home.js
       ├ town.html                           town.js     (지도 그림 town.jpg 위, 놀이 3종)
       ├ world.html                          world.js    (지도 그림 world.jpg 위, 놀이 3종)
       ├ trip.html                           trip.js     (풍경 그림 trip.jpg 위, 놀이 2종 — 영어 문장·대화)
+      ├ body.html                           body.js     (몸 그림 dress/costume-basic.png 위, 놀이 3종 — 몸의 부위 영어 이름)
       ├ write.html                          write.js    (글자 따라 쓰기, 묶음 8종 — 한글 자음·모음·숫자·낱말 + 영어 대문자·소문자·세 글자·네 글자.
       │                                                 영어 카드는 ?lang=en (알파벳) · ?lang=en&kind=word (단어 쓰기))
       ├ make.html                           make.js     (자음+모음으로 글자 조립)
@@ -255,6 +256,17 @@ index.html            과목 카드            home.js
   `addColorStop` 이 예외를 던져 그림이 통째로 멈춥니다 — 실제로 한 번 겪었습니다). `frame()` 이 맨 앞에서 다음 프레임을
   예약하는 것도 같은 이유입니다. 사진은 `star/` 이고 '별' 단계만 `planet/sun.jpg` 를 그대로 씁니다 (우리 태양이 그 단계라서).
 
+  **몸 이름(`body.html`)이 열네 번째**입니다 (2026-09-24) — 몸의 부위는 **'어디인지' 가 곧 뜻**이라 낱말 카드에
+  안 담깁니다. 마을 지도와 같은 얼개(그림 한 장 + 백분율 단추)이고, 다른 점은 **다니가 움직이지 않는다**는 것뿐입니다
+  (누를 곳이 곧 다니 자신이라 걸어갈 데가 없습니다). 그림은 코디 놀이의 평상복 다니(`dress/costume-basic.png`)를
+  그대로 씁니다 — 새 그림을 안 만든 것은 정한 것이니 되돌리지 마세요. 부위 열세 곳이 `js/body.js` 의 `PARTS` 에 있고,
+  눈·귀·손처럼 둘인 곳은 `boxes` 가 둘이라 양쪽 다 눌리며 이름도 `many` 로 말합니다 (`eye → eyes`, `foot → feet`).
+  **'무엇을 할까'(`use`)의 `hint` 는 부위 이름을 말하지 않습니다** — 말해 버리면 '듣고 찾기' 와 똑같아지고
+  '무엇을 하는 곳인지' 로 찾는 재미가 사라집니다. `hint` 는 **한 부위에만 맞아야 합니다** (`I run with these` 는
+  다리와 발 둘 다라 못 씁니다 — 발은 `I wear socks and shoes on these.`). **얼굴 칸은 옆으로 나란히 둡니다** —
+  위아래로 쌓으면 한 칸이 손가락보다 얇아져서(코는 그림에서 세로 2%뿐) 눈·코·눈을 가로로 놓고 그 바깥에 귀를,
+  아래에 입을 두었습니다. 폰에서도 돌아가지만(얼굴 칸 36~57px) 세계 지도처럼 **태블릿이 제격**입니다.
+
   ⚠️ **세계 지도는 태블릿 전용입니다 — 이것은 버그가 아니라 정한 것입니다.** (2026-09-06)
   지리적으로 정확한 지도에서 한국은 가로의 4.5% 라서 폰(390px)에서는 16×18px 이 됩니다
   (손가락 최소 64px). 태블릿 세로 35×39px, 태블릿 가로 39×43px.
@@ -338,6 +350,8 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.make` | 글자 만들기 최고 별 |
 | `daniland.best.hundred.<act>` | 백 판 놀이별(뛰어 세기·여기는 몇·앞뒤 수) 최고 별 |
 | `daniland.best.hundred` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
+| `daniland.best.body.<act>` | 몸 이름 놀이별(듣고 찾기·무엇을 할까) 최고 별 (구경하기는 점수가 없습니다) |
+| `daniland.best.body` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.trip.<act>` | 할머니 섬 여행 놀이별(탈것 여행·다니 돌보기) 최고 별 |
 | `daniland.best.trip` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.ride.<act>` | 탈것 타기 놀이별(타기·문장 고르기·타고 내리기) 최고 별 |
@@ -366,7 +380,7 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.rank.dodge` | 장애물 피하기 순위표 — `[{ m, level, treats }, …]` 먼 순서로 다섯 개 (시작·결과 화면) |
 | `daniland.best.maze.<n>` | 미로 찾기 판 크기별(5·7·9·11) 한 번에 찾은 적 있음 (1/1) |
 | `daniland.best.maze` | 한 번에 찾은 것 중 제일 큰 판 — stars 가 칸 수(5~11)입니다 (카드의 ⭐ 는 이것을 `bestUnit: '칸 미로'` 로 읽습니다) |
-| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.fishStart` `daniland.townAct` `daniland.worldAct` `daniland.tripAct` `daniland.rideAct` `daniland.swedenAct` `daniland.greeceAct` `daniland.germanyAct` `daniland.franceAct` `daniland.norwayAct` `daniland.spainAct` `daniland.europeAct` `daniland.spaceAct` `daniland.spaceSpeed` `daniland.starAct` `daniland.starMass` `daniland.numShow`(더하기·빼기·곱하기의 그림/식/둘 다) `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.mazeSize` | 마지막에 고른 설정 |
+| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.fishStart` `daniland.townAct` `daniland.worldAct` `daniland.bodyAct` `daniland.tripAct` `daniland.rideAct` `daniland.swedenAct` `daniland.greeceAct` `daniland.germanyAct` `daniland.franceAct` `daniland.norwayAct` `daniland.spainAct` `daniland.europeAct` `daniland.spaceAct` `daniland.spaceSpeed` `daniland.starAct` `daniland.starMass` `daniland.numShow`(더하기·빼기·곱하기의 그림/식/둘 다) `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.mazeSize` | 마지막에 고른 설정 |
 | `daniland.numMax` | 수학 놀이가 넷뿐이던 시절의 숫자 범위 — 읽기만 합니다 (`numbers.js` 의 `loadMax()`) |
 | `daniland.rate` `daniland.voice.<lang>` | 목소리·속도 |
 | `daniland.drawer` | 그림 그리기 도장 서랍 접힘 상태 |
