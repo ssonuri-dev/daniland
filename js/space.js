@@ -174,9 +174,12 @@
       if (d.id === 'earth') earth = b;
     }
 
+    // 달은 진짜 거리(0.0026 AU)로 놓으면 지구 점 안에 파묻혀 사라집니다 — 지구 점 반지름의 1/32 거리예요.
+    // 그래서 몸이 작아지는 만큼(REAL_SIZE) 달 궤도도 같이 줄여, 지구 옆에 딱 붙어 보이게 둡니다.
+    // 평소 값 그대로 두면 달만 안 줄어들어 지구-태양 거리의 2.6배 밖을 도는 떠돌이가 됩니다.
     var m = byId('moon');
     if (m && earth) {
-      moon = { data: m, a: MOON_ORBIT, e: 0, aReal: MOON_ORBIT, eReal: 0, peri: 0,
+      moon = { data: m, a: MOON_ORBIT, e: 0, aReal: MOON_ORBIT * REAL_SIZE, eReal: 0, peri: 0,
                R: drawRadius(m.radiusKm) * 0.75, angle: 1.2, spin: 0, center: earth };
       bodies.push(moon);
     }
