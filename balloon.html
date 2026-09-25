@@ -28,7 +28,11 @@
       <div class="lives" id="lives"></div>
     </div>
 
-    <div class="balloon-field" id="field"></div>
+    <div class="balloon-field" id="field">
+      <!-- 손 모드에서만 보입니다 — 거울로 비친 자기 모습과 🖐 커서 (js/hand.js) -->
+      <video class="cam" id="cam" playsinline muted hidden></video>
+      <div class="hand-cursor" id="handCursor" hidden>🖐</div>
+    </div>
   </div>
 
   <!-- 단계가 올라갈 때 잠깐 뜨는 안내 -->
@@ -41,6 +45,10 @@
 
     <p class="hint">올라오는 풍선을 눌러서 터뜨려요</p>
     <p class="hint">놓치면 하트가 하나 사라져요 ❤️❤️❤️❤️❤️<br>단계가 올라갈수록 풍선이 빨라져요!</p>
+
+    <p class="hint" id="modePick">어떻게 터뜨릴까요?</p>
+    <div class="level-row" id="modeRow"></div>
+    <p class="hint cam-note" id="camNote" hidden></p>
 
     <p class="hint" id="startPick" hidden>어느 단계부터 할까요?</p>
     <div class="level-row" id="levelRow" hidden></div>
@@ -61,6 +69,7 @@
 
   <script src="js/ui.js"></script>
   <script src="js/sfx.js"></script>
+  <script src="js/hand.js"></script>
   <script src="js/balloon.js"></script>
 </body>
 </html>

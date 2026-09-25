@@ -31,6 +31,12 @@
   // 예전 판(10개 한 판)의 기록과 뜻이 달라 이름을 새로 씁니다.
   var BEST_KEY = 'daniland.best.balloon.level';
   var START_KEY = 'daniland.balloonStart';
+  var MODE_KEY = 'daniland.balloonMode';
+
+  // 손 모드 — 커서가 풍선 몸통에서 이만큼 벗어나도 터진 것으로 봅니다.
+  var HAND_PAD = 8;
+  // 손이 이보다 약하게 움직이면 스치고 지나간 것으로 봅니다 (0~1).
+  var HAND_HIT = 0.12;
 
   var el = {
     field: document.getElementById('field'),
@@ -40,6 +46,12 @@
     lives: document.getElementById('lives'),
     banner: document.getElementById('banner'),
     backBtn: document.getElementById('backBtn'),
+
+    cam: document.getElementById('cam'),
+    handCursor: document.getElementById('handCursor'),
+    modePick: document.getElementById('modePick'),
+    modeRow: document.getElementById('modeRow'),
+    camNote: document.getElementById('camNote'),
 
     startOverlay: document.getElementById('startOverlay'),
     startBtn: document.getElementById('startBtn'),
@@ -56,6 +68,7 @@
   };
 
   var state = {
+    mode: UI.loadValue(MODE_KEY) === 'hand' ? 'hand' : 'tap',  // 누르기냐 카메라냐
     startLevel: parseInt(UI.loadValue(START_KEY), 10) || 1,  // 시작 화면에서 고른 단계
     level: 1,
     count: 0,     // 이 단계의 풍선 수
@@ -68,12 +81,18 @@
 
   var timer = null;       // 다음 풍선 띄우기
   var bannerTimer = null; // 단계 안내를 띄워 두는 시간
+  var handRaf = 0;        // 손 따라가기 (손 모드에서만 돕니다)
 
+  buildModeRow();
   buildStartRow();
   fit();
 
   el.startBtn.addEventListener('click', function () {
     if (window.SFX) SFX.unlock();
+
+    // 손 모드는 카메라가 열린 뒤에 시작합니다 — 권한을 거절하면 누르기로 돌아갑니다.
+    if (state.mode === 'hand') { openCamThenStart(); return; }
+
     el.startOverlay.hidden = true;
     startRun();
   });
@@ -90,7 +109,128 @@
 
   function bindGo(btn, href) {
     if (!btn) return;
-    btn.addEventListener('click', function () { window.location.href = href; });
+    btn.addEventListener('click', function () {
+      stopHand();
+      window.location.href = href;
+    });
+  }
+
+  /* ---------- 손으로 터뜨리기 (카메라) ----------
+   * js/hand.js 가 찾아 준 손 자리에 🖐 커서를 놓고, 커서가 풍선 몸통에 닿으면
+   * 누른 것과 똑같이 popBalloon() 을 부릅니다.
+   *
+   * 손 모드에서도 누르기는 그대로 됩니다 — 인식이 잘 안 되는 날 아이가 막히지 않게.
+   * -------------------------------------------------------------------- */
+
+  function buildModeRow() {
+    var can = !!(window.Hand && Hand.supported());
+
+    // 카메라가 없는 기기는 물을 것도 없습니다.
+    if (!can) state.mode = 'tap';
+    el.modePick.hidden = !can;
+    el.modeRow.hidden = !can;
+    if (!can) return;
+
+    el.modeRow.innerHTML = '';
+
+    [['tap', '👆 눌러서'], ['hand', '🖐 손으로']].forEach(function (m) {
+      var b = document.createElement('button');
+      b.className = 'level-btn' + (m[0] === state.mode ? ' on' : '');
+      b.textContent = m[1];
+
+      b.addEventListener('click', function () {
+        state.mode = m[0];
+        UI.saveValue(MODE_KEY, m[0]);
+        if (window.SFX) SFX.tap();
+        note(m[0] === 'hand' ? '태블릿을 세워 놓고, 카메라 앞에서 손을 흔들어 터뜨려요!' : '');
+
+        Array.prototype.forEach.call(el.modeRow.children, function (x) {
+          x.classList.toggle('on', x === b);
+        });
+      });
+
+      el.modeRow.appendChild(b);
+    });
+  }
+
+  function note(text) {
+    el.camNote.textContent = text || '';
+    el.camNote.hidden = !text;
+  }
+
+  function openCamThenStart() {
+    el.startBtn.disabled = true;
+    note('카메라를 켜는 중이에요…');
+
+    Hand.start(el.cam).then(function () {
+      el.startBtn.disabled = false;
+      note('');
+
+      el.field.classList.add('hand-on');
+      el.cam.hidden = false;
+      el.handCursor.hidden = false;
+      if (!handRaf) handRaf = requestAnimationFrame(handTick);
+
+      el.startOverlay.hidden = true;
+      startRun();
+    }, function () {
+      // 권한을 거절했거나 카메라가 없는 경우 — 놀이는 계속할 수 있어야 합니다.
+      el.startBtn.disabled = false;
+      state.mode = 'tap';
+      UI.saveValue(MODE_KEY, 'tap');
+      buildModeRow();
+      note('카메라를 못 열었어요. 눌러서 터뜨려요!');
+    });
+  }
+
+  function stopHand() {
+    if (!handRaf) return;
+
+    cancelAnimationFrame(handRaf);
+    handRaf = 0;
+    Hand.stop();
+
+    el.field.classList.remove('hand-on');
+    el.cam.hidden = true;
+    el.handCursor.hidden = true;
+  }
+
+  function handTick() {
+    handRaf = requestAnimationFrame(handTick);
+
+    var hand = Hand.read();
+    var x = hand.x * el.field.clientWidth;
+    var y = hand.y * el.field.clientHeight;
+
+    // 손을 놓쳤을 때도 마지막 자리에 흐리게 남겨 둡니다 (사라지면 아이가 당황합니다).
+    el.handCursor.style.transform = 'translate(' + (x - 32) + 'px,' + (y - 32) + 'px)';
+    el.handCursor.classList.toggle('lost', !hand.live);
+
+    if (!state.running || !hand.live || hand.power < HAND_HIT) return;
+
+    var box = el.field.getBoundingClientRect();
+    hit(box.left + x, box.top + y);
+  }
+
+  // 커서가 닿은 풍선 하나를 터뜨립니다 (한 프레임에 하나만 — 손이 지나가며 쓸어 담지 않게).
+  function hit(px, py) {
+    var bodies = el.field.querySelectorAll('.balloon:not([data-done]) .body');
+
+    for (var i = 0; i < bodies.length; i++) {
+      var r = bodies[i].getBoundingClientRect();
+
+      if (px >= r.left - HAND_PAD && px <= r.right + HAND_PAD
+        && py >= r.top - HAND_PAD && py <= r.bottom + HAND_PAD) {
+        popBalloon(bodies[i].parentNode.parentNode);
+        return;
+      }
+    }
+  }
+
+  // 풍선만 걷어 냅니다 — 카메라 화면과 커서는 판 안에 그대로 있어야 합니다.
+  function clearBalloons() {
+    var old = el.field.querySelectorAll('.balloon');
+    for (var i = 0; i < old.length; i++) old[i].remove();
   }
 
   /* ---------- 시작 단계 고르기 ----------
@@ -158,7 +298,7 @@
   }
 
   function startLevel(n) {
-    el.field.innerHTML = '';
+    clearBalloons();
     el.field.classList.remove('stopped');
 
     state.count = levelCount(n);
@@ -348,6 +488,7 @@
     el.field.style.height = Math.max(260, screenH - top - bottomPad - 6) + 'px';
   }
 
+  window.addEventListener('pagehide', stopHand);
   window.addEventListener('resize', fit);
   window.addEventListener('orientationchange', function () { setTimeout(fit, 200); });
 })();
