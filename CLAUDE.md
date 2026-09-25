@@ -63,6 +63,7 @@ ES5 IIFE 로 감싸 `window` 에 전역을 붙이는 방식입니다. `import`/`
 | `UI` | `js/ui.js` | 섞기·이모지 개수 세기·URL 파라미터·폭죽·localStorage |
 | `TTS` | `js/tts.js` | 브라우저 speechSynthesis 래퍼 (목소리 순위 매기기 포함) |
 | `SFX` | `js/sfx.js` | WebAudio 로 만든 효과음 (오디오 파일 없음) |
+| `Hand` | `js/hand.js` | 앞 카메라 영상에서 손이 어디 있나 찾기 (라이브러리 없음 — 아래 '카메라') |
 | `VoicePicker` | `js/voicepicker.js` | 목소리·속도 고르는 패널 (게임 화면 공용) |
 
 `js/gate.js` 는 이 표에 없습니다 — 전역을 만들지 않고 `<body>` 맨 위에서 혼자 도는
@@ -124,6 +125,7 @@ index.html            과목 카드            home.js
       │  └ planet.html?planet=jupiter       planet.js   (행성 한 곳 — 사진·숫자 칩·이야기 카드. 데이터는 js/planets.js)
       ├ star.html                           star.js     (별의 일생 — 무게를 고르면 성운에서 블랙홀까지. 데이터는 js/stars.js)
       ├ riddle.html                         riddle.js   (수수께끼·넌센스 — js/riddles.js 의 문제를 열 개씩, 보기 넉 장)
+      ├ smash.html                          smash.js    (부수기 — 판에 나온 것을 쳐서 깸. 카메라로 손을 씀)
       ├ fish.html                           fish.js     (낚시 — 하늘·바다·배·물고기를 캔버스에 그림, 단계·하트. 장애물 피하기와 같은 얼개)
       └ draw.html                           draw.js     (독립 — 다른 js 를 전혀 안 씀)
 ```
@@ -371,6 +373,7 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.riddle` | 수수께끼 최고 별 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.riddle.done` | 수수께끼에서 맞혀 본 문제의 `q` 목록 — 안 풀어 본 문제부터 내는 데 씁니다 |
 | `daniland.best.balloon.level` | 풍선 터뜨리기에서 도달한 최고 단계 |
+| `daniland.best.smash.level` | 부수기에서 도달한 최고 단계 (카드의 ⭐ 는 이것을 `bestUnit: '단계'` 로 읽습니다) |
 | `daniland.book.<id>.made` | 영어 그림책에서 아이가 만든 책 — `{ 빈칸이름: word }` (책마다 마지막 것 하나) |
 | `daniland.book.<id>.read` | 그 책을 끝까지 읽은 적 있음 (책장의 📖) |
 | `daniland.book.last` `daniland.book.ko` | 마지막에 본 책 · 우리말 뜻 보이기 |
@@ -380,6 +383,8 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.rank.dodge` | 장애물 피하기 순위표 — `[{ m, level, treats }, …]` 먼 순서로 다섯 개 (시작·결과 화면) |
 | `daniland.best.maze.<n>` | 미로 찾기 판 크기별(5·7·9·11) 한 번에 찾은 적 있음 (1/1) |
 | `daniland.best.maze` | 한 번에 찾은 것 중 제일 큰 판 — stars 가 칸 수(5~11)입니다 (카드의 ⭐ 는 이것을 `bestUnit: '칸 미로'` 로 읽습니다) |
+| `daniland.balloonMode` `daniland.smashMode` | 그 놀이를 마지막에 누르기로 했나 손으로 했나 (`tap` / `hand`) |
+| `daniland.smashStart` | 부수기에서 마지막에 고른 시작 단계 |
 | `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.fishStart` `daniland.townAct` `daniland.worldAct` `daniland.bodyAct` `daniland.tripAct` `daniland.rideAct` `daniland.swedenAct` `daniland.greeceAct` `daniland.germanyAct` `daniland.franceAct` `daniland.norwayAct` `daniland.spainAct` `daniland.europeAct` `daniland.spaceAct` `daniland.spaceSpeed` `daniland.starAct` `daniland.starMass` `daniland.numShow`(더하기·빼기·곱하기의 그림/식/둘 다) `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.mazeSize` | 마지막에 고른 설정 |
 | `daniland.numMax` | 수학 놀이가 넷뿐이던 시절의 숫자 범위 — 읽기만 합니다 (`numbers.js` 의 `loadMax()`) |
 | `daniland.rate` `daniland.voice.<lang>` | 목소리·속도 |
@@ -400,6 +405,47 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 TTS 는 브라우저 내장 `speechSynthesis` 뿐이고 오디오 자산이 없습니다. `tts.js` 의 `score()` 가
 `Natural`/`Neural`/`Online`/`Google` 이 붙은 목소리를 위로 올리고, 재생에 실패하면 다음 후보로
 자동 폴백합니다. 첫 사용자 제스처에서 `TTS.unlock()`/`SFX.unlock()` 을 호출해야 모바일에서 소리가 납니다.
+
+### 카메라 (`js/hand.js`)
+
+풍선 터뜨리기와 부수기가 **앞 카메라로 손을 찾아** 놉니다. 시작 화면에서 `👆 눌러서 / 🖐 손으로` 를
+고르고, 손 모드에서도 **누르기는 그대로 됩니다** — 인식이 안 되는 날 아이가 막히면 안 됩니다.
+
+⚠️ **MediaPipe·TensorFlow.js 같은 손 인식 라이브러리를 들이지 마세요.** 손가락 21점을 정확히 잡아
+주지만 CDN 에서 5~8MB 를 받아야 하고, 이 저장소는 외부 스크립트가 한 줄도 없다는 것이 원칙입니다
+(그래야 인터넷 없이 `file://` 로도 돕니다). 두 놀이 다 손 **모양**은 알 필요가 없고 손이 **어디** 있는지만
+알면 되므로 과한 도구입니다.
+
+대신 **프레임 차분**입니다 — 영상을 80×60 으로 줄여 그리고 직전 프레임과 밝기를 견줘, 달라진 점이
+제일 많이 몰린 칸 둘레만 더해 가운데를 냅니다. 온 화면에서 **제일 센 칸 하나**를 고르는 것이
+뒤에서 누가 지나갈 때의 대비입니다 (큰 덩어리 하나만 남습니다). 불이 켜지는 등 온 화면이 한꺼번에
+변하면 버립니다.
+
+`Hand.follow(커서, 판, onHit)` 가 커서를 옮기고 닿은 자리를 알려 줍니다 — **부르는 쪽마다 따로 짜지
+마세요.** 두 화면에 같은 rAF 를 두면 한쪽만 고쳐져 어긋납니다.
+
+정해 둔 것들:
+
+- **움직임으로 찾으므로 손을 멈추면 놓칩니다.** 그래서 커서를 지우지 않고 마지막 자리에 흐리게
+  남깁니다(`.lost`) — 사라지면 아이가 어디를 봐야 할지 모릅니다. **손을 가만히 두고 기다리는 놀이
+  (떨어지는 것 받기)는 이 방식으로 만들지 마세요** — 받으려고 손을 멈추는 순간 커서를 잃습니다.
+- **자기 모습을 흐리게(0.22) 깔아 두는 것은 꾸밈이 아닙니다.** 아이가 화면을 보고 카메라 안에 손이
+  들어오게 스스로 맞춥니다. 지우지 마세요.
+- **영상은 거울로 뒤집습니다** — 오른쪽으로 손을 옮기면 커서도 오른쪽입니다. css 의 `scaleX(-1)` 과
+  `hand.js` 의 `ctx.scale(-1, 1)` 이 짝이라 한쪽만 고치면 좌우가 어긋납니다.
+- **부수기만 `power`(움직임의 세기)를 씁니다** — 살살 지나가면 반 칸, 세게 휘둘러야 한 칸입니다.
+  이 둘을 같게 만들면 카메라를 쓸 이유가 없어집니다(누르기와 똑같아집니다). 다만 **살살 쳐도
+  반 칸은 깎입니다** — 힘이 약한 날 아무것도 못 깨고 끝나면 배울 것이 없습니다.
+  `smash.js` 의 `STRONG` 은 아이 팔 힘·방 밝기에 따라 달라지므로 실기기에서 맞추는 값입니다.
+- **같은 것을 프레임마다 여러 번 때리지 않게** `HIT_GAP`(260ms)으로 막습니다 — 없으면 한 번 휘두른
+  손이 60fps 로 세어져 무엇이든 즉시 깨집니다.
+- **과녁은 판 폭의 17%** 이고 76~132px 입니다. 손은 손가락보다 겨냥이 거칠어 풍선(76px)보다 큽니다.
+- 카메라 권한을 거절하면 **누르기로 돌아가고** 안내를 띄웁니다. 화면을 나갈 때 `Hand.stop()` 으로
+  반드시 꺼야 합니다 (`pagehide` 와 ← 단추 둘 다에 걸려 있습니다).
+- 판을 비울 때 `innerHTML = ''` 을 쓰면 **카메라 화면과 커서가 같이 지워집니다** — 단계가 넘어갈 때
+  영상이 사라집니다. `.balloon` / `.thing` 만 골라 지우세요.
+- 배포된 https 에서는 됩니다. `file://` 은 크롬에선 대개 되지만 보장되지 않습니다.
+- 태블릿을 **세워 놓아야** 합니다. 손을 휘두를 거리가 필요해 들고는 못 합니다.
 
 ## 아이가 쓰는 화면이라는 제약
 

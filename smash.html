@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <meta name="theme-color" content="#ff8fab">
-  <title>풍선 터뜨리기 · 다니랜드 🎈</title>
+  <title>부수기 · 다니랜드 🧊</title>
   <link rel="icon" href="dani.png">
   <!-- 구글 웹폰트: 제목은 Jua, 본문은 나눔고딕 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,7 +16,7 @@
   <!-- 들어올 때 비밀번호 (문패입니다 — js/gate.js 주석 참고) -->
   <script src="js/gate.js"></script>
 
-  <div class="wrap balloon-page">
+  <div class="wrap smash-page">
     <div class="topbar">
       <button class="icon-btn" id="backBtn" title="뒤로">←</button>
       <div class="progress"><div class="progress-bar" id="bar"></div></div>
@@ -28,7 +28,7 @@
       <div class="lives" id="lives"></div>
     </div>
 
-    <div class="balloon-field cam-field" id="field">
+    <div class="smash-field cam-field" id="field">
       <!-- 손 모드에서만 보입니다 — 거울로 비친 자기 모습과 🖐 커서 (js/hand.js) -->
       <video class="cam" id="cam" playsinline muted hidden></video>
       <div class="hand-cursor" id="handCursor" hidden>🖐</div>
@@ -41,12 +41,12 @@
   <!-- 시작 화면 -->
   <div class="overlay" id="startOverlay">
     <img src="dani.png" alt="다니">
-    <h2>🎈 풍선 터뜨리기</h2>
+    <h2>🧊 부수기</h2>
 
-    <p class="hint">올라오는 풍선을 눌러서 터뜨려요</p>
-    <p class="hint">놓치면 하트가 하나 사라져요 ❤️❤️❤️❤️❤️<br>단계가 올라갈수록 풍선이 빨라져요!</p>
+    <p class="hint">얼음과 항아리를 <b>세게</b> 쳐서 깨요<br>살살 치면 금만 가요!</p>
+    <p class="hint">깨지기 전에 사라지면 하트가 하나 없어져요 ❤️❤️❤️❤️❤️<br>안에서 무엇이 나올까요?</p>
 
-    <p class="hint" id="modePick">어떻게 터뜨릴까요?</p>
+    <p class="hint" id="modePick">어떻게 부술까요?</p>
     <div class="level-row" id="modeRow"></div>
     <p class="hint cam-note" id="camNote" hidden></p>
 
@@ -70,6 +70,6 @@
   <script src="js/ui.js"></script>
   <script src="js/sfx.js"></script>
   <script src="js/hand.js"></script>
-  <script src="js/balloon.js"></script>
+  <script src="js/smash.js"></script>
 </body>
 </html>

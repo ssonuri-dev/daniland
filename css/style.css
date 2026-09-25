@@ -1636,7 +1636,7 @@ button {
  * 카메라 안에 손이 들어오게 스스로 맞춥니다. 지우지 마세요.
  * ------------------------------------------------------------------------ */
 
-.balloon-field .cam {
+.cam-field .cam {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -1648,7 +1648,7 @@ button {
   pointer-events: none;
 }
 
-.balloon-field .cam[hidden] { display: none; }
+.cam-field .cam[hidden] { display: none; }
 
 /* 손이 있는 자리 — js 가 transform 으로 옮깁니다 (64px 칸의 왼쪽 위 기준) */
 .hand-cursor {
@@ -1656,10 +1656,10 @@ button {
   top: 0;
   left: 0;
   z-index: 3;
-  width: 64px;
-  height: 64px;
-  font-size: 46px;
-  line-height: 64px;
+  width: 76px;
+  height: 76px;
+  font-size: 56px;
+  line-height: 76px;
   text-align: center;
   pointer-events: none;
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
@@ -4012,4 +4012,121 @@ button {
   .step-chip { padding: 7px 10px; }
   .step-chip .sc-name { display: none; }
   .step-chip.on .sc-name { display: inline; }
+}
+
+/* ---------- 부수기 ----------
+ * 판에 물건이 뿅 나타나고, 세게 치면 깨집니다 (js/smash.js).
+ * 금(.crack)은 이모지 위에 얹은 선 두 개입니다 — 이모지 자체는 고쳐 그릴 수
+ * 없으니, '몇 번 맞았나' 를 보여 주려면 위에 무언가를 겹치는 수밖에 없습니다.
+ * .shake 는 .thing 에, 깜빡임(.hurry)은 .art 에 겁니다 — 한 요소에 몰면
+ * animation 을 서로 뺏어 맞아도 안 흔들립니다.
+ * ------------------------------------------------------------------------ */
+
+.smash-page { padding-bottom: 14px; }
+
+/* 놀이판 높이는 js/smash.js 가 화면에 맞춰 정합니다. */
+.smash-field {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, #eef4ff 0%, #ffffff 70%);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  touch-action: none;
+}
+
+/* 카메라를 켜면 바탕을 가라앉혀 영상이 보이게 합니다 */
+.cam-field.hand-on { background: #f2f5fb; }
+
+.thing {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  animation: thing-in 0.25s ease-out;
+}
+
+@keyframes thing-in {
+  from { transform: scale(0.3); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.thing .art {
+  line-height: 1;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.18));
+}
+
+/* 맞을 때마다 한 번 흔들립니다 */
+.thing.shake { animation: thing-shake 0.22s ease; }
+
+@keyframes thing-shake {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25%      { transform: translate(-5px, 2px) rotate(-7deg); }
+  75%      { transform: translate(5px, -2px) rotate(7deg); }
+}
+
+/* 사라지기 직전 — 서둘러 치라고 깜빡입니다 */
+.thing.hurry .art { animation: thing-hurry 0.42s ease-in-out infinite; }
+
+@keyframes thing-hurry {
+  50% { opacity: 0.4; transform: scale(0.93); }
+}
+
+/* ---- 금 ---- */
+
+.thing .crack {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.thing .crack i {
+  position: absolute;
+  left: 50%;
+  top: 14%;
+  width: 4px;
+  height: 72%;
+  background: rgba(28, 28, 38, 0.7);
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+.thing .crack i:nth-child(1) { transform: translateX(-50%) rotate(15deg); }
+.thing .crack i:nth-child(2) { transform: translate(-50%, 6%) rotate(-34deg); }
+
+.thing.c1 .crack i:nth-child(1),
+.thing.c2 .crack i:nth-child(2) { opacity: 1; }
+
+/* ---- 깨질 때 ---- */
+
+.thing.broken { pointer-events: none; }
+.thing.broken .crack i { opacity: 0; }
+.thing.broken .art { animation: thing-break 0.5s ease-out forwards; }
+
+@keyframes thing-break {
+  to { transform: scale(1.9); opacity: 0; }
+}
+
+/* 안에서 튀어나오는 선물 */
+.thing .prize {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  font-size: 0.72em;
+  line-height: 1;
+  pointer-events: none;
+  animation: prize-up 0.8s ease-out forwards;
+}
+
+@keyframes prize-up {
+  from { transform: translate(-50%, -50%)  scale(0.4); opacity: 0; }
+  40%  { transform: translate(-50%, -95%)  scale(1.2); opacity: 1; }
+  to   { transform: translate(-50%, -195%) scale(1);   opacity: 0; }
+}
+
+/* 못 깨고 사라질 때 */
+.thing.away { pointer-events: none; animation: thing-away 0.3s ease-in forwards; }
+
+@keyframes thing-away {
+  to { transform: scale(0.4); opacity: 0; }
 }

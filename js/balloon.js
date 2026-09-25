@@ -81,7 +81,7 @@
 
   var timer = null;       // 다음 풍선 띄우기
   var bannerTimer = null; // 단계 안내를 띄워 두는 시간
-  var handRaf = 0;        // 손 따라가기 (손 모드에서만 돕니다)
+  var handOn = false;     // 카메라를 켜 두었나 (손 모드에서만)
 
   buildModeRow();
   buildStartRow();
@@ -169,7 +169,8 @@
       el.field.classList.add('hand-on');
       el.cam.hidden = false;
       el.handCursor.hidden = false;
-      if (!handRaf) handRaf = requestAnimationFrame(handTick);
+      Hand.follow(el.handCursor, el.field, hit);
+      handOn = true;
 
       el.startOverlay.hidden = true;
       startRun();
@@ -184,10 +185,9 @@
   }
 
   function stopHand() {
-    if (!handRaf) return;
+    if (!handOn) return;
 
-    cancelAnimationFrame(handRaf);
-    handRaf = 0;
+    handOn = false;
     Hand.stop();
 
     el.field.classList.remove('hand-on');
@@ -195,25 +195,10 @@
     el.handCursor.hidden = true;
   }
 
-  function handTick() {
-    handRaf = requestAnimationFrame(handTick);
-
-    var hand = Hand.read();
-    var x = hand.x * el.field.clientWidth;
-    var y = hand.y * el.field.clientHeight;
-
-    // 손을 놓쳤을 때도 마지막 자리에 흐리게 남겨 둡니다 (사라지면 아이가 당황합니다).
-    el.handCursor.style.transform = 'translate(' + (x - 32) + 'px,' + (y - 32) + 'px)';
-    el.handCursor.classList.toggle('lost', !hand.live);
-
-    if (!state.running || !hand.live || hand.power < HAND_HIT) return;
-
-    var box = el.field.getBoundingClientRect();
-    hit(box.left + x, box.top + y);
-  }
-
   // 커서가 닿은 풍선 하나를 터뜨립니다 (한 프레임에 하나만 — 손이 지나가며 쓸어 담지 않게).
   function hit(px, py) {
+    if (!state.running) return;
+
     var bodies = el.field.querySelectorAll('.balloon:not([data-done]) .body');
 
     for (var i = 0; i < bodies.length; i++) {

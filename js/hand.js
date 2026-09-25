@@ -19,6 +19,7 @@
  *   Hand.supported()            이 기기에서 카메라를 쓸 수 있나
  *   Hand.start(videoEl)         켜기 (약속을 돌려줍니다 - 권한 거절이면 실패)
  *   Hand.read()                 { x, y, power, live } - x·y 는 0~1
+ *   Hand.follow(커서, 판, onHit) 커서를 손 자리에 놓고 닿은 곳을 알려 주기
  *   Hand.stop()                 끄기 (화면을 나갈 때 꼭 불러 주세요)
  *
  * x 는 거울처럼 뒤집혀 있습니다 - 아이가 오른쪽으로 손을 옮기면 x 가 커집니다.
@@ -39,6 +40,8 @@
   var FULL = 300;                  // 이 정도면 power 1 (세게 휘두른 것)
   var FLASH = 0.4;                 // 온 화면의 이만큼이 변하면 불빛이 바뀐 것 - 버립니다
 
+  var TOUCH = 0.12;                // follow() 가 이보다 약한 움직임은 스친 것으로 봅니다
+
   var SMOOTH = 0.4;                // 자리 따라가는 빠르기 (1 이면 안 부드럽게)
   var GAIN = 1.25;                 // 가운데에서 밀어내기 - 팔을 조금만 뻗어도 구석까지 갑니다
 
@@ -52,6 +55,7 @@
 
   var pt = { x: 0.5, y: 0.5, power: 0, live: false };
   var raf = 0;
+  var followRaf = 0;
   var on = false;
 
   function supported() {
@@ -100,6 +104,7 @@
 
   function stop() {
     on = false;
+    stopFollow();
     cancelAnimationFrame(raf);
     raf = 0;
 
@@ -117,6 +122,45 @@
   }
 
   function read() { return pt; }
+
+  /* ---------- 커서 따라가기 ----------
+   * 손 자리에 커서를 놓고, 손이 닿은 자리를 화면 좌표로 알려 줍니다.
+   * 부르는 쪽마다 똑같이 짜 두면 한쪽만 고쳐져 어긋나므로 여기 한 번만 둡니다.
+   *
+   *   cursor  손 자리에 놓을 요소 (.hand-cursor - transform 으로 옮깁니다)
+   *   field   놀이판 (이 안에서의 자리로 셉니다)
+   *   onHit   function (x, y, power) - x·y 는 화면 좌표(getBoundingClientRect 와 같은 기준)
+   * -------------------------------------------------------------------- */
+
+  function follow(cursor, field, onHit) {
+    stopFollow();
+
+    function tick() {
+      followRaf = requestAnimationFrame(tick);
+
+      var hand = read();
+      var x = hand.x * field.clientWidth;
+      var y = hand.y * field.clientHeight;
+      var half = cursor.offsetWidth / 2;
+
+      // 손을 놓쳐도 커서를 지우지 않고 마지막 자리에 흐리게 둡니다
+      // (사라지면 아이가 어디를 봐야 할지 몰라 당황합니다).
+      cursor.style.transform = 'translate(' + (x - half) + 'px,' + (y - half) + 'px)';
+      cursor.classList.toggle('lost', !hand.live);
+
+      if (!hand.live || hand.power < TOUCH) return;
+
+      var box = field.getBoundingClientRect();
+      onHit(box.left + x, box.top + y, hand.power);
+    }
+
+    followRaf = requestAnimationFrame(tick);
+  }
+
+  function stopFollow() {
+    cancelAnimationFrame(followRaf);
+    followRaf = 0;
+  }
 
   /* ---------- 한 프레임 ---------- */
 
@@ -239,6 +283,7 @@
     supported: supported,
     start: start,
     stop: stop,
-    read: read
+    read: read,
+    follow: follow
   };
 })();

@@ -1065,6 +1065,16 @@ window.PAGES = [
 
   {
     subject: '놀이',
+    title: '부수기',
+    icon: '🧊',
+    meta: '카메라 앞에서 손으로 깨요',
+    href: 'smash.html',
+    bestKey: 'daniland.best.smash.level',
+    bestUnit: '단계'
+  },
+
+  {
+    subject: '놀이',
     title: '미로 찾기',
     icon: '🧭',
     meta: '길을 그어 간식까지 가요',
