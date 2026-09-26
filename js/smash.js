@@ -1,16 +1,19 @@
 /* =========================================================================
  * 다니랜드 - 부수기
  *
- * 판에 나타난 얼음·항아리·상자·바위를 쳐서 깹니다.
+ * 판에 나타난 말랑말랑 젤리 괴물을 쳐서 터뜨립니다 (뿌요뿌요 같은 덩어리에 눈·입).
+ * 괴물은 그림 파일이 아니라 css 로 그립니다 — 이모지는 깨질 때 모양을 못 바꾸지만,
+ * 직접 그리면 몸이 찌부러졌다가 젤리 방울로 튀는 것까지 보여 줄 수 있습니다.
  * 카메라 앞에서 손을 휘두르거나(손 모드), 그냥 눌러도 됩니다.
  *
- * ⭐ 이 놀이의 핵심은 '세게 쳐야 깨진다' 입니다.
- * js/hand.js 가 돌려주는 power(움직임의 세기)를 그대로 씁니다 — 살살 지나가면
- * 금만 가고, 세게 휘둘러야 한 칸이 깎입니다. 이 둘을 같게 만들면 카메라를 쓸
- * 이유가 없어집니다 (누르기와 똑같아집니다).
+ * ⭐ 한 번 치면 깨집니다. 대신 많이 나옵니다.
+ * 처음에는 두세 번씩 쳐야 깨지게 만들었는데 '빡세다' 는 반응이라 (2026-09-27)
+ * 체력을 없애고 개수를 늘렸습니다. 재미는 '깨지는 순간' 에서 나오므로 그 순간을
+ * 크게 만듭니다 — 몸이 찌부러지며 젤리 방울이 사방으로 튀고, '뽁!' 글자와
+ * 충격파, 판이 한 번 흔들리고, 선물이 튀어 오릅니다. 이어서 깨면 'n연속!' 이 뜨고 소리가 한 음씩 올라갑니다.
  *
- * 다만 살살 쳐도 반 칸은 깎입니다 — 힘이 약한 날 아무것도 못 깨고 끝나면
- * 배울 것이 없습니다 (실패를 벌하지 않기).
+ * 손 모드에서 power(움직임의 세기)는 깨지느냐가 아니라 파편이 얼마나 멀리
+ * 튀느냐에만 씁니다 — 세게 휘두르면 더 시원하게 부서집니다.
  *
  * 단계·하트·시작 단계 고르기는 풍선 터뜨리기(js/balloon.js)와 같은 얼개입니다.
  * ========================================================================= */
@@ -18,35 +21,38 @@
 (function () {
   var LIVES = 5;
 
-  // 깰 것 — 뒤로 갈수록 단단합니다 (hp 가 곧 세게 쳐야 하는 횟수).
-  var THINGS = [
-    { art: '🧊', hp: 2 },
-    { art: '🏺', hp: 3 },
-    { art: '🎁', hp: 3 },
-    { art: '🪨', hp: 4 }
+  // 괴물 — 색·얼굴·머리 장식만 다릅니다 (모두 한 번에 터집니다).
+  //   c 몸 색, l 밝은 색(방울·반짝이), face 는 two(두 눈)·one(외눈)·happy(^^),
+  //   top 은 머리 위 장식(horns 뿔 · ears 귀 · antenna 더듬이 · '' 없음)
+  var MONSTERS = [
+    { c: '#ff5b6e', l: '#ffb3bc', face: 'two',   top: 'horns' },
+    { c: '#4cd07d', l: '#b6f2cb', face: 'one',   top: 'antenna' },
+    { c: '#4aa8ff', l: '#bfe0ff', face: 'happy', top: '' },
+    { c: '#ffc93f', l: '#fff0b8', face: 'two',   top: 'ears' },
+    { c: '#b27cff', l: '#e2ccff', face: 'one',   top: 'horns' },
+    { c: '#ff8fd0', l: '#ffd6ee', face: 'happy', top: 'ears' },
+    { c: '#ff9f43', l: '#ffd7ae', face: 'two',   top: 'antenna' },
+    { c: '#2ec4b6', l: '#aef0e8', face: 'two',   top: '' }
   ];
 
+  // 터질 때 뜨는 소리 글자
+  var POPS = ['뽁!', '퐁!', '뿅!', '팡!'];
+
   // 깨면 안에서 튀어나오는 것 (무엇이 나올지 모르는 것이 다시 하게 만듭니다)
-  var PRIZES = ['🍬', '🌟', '🦋', '🐤', '💎', '🍓', '🌸', '🐞', '🍀', '🎀'];
+  var PRIZES = ['🍬', '🌟', '🦋', '🐤', '💎', '🍓', '🌸', '🐞', '🍀', '🎀', '🍭', '👑'];
 
   var PRAISE = ['참 잘했어요!', '멋져요!', '최고예요!', '대단해요!'];
 
-  function levelCount(n) { return 8 + 2 * (n - 1); }                     // 그 단계에 나오는 개수
-  function levelLife(n) { return Math.max(2.6, 6.0 - 0.55 * (n - 1)); }  // 사라지기까지 초
-  function levelGap(n) { return Math.max(650, 1800 - 170 * (n - 1)); }   // 다음 것까지 ms
-  function levelKinds(n) { return Math.min(THINGS.length, 1 + Math.floor(n / 2)); }  // 몇 가지가 나오나
+  function levelCount(n) { return 16 + 4 * (n - 1); }                    // 그 단계에 나오는 개수
+  function levelLife(n) { return Math.max(2.4, 4.2 - 0.3 * (n - 1)); }   // 사라지기까지 초
+  function levelGap(n) { return Math.max(380, 950 - 80 * (n - 1)); }     // 다음 것까지 ms
+  // 판에 한꺼번에 떠 있는 것은 대략 life ÷ gap — 1단계 4개쯤, 8단계 6개쯤입니다.
 
-  /* 손으로 칠 때 ---------------------------------------------------------
-   * STRONG 은 아이의 팔 힘·카메라 밝기에 따라 달라집니다. 태블릿에서 너무
-   * 안 깨지면 이 한 줄만 낮추세요 (0.35 쯤). 다른 데는 건드릴 것이 없습니다.
-   * -------------------------------------------------------------------- */
-  var STRONG = 0.5;       // 이보다 세게 치면 한 칸
-  var WEAK_DMG = 0.5;     // 살살 친 것은 반 칸
   var HIT_PAD = 6;        // 물건에서 이만큼 벗어나도 맞은 것으로
-  var HIT_GAP = 260;      // 같은 물건을 다시 칠 수 있기까지 ms
-                          // (한 번 휘두른 것이 프레임마다 여러 번 세지지 않게 막습니다)
+  var HURRY = 1100;       // 사라지기 이만큼 전부터 깜빡입니다
+  var COMBO_GAP = 900;    // 이 안에 또 깨면 연속으로 칩니다 (ms)
 
-  var HURRY = 1200;       // 사라지기 이만큼 전부터 깜빡입니다
+  var DROPS = 12;         // 튀는 젤리 방울 개수
 
   var BEST_KEY = 'daniland.best.smash.level';
   var START_KEY = 'daniland.smashStart';
@@ -89,11 +95,14 @@
     spawned: 0,
     settled: 0,   // 깨졌거나 사라진 개수
     broken: 0,    // 한 판 통틀어 깬 개수 (⭐)
+    combo: 0,     // 지금 몇 연속인가
+    bestCombo: 0, // 이 판에서 제일 긴 연속
+    lastBreak: 0,
     lives: LIVES,
     running: false
   };
 
-  var alive = [];         // 지금 판에 있는 것 { el, hp, max, done, last, dieAt, hurried }
+  var alive = [];         // 지금 판에 있는 것 { el, kind, size, done, dieAt, hurried }
   var timer = null;       // 다음 것 내놓기
   var bannerTimer = null;
   var lifeRaf = 0;        // 사라질 때를 보는 시계
@@ -131,8 +140,8 @@
   }
 
   /* ---------- 손으로 부수기 (카메라) ----------
-   * 풍선 터뜨리기와 같은 얼개입니다. 다른 점은 power 를 쓴다는 것뿐 —
-   * 거기서는 닿기만 하면 터지고, 여기서는 얼마나 세게 쳤는지가 셈에 들어갑니다.
+   * 풍선 터뜨리기와 같은 얼개입니다. 한 번 휘두른 손이 지나간 자리의 것은
+   * 모두 깨집니다 — 쓸어 깨는 것이 이 놀이의 재미라 하나만 고르지 않습니다.
    * -------------------------------------------------------------------- */
 
   function buildModeRow() {
@@ -155,7 +164,7 @@
         state.mode = m[0];
         UI.saveValue(MODE_KEY, m[0]);
         if (window.SFX) SFX.tap();
-        note(m[0] === 'hand' ? '태블릿을 세워 놓고, 카메라 앞에서 손을 세게 휘둘러요!' : '');
+        note(m[0] === 'hand' ? '태블릿을 세워 놓고, 카메라 앞에서 손을 휘둘러 깨요!' : '');
 
         Array.prototype.forEach.call(el.modeRow.children, function (x) {
           x.classList.toggle('on', x === b);
@@ -208,11 +217,12 @@
     el.handCursor.hidden = true;
   }
 
-  // 손이 닿은 자리(화면 좌표) — 그 자리에 있는 것 하나만 칩니다.
+  // 손이 닿은 자리(화면 좌표) — 그 자리에 있는 것을 모두 깹니다.
   function hit(px, py, power) {
     if (!state.running) return;
 
-    for (var i = 0; i < alive.length; i++) {
+    // breakThing 이 alive 에서 빼므로 뒤에서부터 봅니다.
+    for (var i = alive.length - 1; i >= 0; i--) {
       var t = alive[i];
       if (t.done) continue;
 
@@ -220,8 +230,7 @@
 
       if (px >= r.left - HIT_PAD && px <= r.right + HIT_PAD
         && py >= r.top - HIT_PAD && py <= r.bottom + HIT_PAD) {
-        hitThing(t, power);
-        return;
+        breakThing(t, power);
       }
     }
   }
@@ -235,6 +244,9 @@
 
     state.level = state.startLevel;
     state.broken = 0;
+    state.combo = 0;
+    state.bestCombo = 0;
+    state.lastBreak = 0;
     state.lives = LIVES;
 
     updateScore();
@@ -272,7 +284,7 @@
   /* ---------- 물건 하나 ---------- */
 
   function makeThing() {
-    var kind = THINGS[UI.randInt(0, levelKinds(state.level) - 1)];
+    var kind = MONSTERS[UI.randInt(0, MONSTERS.length - 1)];
     var size = thingSize();
     var spot = findSpot(size);
 
@@ -282,27 +294,13 @@
     box.style.top = spot.y + 'px';
     box.style.width = size + 'px';
     box.style.height = size + 'px';
-    box.style.fontSize = Math.round(size * 0.62) + 'px';
-
-    var art = document.createElement('div');
-    art.className = 'art';
-    art.textContent = kind.art;
-
-    // 금 — 깨질수록 한 줄씩 늘어납니다 (.c1 / .c2 는 .thing 에 붙습니다).
-    var crack = document.createElement('div');
-    crack.className = 'crack';
-    crack.appendChild(document.createElement('i'));
-    crack.appendChild(document.createElement('i'));
-
-    box.appendChild(art);
-    box.appendChild(crack);
+    box.appendChild(monsterEl(kind));
 
     var thing = {
       el: box,
-      hp: kind.hp,
-      max: kind.hp,
+      kind: kind,
+      size: size,
       done: false,
-      last: 0,
       dieAt: Date.now() + levelLife(state.level) * 1000,
       hurried: false
     };
@@ -310,11 +308,33 @@
     // 누르기는 늘 세게 친 것으로 칩니다 (손가락에는 세기가 없습니다).
     box.addEventListener('pointerdown', function (e) {
       e.preventDefault();
-      hitThing(thing, 1);
+      breakThing(thing, 1);
     });
 
     alive.push(thing);
     el.field.appendChild(box);
+  }
+
+  // 젤리 괴물 하나 — 몸·반짝이·머리 장식·눈·입. 크기는 모두 % 라 과녁 크기를 따라갑니다.
+  function monsterEl(kind) {
+    var body = document.createElement('div');
+    body.className = 'slime face-' + kind.face + (kind.top ? ' top-' + kind.top : '');
+    body.style.setProperty('--c', kind.c);
+    body.style.setProperty('--l', kind.l);
+    // 다 같이 들썩이면 기계 같아서 박자를 조금씩 어긋냅니다.
+    body.style.animationDelay = (-Math.random() * 1.2).toFixed(2) + 's';
+
+    var parts = ['shine', 'deco l', 'deco r', 'mouth'];
+    if (kind.face === 'one') parts.push('eye big');
+    else parts.push('eye l', 'eye r');
+
+    parts.forEach(function (name) {
+      var p = document.createElement('i');
+      p.className = name;
+      body.appendChild(p);
+    });
+
+    return body;
   }
 
   // 손으로 겨누는 과녁이라 풍선보다 큽니다 — 판이 넓으면 같이 커집니다.
@@ -349,50 +369,118 @@
     return true;
   }
 
-  /* ---------- 치기 ---------- */
+  /* ---------- 깨기 ---------- */
 
-  function hitThing(thing, power) {
-    if (!state.running || thing.done) return;
+  function breakThing(thing, power) {
+    if (!state.running || settle(thing)) return;
 
-    // 한 번 휘두른 손이 프레임마다 여러 번 세지지 않게 잠깐 막아 둡니다.
+    // 연속 — 앞의 것을 깬 지 COMBO_GAP 안이면 이어서 셉니다.
     var now = Date.now();
-    if (now - thing.last < HIT_GAP) return;
-    thing.last = now;
-
-    thing.hp -= power >= STRONG ? 1 : WEAK_DMG;
-
-    // 맞은 것이 눈에 띄게 한 번 흔들어 줍니다.
-    thing.el.classList.remove('shake');
-    void thing.el.offsetWidth;
-    thing.el.classList.add('shake');
-
-    var cracks = Math.floor(thing.max - thing.hp);
-    thing.el.classList.toggle('c1', cracks >= 1);
-    thing.el.classList.toggle('c2', cracks >= 2);
-
-    if (thing.hp <= 0) { breakThing(thing); return; }
-    if (window.SFX) SFX.tap();
-  }
-
-  function breakThing(thing) {
-    if (settle(thing)) return;
-
-    if (window.SFX) SFX.pop();
-    UI.confettiAt(thing.el);
+    state.combo = now - state.lastBreak <= COMBO_GAP ? state.combo + 1 : 1;
+    state.lastBreak = now;
+    if (state.combo > state.bestCombo) state.bestCombo = state.combo;
 
     state.broken += 1;
     updateScore();
 
-    // 안에서 선물이 튀어나옵니다.
+    if (window.SFX) SFX.smash(state.combo);
+
+    var cx = thing.el.offsetLeft + thing.size / 2;
+    var cy = thing.el.offsetTop + thing.size / 2;
+
+    shatter(thing, cx, cy, power);
+    if (state.combo >= 2) comboText(cx, cy - thing.size * 1.05, state.combo);
+    jolt();
+
+    // 물건은 곧바로 치웁니다 — 남은 것은 파편과 선물이 맡습니다.
+    thing.el.classList.add('broken');
+    setTimeout(function () { thing.el.remove(); }, 180);
+
+    step();
+  }
+
+  /* 부서지는 모습 ---------------------------------------------------------
+   * 젤리 방울·'뽁!'·충격파 고리·선물을 판에 직접 붙입니다 (물건은 곧 지워지므로
+   * 그 안에 두면 같이 사라집니다). 모두 애니메이션이 끝나면 스스로 지웁니다.
+   * -------------------------------------------------------------------- */
+
+  function shatter(thing, cx, cy, power) {
+    var size = thing.size;
+    // 세게 휘두를수록 멀리 튑니다 (누르기는 1).
+    var reach = size * (0.9 + 0.8 * Math.min(1, Math.max(0.2, power)));
+
+    for (var i = 0; i < DROPS; i++) {
+      var angle = (Math.PI * 2 * i) / DROPS + (Math.random() - 0.5) * 0.5;
+      var dist = reach * (0.6 + Math.random() * 0.6);
+      var piece = Math.round(size * (0.1 + Math.random() * 0.12));
+
+      var s = document.createElement('div');
+      s.className = 'drop';
+      s.style.left = (cx - piece / 2) + 'px';
+      s.style.top = (cy - piece / 2) + 'px';
+      s.style.width = piece + 'px';
+      s.style.height = piece + 'px';
+      s.style.background = i % 3 ? thing.kind.c : thing.kind.l;
+      s.style.setProperty('--dx', Math.round(Math.cos(angle) * dist) + 'px');
+      s.style.setProperty('--dy', Math.round(Math.sin(angle) * dist) + 'px');
+      // 떨어지는 만큼 — 위로 튄 것도 결국 아래로 떨어집니다.
+      s.style.setProperty('--fall', Math.round(size * (0.5 + Math.random() * 0.5)) + 'px');
+      s.style.animationDuration = (0.55 + Math.random() * 0.25) + 's';
+
+      addFx(s, 900);
+    }
+
+    var boom = document.createElement('div');
+    boom.className = 'boom';
+    boom.textContent = POPS[UI.randInt(0, POPS.length - 1)];
+    // 글자는 위로, 선물은 가운데에서 — 같은 자리면 서로 가려 둘 다 안 읽힙니다.
+    place(boom, cx, cy - size * 0.45, size * 1.4);
+    boom.style.fontSize = Math.round(size * 0.42) + 'px';
+    boom.style.color = thing.kind.c;
+    addFx(boom, 500);
+
+    var ring = document.createElement('div');
+    ring.className = 'ring';
+    place(ring, cx, cy, size * 1.1);
+    ring.style.borderColor = thing.kind.l;
+    addFx(ring, 500);
+
     var prize = document.createElement('div');
     prize.className = 'prize';
     prize.textContent = PRIZES[UI.randInt(0, PRIZES.length - 1)];
-    thing.el.appendChild(prize);
+    place(prize, cx, cy, size);
+    prize.style.fontSize = Math.round(size * 0.6) + 'px';
+    addFx(prize, 1150);
+  }
 
-    thing.el.classList.add('broken');
-    setTimeout(function () { thing.el.remove(); }, 800);
+  // 'n연속!' — 이어서 깰수록 글자가 커집니다.
+  function comboText(x, y, n) {
+    var t = document.createElement('div');
+    t.className = 'combo';
+    t.textContent = n + '연속!';
+    t.style.left = x + 'px';
+    t.style.top = y + 'px';
+    t.style.fontSize = Math.min(64, 26 + n * 4) + 'px';
+    addFx(t, 900);
+  }
 
-    step();
+  // 판을 한 번 흔듭니다 (연달아 깨면 처음부터 다시 흔듭니다).
+  function jolt() {
+    el.field.classList.remove('jolt');
+    void el.field.offsetWidth;
+    el.field.classList.add('jolt');
+  }
+
+  function place(node, cx, cy, box) {
+    node.style.left = (cx - box / 2) + 'px';
+    node.style.top = (cy - box / 2) + 'px';
+    node.style.width = box + 'px';
+    node.style.height = box + 'px';
+  }
+
+  function addFx(node, life) {
+    el.field.appendChild(node);
+    setTimeout(function () { node.remove(); }, life);
   }
 
   // 못 깨고 사라진 것 — 하트가 하나 없어집니다.
@@ -404,6 +492,7 @@
 
     if (!state.running) return;
 
+    state.combo = 0;
     state.lives -= 1;
     updateLives();
     if (window.SFX) SFX.wrong();
@@ -491,10 +580,11 @@
 
     buildStartRow();
 
-    el.endStars.textContent = '🧊 ' + state.level + '단계';
+    el.endStars.textContent = '👾 ' + state.level + '단계';
     el.endTitle.textContent = isBest ? '새 최고 기록! 🏆' : PRAISE[UI.randInt(0, PRAISE.length - 1)];
     el.endText.textContent = (state.startLevel > 1 ? state.startLevel + '단계에서 시작해서 ' : '')
-      + state.level + '단계까지 갔어요. ' + state.broken + '개를 깼어요!';
+      + state.level + '단계까지 갔어요. ' + state.broken + '개를 깼어요!'
+      + (state.bestCombo >= 2 ? ' 한 번에 ' + state.bestCombo + '연속!' : '');
     el.endOverlay.hidden = false;
   }
 

@@ -1066,8 +1066,8 @@ window.PAGES = [
   {
     subject: '놀이',
     title: '부수기',
-    icon: '🧊',
-    meta: '카메라 앞에서 손으로 깨요',
+    icon: '👾',
+    meta: '말랑한 괴물을 쳐서 뽁! 터뜨려요',
     href: 'smash.html',
     bestKey: 'daniland.best.smash.level',
     bestUnit: '단계'

@@ -34,6 +34,28 @@
     osc.stop(t0 + duration + 0.05);
   }
 
+  // 음이 미끄러지는 소리 — 높은 데서 낮은 데로 떨어지면 '뽁' 하고 말랑하게 들립니다.
+  function sweep(from, to, delay, duration, type, volume) {
+    var ac = audio();
+    if (!ac) return;
+    var t0 = ac.currentTime + delay;
+    var osc = ac.createOscillator();
+    var gain = ac.createGain();
+
+    osc.type = type || 'sine';
+    osc.frequency.setValueAtTime(from, t0);
+    osc.frequency.exponentialRampToValueAtTime(to, t0 + duration);
+
+    gain.gain.setValueAtTime(0.0001, t0);
+    gain.gain.exponentialRampToValueAtTime(volume || 0.18, t0 + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+
+    osc.connect(gain);
+    gain.connect(ac.destination);
+    osc.start(t0);
+    osc.stop(t0 + duration + 0.05);
+  }
+
   // 짧은 잡음 한 방 — '팡' 하고 터지는 소리는 음정이 아니라 잡음이라야 납니다.
   function burst(duration, volume) {
     var ac = audio();
@@ -72,6 +94,15 @@
     pop: function () {
       burst(0.09, 0.25);
       tone(880, 0, 0.05, 'triangle', 0.09);
+    },
+
+    // 부수기 — 젤리 괴물이 '뽁' 하고 터지는 소리.
+    // n 은 몇 연속인지 — 이어서 터뜨릴수록 두 반음씩 올라가 신이 납니다 (열 번째에서 멈춤).
+    smash: function (n) {
+      var up = Math.pow(2, (Math.min(n || 1, 10) - 1) * 2 / 12);
+      sweep(620 * up, 150 * up, 0, 0.15, 'sine', 0.28);
+      burst(0.06, 0.12);
+      tone(1400 * up, 0.05, 0.09, 'triangle', 0.05);
     },
 
     correct: function () {
