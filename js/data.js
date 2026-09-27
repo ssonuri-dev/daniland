@@ -796,6 +796,17 @@ window.PAGES = [
     bestKey: 'daniland.best.ride'
   },
 
+  // 낱말은 위 '단어 공부' 수업들에서 그대로 읽어 옵니다 (js/wordquiz.js) — 수업에 낱말을 더하면 퀴즈도 늡니다.
+  {
+    subject: '영어',
+    group: '문장·놀이',
+    title: '단어 퀴즈',
+    icon: '🧠',
+    meta: '배운 낱말이 섞여 나와요',
+    href: 'wordquiz.html',
+    bestKey: 'daniland.best.wordquiz'
+  },
+
   {
     subject: '영어',
     group: '책 읽기',

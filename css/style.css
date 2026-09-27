@@ -3497,6 +3497,18 @@ button {
   .riddle-cards .ans-card.with-art .text { font-size: 15px; }
 }
 
+/* ---------- 단어 퀴즈 (wordquiz.html) ----------
+ * 수수께끼의 riddle-* 를 그대로 쓰고 다른 것만 여기에. '듣고 그림 찾기' 는 보기가 그림뿐(.art-only)이라 그림을 크게,
+ * '영어를 보고 뜻 고르기' 는 판 제목이 영어 낱말 하나라 더 크게 씁니다. */
+.wq-panel { background: linear-gradient(135deg, #e6f4ff 0%, #fff8d6 100%); }
+.wq-cards .ans-card.art-only .art { font-size: clamp(40px, calc(var(--ch, 96px) * 0.6), 96px); }
+.wq-cards .ans-card .text:lang(en) { word-break: normal; }
+.wq-panel.word-q .fact-title { font-size: 36px; line-height: 1.2; }
+
+@media (max-width: 599px) {
+  .wq-panel.word-q .fact-title { font-size: 28px; }
+}
+
 /* ---------- 코디 놀이 (dress.html) ----------
  * 배경 한 장 위에 옷(캐릭터)과 소품을 %로 겹치는 장면입니다 (그림책 장면과 비슷한 얼개지만
  * 이모지 대체 그림이 없습니다 — 그림 파일이 없는 항목은 .dress-missing 이 이름 글자로 대신합니다).
