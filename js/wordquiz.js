@@ -1,7 +1,7 @@
 /* =========================================================================
  * 다니랜드 - 단어 퀴즈 (wordquiz.html)
  *
- * 영어 '단어 공부' 묶음의 수업(LESSONS)과 마을 지도의 장소(js/town-places.js)에서 낱말을 섞어 냅니다
+ * 영어 '단어 공부' 묶음의 수업(LESSONS)·몸 이름(js/body-parts.js)·마을 지도의 장소(js/town-places.js)에서 낱말을 섞어 냅니다
  * — 여기에 낱말을 따로 적지 않습니다.
  * 수업에 낱말을 더하면 퀴즈도 같이 늘어납니다 (글자 만들기·단어 쓰기와 같은 규칙).
  * 화면 얼개는 수수께끼(riddle.js)와 같습니다: 위 판에 문제, 아래 보기 넉 장, 한 판 열 문제.
@@ -68,6 +68,13 @@
       items: TOWN_PLACES.map(function (p) { return { emoji: p.icon, word: p.word, ko: p.ko }; })
     });
   }
+  // 몸 이름(body.html)의 부위도 — 그림(icon)은 🎒 어깨·🧣 목처럼 빗댄 것이라 글자 문제로만 냅니다 (noPic).
+  if (window.BODY_PARTS) {
+    LESSON_LIST.push({
+      icon: '🧍', title: '몸 이름', noPic: true,
+      items: BODY_PARTS.map(function (p) { return { word: p.word, ko: p.ko }; })
+    });
+  }
 
   var POOL = LESSON_LIST.map(function (l) {
     return {
@@ -77,7 +84,7 @@
   }).filter(function (g) { return g.items.length >= 4; });   // 보기 넉 장이 안 되는 수업은 뺍니다
 
   // 그림 문제는 그 수업에 그림 낱말이 넉 개 이상일 때만 — 숫자 세기는 one(🍭 하나)만 그림이 한 개라 못 씁니다
-  POOL.forEach(function (g) { g.pics = g.items.filter(hasPic).length >= 4; });
+  POOL.forEach(function (g) { g.pics = !g.lesson.noPic && g.items.filter(hasPic).length >= 4; });
 
   var state = {
     round: 0,
