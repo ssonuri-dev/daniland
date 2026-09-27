@@ -1141,6 +1141,130 @@ button {
   .hundred-cards .choice.num-card .num { font-size: 34px; }
 }
 
+/* ---------- 시계 공부 (clock.html) ---------- */
+
+.clock-page { padding-bottom: 14px; }
+.clock-page .tools { margin-top: 10px; }
+
+.clock-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 시계 크기(width·height)는 js/clock.js 의 fitClock() 이 정합니다 */
+.clock-face {
+  width: 300px;
+  height: 300px;
+  touch-action: none;             /* 바늘 맞추기에서 끌 때 화면이 안 밀리게 */
+  user-select: none;
+  -webkit-user-select: none;
+}
+.act-set .clock-face { cursor: grab; }
+.clock-face.dragging { cursor: grabbing; }
+.clock-face.pop { animation: pop 0.45s ease; }
+.clock-face.wrong { animation: shake 0.4s ease; }
+
+.clock-svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.ck-rim { fill: var(--pink); }
+.ck-bg { fill: #fff; }
+.ck-tick { stroke: #cdbfc6; stroke-width: 1.5; stroke-linecap: round; }
+.ck-tick.big { stroke: var(--ink); stroke-width: 3; }
+.ck-num {
+  font-family: 'Jua', 'Malgun Gothic', sans-serif;
+  font-size: 22px;
+  fill: var(--ink);
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+/* 30분·5분 단계에서 바깥에 적는 분 숫자 — 긴 바늘 색과 같게 */
+.ck-min {
+  font-family: 'Jua', 'Malgun Gothic', sans-serif;
+  font-size: 13px;
+  fill: #3d97ec;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+/* 짧은 바늘(시)은 분홍, 긴 바늘(분)은 파랑 — 안내 말에서도 '짧은 바늘·긴 바늘' 로 부릅니다 */
+.ck-hand line { stroke-linecap: round; }
+.ck-hand.hour line { stroke: #e8588a; stroke-width: 10; }
+.ck-hand.minute line { stroke: #3d97ec; stroke-width: 6; }
+.ck-hand.hour circle { fill: #e8588a; }
+.ck-hand.minute circle { fill: #3d97ec; }
+.ck-hand.ghost { opacity: 0.25; }
+.ck-pin { fill: var(--ink); }
+
+/* 디지털 짝에서 '디지털을 보고 바늘 시계 고르기' 문제일 때 큰 시계 대신 */
+.clock-digital {
+  display: none;
+  padding: 0.12em 0.4em;
+  font-family: 'Courier New', monospace;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: 2px;
+  color: #7dffa0;
+  background: #2b2530;
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+}
+.show-digital .clock-face { display: none; }
+.show-digital .clock-digital { display: block; margin: 10px 0; }
+
+.clock-period {
+  margin-bottom: 6px;
+  padding: 6px 18px;
+  font-family: 'Jua', 'Malgun Gothic', sans-serif;
+  font-size: 22px;
+  color: var(--ink);
+  background: var(--yellow);
+  border-radius: 999px;
+}
+.clock-period[hidden] { display: none; }
+
+/* 보기 — 백 판처럼 폰에서는 두 줄 두 칸, 넓은 화면에서는 한 줄 넉 장 */
+.cards.clock-cards {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  max-width: 520px;
+  margin: 12px auto 0;
+}
+.clock-cards .choice { aspect-ratio: 3 / 2; padding: 4px; }
+.clock-cards.mini .choice { aspect-ratio: 1 / 1; padding: 8px; }
+.clock-cards .ck-text { font-family: 'Jua', 'Malgun Gothic', sans-serif; font-size: 28px; color: var(--ink); }
+.clock-cards .ck-lcd {
+  padding: 2px 12px;
+  font-family: 'Courier New', monospace;
+  font-size: 34px;
+  font-weight: 800;
+  color: #7dffa0;
+  background: #2b2530;
+  border-radius: 12px;
+}
+.clock-cards .ck-emoji { font-size: 40px; line-height: 1; }
+.clock-cards .ck-label { font-size: 15px; font-weight: 800; color: var(--ink); line-height: inherit; }
+.clock-cards.mini .clock-svg { width: 100%; height: 100%; }
+
+.act-set .clock-cards { display: none; }
+.clock-set-row { display: none; text-align: center; margin-top: 12px; }
+.act-set .clock-set-row { display: block; }
+.clock-set-row .big-btn { margin: 0; }
+
+@media (min-width: 600px) {
+  .cards.clock-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .clock-cards .choice { aspect-ratio: auto; height: 86px; }
+  /* 바늘 시계 카드는 큰 시계가 빠진 자리를 써서 넓게 (넉 장 × 약 170px) */
+  .cards.clock-cards.mini { max-width: 720px; }
+  .clock-cards.mini .choice { aspect-ratio: 1 / 1; height: auto; }
+  .clock-cards.routine .choice { height: 96px; }
+  .clock-cards .ck-text { font-size: 24px; }
+}
+
+@media (max-width: 420px) {
+  .clock-cards .ck-text { font-size: 24px; }
+  .clock-cards .ck-lcd { font-size: 28px; }
+}
+
 /* ---------- 그림 그리기 ---------- */
 
 .draw-page {

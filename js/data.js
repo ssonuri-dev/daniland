@@ -53,7 +53,8 @@ window.SUBJECTS = [
     groups: [
       { name: '세기·비교',          icon: '🔢', desc: '세어 보고 견줘요' },
       { name: '더하기·빼기·곱하기', icon: '➕', desc: '식을 세워요' },
-      { name: '수 순서·백 판',      icon: '💯', desc: '수의 차례와 자리' }
+      { name: '수 순서·백 판',      icon: '💯', desc: '수의 차례와 자리' },
+      { name: '시계',               icon: '🕒', desc: '몇 시인지 읽어요' }
     ] },
   { name: '한글', icon: '🇰🇷', desc: '글자를 익혀요',
     groups: [
@@ -1046,6 +1047,44 @@ window.PAGES = [
     meta: '100까지 뛰어 세요',
     href: 'hundred.html',
     bestKey: 'daniland.best.hundred'
+  },
+
+  // 시계 공부 — 네 장이 clock.html 한 화면을 ?act= 로 나눠 씁니다 (js/clock.js 맨 위 주석).
+  {
+    subject: '수학',
+    group: '시계',
+    title: '시계 읽기',
+    icon: '🕒',
+    meta: '몇 시일까?',
+    href: 'clock.html?act=read',
+    bestKey: 'daniland.best.clock.read'
+  },
+  {
+    subject: '수학',
+    group: '시계',
+    title: '바늘 맞추기',
+    icon: '👆',
+    meta: '바늘을 돌려요',
+    href: 'clock.html?act=set',
+    bestKey: 'daniland.best.clock.set'
+  },
+  {
+    subject: '수학',
+    group: '시계',
+    title: '디지털 짝',
+    icon: '📟',
+    meta: '4:30 은 어떤 시계?',
+    href: 'clock.html?act=digital',
+    bestKey: 'daniland.best.clock.digital'
+  },
+  {
+    subject: '수학',
+    group: '시계',
+    title: '하루 일과',
+    icon: '🌞',
+    meta: '몇 시에 무엇을 할까',
+    href: 'clock.html?act=routine',
+    bestKey: 'daniland.best.clock.routine'
   },
 
   {

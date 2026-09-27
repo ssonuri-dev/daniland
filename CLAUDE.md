@@ -111,6 +111,7 @@ index.html            과목 카드            home.js
       ├ play.html?lesson=en-fruits          game.js     (수업 데이터 기반, 놀이 5종)
       ├ numbers.html?act=plus               numbers.js  (문제를 매번 생성, 놀이 8종)
       ├ hundred.html                        hundred.js  (1~100 백 판, 놀이 3종)
+      ├ clock.html?act=read                 clock.js    (바늘 시계 — 카드 넉 장이 ?act= 로 나눠 씀: 읽기·바늘 맞추기·디지털 짝·하루 일과)
       ├ town.html                           town.js     (지도 그림 town.jpg 위, 놀이 3종)
       ├ world.html                          world.js    (지도 그림 world.jpg 위, 놀이 3종)
       ├ trip.html                           trip.js     (풍경 그림 trip.jpg 위, 놀이 2종 — 영어 문장·대화)
@@ -298,6 +299,14 @@ index.html            과목 카드            home.js
   으로 문제를 세우면 배우는 내용은 그대로입니다(`where` 놀이가 그렇습니다).
   **칸을 `<button>` 으로 바꾸지 마세요.**
 
+  **시계(`clock.html`)가 열여섯 번째**입니다 (2026-09-28) — 수학의 새 묶음 '시계'. 바늘 시계가 곧 교구라
+  따로 만들었고, `numbers.html` 처럼 **카드 넉 장이 `?act=` 로 한 화면을 나눠 씁니다** (시작 화면엔 단계만: 정각·30분·5분 단위,
+  하루 일과는 단계 없음 — 사용자가 고른 범위). 시계는 그림 파일이 아니라 **svg 글**로 그립니다(`clockSvg()`) — 큰 시계와
+  보기 카드의 작은 시계가 같은 함수를 씁니다. **짧은 바늘은 분에 따라 움직입니다**(3시 30분 = 3과 4 사이) — 숫자에 딱 붙이지 마세요.
+  바늘 맞추기에서도 긴 바늘이 12 를 넘으면 짧은 바늘이 따라갑니다. 틀린 보기(`confusions()`)는 아이가 실제로 헷갈리는 쪽이고
+  **그 단계의 눈금에 맞는 것만** 씁니다 (정각 단계에 '3시 30분' 이 나오면 읽지 않고도 지웁니다). 하루 일과는 **같은 시계 모양이
+  아침·저녁에 한 번씩 오는 짝**(7시 일어나기 ↔ 7시 목욕)을 보기에 넣어 '아침·밤' 을 보게 합니다 — 시각은 글로도 소리로도 미리 말하지 않습니다.
+
 ### 글자 쓰기는 획 하나씩 본다 (write.js)
 
 ⚠️ **낱말도 글꼴 글자를 통째로 맞추는 게 아니라, 자모 획으로 조립해서 획 하나씩 봅니다.**
@@ -367,6 +376,7 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.make` | 글자 만들기 최고 별 |
 | `daniland.best.hundred.<act>` | 백 판 놀이별(뛰어 세기·여기는 몇·앞뒤 수) 최고 별 |
 | `daniland.best.hundred` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
+| `daniland.best.clock.<act>` | 시계 놀이별(read·set·digital·routine) 최고 별 — 카드마다 이것을 읽습니다 |
 | `daniland.best.body.<act>` | 몸 이름 놀이별(듣고 찾기·무엇을 할까) 최고 별 (구경하기는 점수가 없습니다) |
 | `daniland.best.body` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.trip.<act>` | 할머니 섬 여행 놀이별(탈것 여행·다니 돌보기) 최고 별 |
@@ -401,7 +411,7 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.maze` | 한 번에 찾은 것 중 제일 큰 판 — stars 가 칸 수(5~11)입니다 (카드의 ⭐ 는 이것을 `bestUnit: '칸 미로'` 로 읽습니다) |
 | `daniland.balloonMode` `daniland.smashMode` | 그 놀이를 마지막에 누르기로 했나 손으로 했나 (`tap` / `hand`) |
 | `daniland.smashStart` | 부수기에서 마지막에 고른 시작 단계 |
-| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.fishStart` `daniland.townAct` `daniland.worldAct` `daniland.bodyAct` `daniland.tripAct` `daniland.rideAct` `daniland.swedenAct` `daniland.greeceAct` `daniland.germanyAct` `daniland.franceAct` `daniland.norwayAct` `daniland.spainAct` `daniland.europeAct` `daniland.spaceAct` `daniland.spaceSpeed` `daniland.starAct` `daniland.starMass` `daniland.numShow`(더하기·빼기·곱하기의 그림/식/둘 다) `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.mazeSize` | 마지막에 고른 설정 |
+| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.fishStart` `daniland.townAct` `daniland.worldAct` `daniland.bodyAct` `daniland.tripAct` `daniland.rideAct` `daniland.swedenAct` `daniland.greeceAct` `daniland.germanyAct` `daniland.franceAct` `daniland.norwayAct` `daniland.spainAct` `daniland.europeAct` `daniland.spaceAct` `daniland.spaceSpeed` `daniland.starAct` `daniland.starMass` `daniland.numShow`(더하기·빼기·곱하기의 그림/식/둘 다) `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.clock.<act>`(시계 단계 60·30·5) `daniland.mazeSize` | 마지막에 고른 설정 |
 | `daniland.numMax` | 수학 놀이가 넷뿐이던 시절의 숫자 범위 — 읽기만 합니다 (`numbers.js` 의 `loadMax()`) |
 | `daniland.rate` `daniland.voice.<lang>` | 목소리·속도 |
 | `daniland.drawer` | 그림 그리기 도장 서랍 접힘 상태 |
