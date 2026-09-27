@@ -29,6 +29,14 @@
     </div>
 
     <div class="smash-field cam-field" id="field">
+      <!-- 누르기 모드의 배경: 우주 — 별·달·고리 행성·별똥별 (손 모드에서는 카메라 영상이 대신합니다) -->
+      <div class="space-scene" aria-hidden="true">
+        <div class="stars s1"></div>
+        <div class="stars s2"></div>
+        <div class="moon"></div>
+        <div class="ringed"><i></i></div>
+        <div class="shoot"></div>
+      </div>
       <!-- 손 모드에서만 보입니다 — 거울로 비친 자기 모습과 🖐 커서 (js/hand.js) -->
       <video class="cam" id="cam" playsinline muted hidden></video>
       <div class="hand-cursor" id="handCursor" hidden>🖐</div>
