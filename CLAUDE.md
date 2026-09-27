@@ -58,6 +58,7 @@ ES5 IIFE 로 감싸 `window` 에 전역을 붙이는 방식입니다. `import`/`
 | `BOOKS` | `js/books.js` | 영어 그림책 — 책 한 권이 객체 하나, 그림은 `books/<id>/` (전집처럼 계속 늘어납니다). 목록 페이지도 읽습니다(책마다 카드) |
 | `PLANETS` `SPACE_QUIZ` | `js/planets.js` | 태양계 — 태양·행성 여덟·달·명왕성·핼리 혜성이 객체 하나씩 (이야기 카드·숫자 칩·퀴즈). `space.html` 과 `planet.html` 이 같이 읽습니다 |
 | `STAR_STAGES` `STAR_PATHS` `STAR_QUIZ` | `js/stars.js` | 별의 일생 — 단계(성운~블랙홀) 하나가 객체 하나, 무게 네 가지가 그 단계를 차례로 엮습니다. `star.html` 만 읽습니다 |
+| `TOWN_PLACES` | `js/town-places.js` | 마을 지도의 장소 열 곳 (이름·좌표·심부름 문장). `town.html` 과 `wordquiz.html`(장소 이름만)이 같이 읽습니다 |
 | `RIDDLES` | `js/riddles.js` | 수수께끼·넌센스 문제 — 문제 하나가 객체 하나 (계속 늘어납니다). `riddle.html` 만 읽습니다 |
 | `Catalog` | `js/catalog.js` | LESSONS+PAGES 를 과목별로 묶고 최고 기록을 붙임 |
 | `UI` | `js/ui.js` | 섞기·이모지 개수 세기·URL 파라미터·폭죽·localStorage |
@@ -125,7 +126,7 @@ index.html            과목 카드            home.js
       │  └ planet.html?planet=jupiter       planet.js   (행성 한 곳 — 사진·숫자 칩·이야기 카드. 데이터는 js/planets.js)
       ├ star.html                           star.js     (별의 일생 — 무게를 고르면 성운에서 블랙홀까지. 데이터는 js/stars.js)
       ├ riddle.html                         riddle.js   (수수께끼·넌센스 — js/riddles.js 의 문제를 열 개씩, 보기 넉 장)
-      ├ wordquiz.html                       wordquiz.js (단어 퀴즈 — 영어 '단어 공부' 수업의 낱말을 섞어 열 문제, 문제 모양 넷)
+      ├ wordquiz.html                       wordquiz.js (단어 퀴즈 — 영어 '단어 공부' 수업 + 마을 지도 장소 이름을 섞어 열 문제, 문제 모양 넷)
       ├ smash.html                          smash.js    (부수기 — 젤리 괴물을 한 번에 터뜨림, 연속. 카메라로 손을 씀)
       ├ fish.html                           fish.js     (낚시 — 하늘·바다·배·물고기를 캔버스에 그림, 단계·하트. 장애물 피하기와 같은 얼개)
       └ draw.html                           draw.js     (독립 — 다른 js 를 전혀 안 씀)
@@ -154,7 +155,7 @@ index.html            과목 카드            home.js
   앞으로 붙일 **영어 대화 수업**이 그 경우라, `LESSONS` 를 확장하는 대신 `numbers.html` ·
   `draw.html` 처럼 페이지를 따로 만들고 `PAGES` 에 카드로 얹기로 정해 두었습니다.
   **마을 시설 이름(`town.html`)이 그 첫 사례입니다** — 위치가 뜻을 갖는 어휘라 낱말 카드 대신
-  지도 그림 한 장 위에 건물 단추를 얹었습니다. 좌표는 `js/town.js` 의 `PLACES` 에 백분율로 있습니다.
+  지도 그림 한 장 위에 건물 단추를 얹었습니다. 좌표는 `js/town-places.js` 의 `TOWN_PLACES` 에 백분율로 있습니다 (단어 퀴즈도 이름을 읽어서 `town.js` 밖으로 뺐습니다).
   **나라 이름(`world.html`)이 두 번째**로, 같은 얼개를 그대로 씁니다 (`js/world.js` 의 `COUNTRIES`).
   다른 점은 길이 없어 다니가 곧장 날아간다는 것과, 지도가 정사각형이 아니라 3:2 라는 것입니다.
   지도 그림을 새로 바꾸면 `box` 와 `x`/`y`, 그리고 **`MAP_RATIO`(가로÷세로)** 를 다시 맞춰야 합니다.
@@ -271,7 +272,7 @@ index.html            과목 카드            home.js
   아래에 입을 두었습니다. 폰에서도 돌아가지만(얼굴 칸 36~57px) 세계 지도처럼 **태블릿이 제격**입니다.
 
   **단어 퀴즈(`wordquiz.html`)가 열다섯 번째**입니다 (2026-09-27) — 영어 '문장·놀이' 묶음. 수업 안의 놀이(`play.html`)는
-  그 수업 낱말만 나오므로, **'단어 공부' 수업 전부를 섞어** 복습하는 화면을 따로 만들었습니다(사용자가 '전부 섞기만' 을 고름 —
+  그 수업 낱말만 나오므로, **'단어 공부' 수업 전부 + 마을 지도의 장소 이름(`TOWN_PLACES`, 사용자 요청)을 섞어** 복습하는 화면을 따로 만들었습니다(사용자가 '전부 섞기만' 을 고름 —
   수업 고르기는 없습니다). 화면은 수수께끼와 같은 얼개(`riddle-*` 클래스 재사용). 낱말은 `LESSONS` 에서 그대로 읽어 오니
   **여기에 낱말 배열을 새로 만들지 마세요.** 문제 모양 넷(듣고 그림 · 그림 보고 영어 · 우리말 보고 영어 · 영어 보고 뜻)이
   덜 나온 것부터 섞이고, 수업은 돌아가며 고르게 뽑습니다. **틀린 보기는 정답과 같은 수업에서만** — orange(과일·색깔),

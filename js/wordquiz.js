@@ -1,7 +1,8 @@
 /* =========================================================================
  * 다니랜드 - 단어 퀴즈 (wordquiz.html)
  *
- * 영어 '단어 공부' 묶음의 수업(LESSONS)에서 낱말을 섞어 냅니다 — 여기에 낱말을 따로 적지 않습니다.
+ * 영어 '단어 공부' 묶음의 수업(LESSONS)과 마을 지도의 장소(js/town-places.js)에서 낱말을 섞어 냅니다
+ * — 여기에 낱말을 따로 적지 않습니다.
  * 수업에 낱말을 더하면 퀴즈도 같이 늘어납니다 (글자 만들기·단어 쓰기와 같은 규칙).
  * 화면 얼개는 수수께끼(riddle.js)와 같습니다: 위 판에 문제, 아래 보기 넉 장, 한 판 열 문제.
  *
@@ -57,9 +58,18 @@
   };
 
   // 수업마다 { lesson, items } — 퀴즈에 쓸 수 있는 낱말만 추립니다.
-  var POOL = (window.LESSONS || []).filter(function (l) {
+  // 마을 지도(town.html)의 장소 이름도 낱말이라 같이 냅니다 — js/town-places.js 를 수업 하나처럼 붙입니다.
+  var LESSON_LIST = (window.LESSONS || []).filter(function (l) {
     return l.subject === '영어' && l.group === '단어 공부' && !l.wordKo;
-  }).map(function (l) {
+  });
+  if (window.TOWN_PLACES) {
+    LESSON_LIST.push({
+      icon: '🗺️', title: '마을 지도',
+      items: TOWN_PLACES.map(function (p) { return { emoji: p.icon, word: p.word, ko: p.ko }; })
+    });
+  }
+
+  var POOL = LESSON_LIST.map(function (l) {
     return {
       lesson: l,
       items: (l.items || []).filter(function (it) { return it.word && it.ko; })
