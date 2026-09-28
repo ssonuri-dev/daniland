@@ -1021,6 +1021,53 @@ button {
 
 .eq-box .group { max-width: 150px; }
 
+/* 가르기·모으기의 수 가지 (js/numbers.js 의 bondEl) — 위에 전체, 두 갈래 선, 아래에 두 부분 */
+.bond {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+}
+.bond-top { display: flex; justify-content: center; }
+/* 아래 두 칸은 반씩 나눈 자리의 가운데 — 두 갈래 선의 끝(25% · 75%)과 맞습니다 */
+.bond-bottom { display: grid; grid-template-columns: 1fr 1fr; justify-items: center; width: 100%; gap: 10px; }
+.bond-lines { width: 100%; height: 28px; }
+.bond-lines svg { display: block; width: 100%; height: 100%; }
+.bond-lines line { stroke: var(--ink-soft); stroke-width: 3; vector-effect: non-scaling-stroke; stroke-linecap: round; }
+
+.bond-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 96px;
+  min-height: 72px;
+  padding: 6px 12px;
+  background: #fff;
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+}
+.bond-node .group { max-width: none; }
+.bond-num { font-size: 34px; font-weight: 800; line-height: 1.1; color: var(--ink); }
+.bond-node.q { background: var(--pink-soft); box-shadow: none; }
+.bond-node.q .bond-num { color: var(--pink); }
+.bond-node.filled { animation: formula-pop 0.4s ease; }
+.bond-node.filled .bond-num { color: var(--pink); }
+
+/* 식만 볼 때는 그림 자리가 비니 숫자를 크게 */
+.bond.eq-only { margin: 10px auto 6px; }
+.bond.eq-only .bond-node { min-width: 110px; min-height: 96px; }
+.bond.eq-only .bond-num { font-size: 56px; }
+.bond.eq-only .bond-lines { height: 40px; }
+@media (max-width: 420px) {
+  .bond-lines { height: 18px; }
+  .bond-node { min-width: 80px; min-height: 60px; padding: 4px 10px; }
+  .bond-num { font-size: 28px; }
+}
+
 /* 숫자 보기는 정사각형일 필요가 없습니다 — 납작하게 두면 세로가 100px 넘게 남아
    더하기·빼기의 그림 묶음이 한 화면에 같이 들어옵니다. (손가락 최소 64px 은 지킵니다) */
 /* 패턴 잇기의 그림 카드. .choice .art 의 크기는 --card 에 물려 있는데
@@ -1097,6 +1144,135 @@ button {
   .seq-num { min-width: 48px; padding: 4px 8px; font-size: 30px; border-radius: 14px; }
   .eq-op { font-size: 26px; }
   .eq-box { padding: 8px 10px; }
+}
+
+/* ---------- 모양 (shape.html) · 재고 견주기 (measure.html) ----------
+   두 화면이 같은 뼈대(.mathpic-page)를 씁니다: 위에 문제 그림(.mathpic-stage), 아래에 보기.
+   그림은 전부 svg 라 폭에 맞춰 늘고, 높이는 화면의 일부(vh)로 막아 스크롤 없이 한 화면에 들어오게 합니다. */
+
+.mathpic-page { padding-bottom: 14px; }
+.mathpic-page .tools { margin-top: 10px; }
+.mathpic-stage { display: flex; flex-direction: column; align-items: center; }
+.mathpic-stage:empty { display: none; }
+
+.mathpic-page .cards { max-width: 640px; margin: 12px auto 0; gap: 12px; }
+
+/* 평면 모양 — 보기 넉 장이 곧 문제 (폰 2×2, 넓으면 한 줄) */
+.cards.shape-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 520px; }
+.shape-cards .choice { padding: 12px; }
+.shape-svg { display: block; width: 100%; height: 100%; overflow: visible; }
+@media (min-width: 600px) and (min-height: 700px) {
+  .cards.shape-cards { max-width: 560px; }
+}
+
+/* 입체 모양 — 가운데 큰 물건(또는 성질 물음), 아래 보기 석 장 */
+.shape-object { font-size: min(150px, 22vh); line-height: 1.15; }
+.shape-prop {
+  max-width: 520px;
+  margin: 6px 0;
+  padding: 16px 22px;
+  font-family: 'Jua', 'Malgun Gothic', sans-serif;
+  font-size: 26px;
+  line-height: 1.35;
+  text-align: center;
+  color: var(--ink);
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+}
+.cards.solid-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.solid-cards .choice { aspect-ratio: 3 / 4; padding: 8px 4px; }
+.solid-svg { display: block; width: 88%; flex: 1 1 auto; min-height: 0; }
+.shape-name { font-size: 17px; font-weight: 800; color: var(--ink); line-height: 1.25; text-align: center; word-break: keep-all; }
+
+/* 쌓기나무 — 맞히면 앞줄이 흐려져 숨은 나무가 보입니다 (js/shape.js 의 stackSvg) */
+.stack-box { width: 100%; display: flex; justify-content: center; }
+.stack-svg { display: block; width: auto; max-width: min(100%, 420px); height: min(38vh, 300px); }
+.stack-svg .front { transition: opacity 0.5s ease; }
+.stack-box.peek .front { opacity: 0.28; }
+.stack-cards .num { font-size: 56px; }
+
+/* 길이 견주기 — 끈 한 줄이 곧 단추입니다 */
+.cards.ribbon-cards { grid-template-columns: minmax(0, 1fr); max-width: 720px; gap: 14px; }
+.ribbon-cards .choice.ribbon-row {
+  display: block;
+  aspect-ratio: auto;
+  height: 76px;
+  padding: 0;
+  border-radius: 20px;
+  overflow: hidden;
+}
+.ribbon-row .ribbon {
+  position: absolute;
+  top: 22px;
+  bottom: 22px;
+  border-radius: 999px;
+  box-shadow: inset 0 -5px 0 rgba(0, 0, 0, 0.12);
+}
+/* 1단계는 왼쪽 끝을 맞춘다는 걸 세로 선으로 보여 줍니다 */
+.ribbon-cards:not(.grid) .ribbon-row::before {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0; left: 0;
+  border-left: 3px dashed #d7c9d0;
+}
+.ribbon-cards:not(.grid) .ribbon { border-top-left-radius: 0; border-bottom-left-radius: 0; }
+/* 2단계는 바탕에 같은 칸 12개 (js/measure.js 의 UNITS) */
+.ribbon-cards.grid .ribbon-row {
+  background-color: #fff;
+  background-image: linear-gradient(to right, #e3d6dc 2px, transparent 2px);
+  background-size: calc(100% / 12) 100%;
+}
+.ribbon-cards.grid .ribbon { border-radius: 8px; box-shadow: inset 0 -5px 0 rgba(0, 0, 0, 0.12), inset 0 0 0 2px rgba(255, 255, 255, 0.5); }
+
+/* 무게 견주기 — 시소 */
+.seesaw { width: min(100%, 420px); }
+.seesaw svg { display: block; width: 100%; height: auto; overflow: visible; }
+.seesaw-row { display: flex; justify-content: center; gap: 10px; width: 100%; }
+.seesaw-row .seesaw { width: min(50%, 360px); }
+.ss-ground { stroke: #cdbfc6; stroke-width: 3; stroke-linecap: round; }
+.ss-stand { fill: var(--purple); }
+.ss-plank { fill: #c98b4f; }
+.ss-thing { font-size: 38px; text-anchor: middle; }
+.cards.thing-cards { max-width: 520px; }
+.thing-cards .choice { aspect-ratio: auto; height: 130px; }
+.thing-emoji { font-size: 56px; line-height: 1.1; }
+.thing-name { font-size: 18px; font-weight: 800; color: var(--ink); }
+
+/* 들이 견주기 — 그릇 석 장 */
+.cards.fill-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 600px; }
+.fill-cards .choice { aspect-ratio: auto; padding: 8px 4px; }
+.glass-svg { display: block; width: 100%; height: auto; max-height: 30vh; }
+.gl-water { fill: #7cc4ff; }
+.gl-glass { fill: none; stroke: #7a8ea3; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.fill-cups { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 1px; min-height: 28px; font-size: 20px; line-height: 1.3; }
+
+/* 자로 재기 */
+.ruler-box { width: 100%; max-width: 760px; }
+.ruler-svg { display: block; width: 100%; height: auto; }
+.rl-body { fill: #fff3c4; stroke: #d9b95a; stroke-width: 2; }
+.rl-tick { stroke: #6b5a44; stroke-width: 2; }
+.rl-num { font-family: 'Jua', 'Malgun Gothic', sans-serif; font-size: 20px; fill: var(--ink); text-anchor: middle; }
+.rl-cm { font-size: 14px; font-weight: 800; fill: var(--ink-soft); text-anchor: end; }
+.pc-body { fill: #ffcf5c; stroke: #b88a1c; stroke-width: 2; }
+.pc-wood { fill: #f4d7ae; stroke: #b88a1c; stroke-width: 2; stroke-linejoin: round; }
+.pc-lead { fill: #40323a; }
+.pc-guide { stroke: #e0577e; stroke-width: 2; stroke-dasharray: 3 3; }
+.act-ruler .num small { font-size: 0.45em; color: var(--ink-soft); }
+
+@media (min-width: 600px) {
+  .cards.shape-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: 720px; }
+  .solid-cards .choice { aspect-ratio: auto; height: 170px; }
+}
+
+@media (max-width: 420px) {
+  .shape-prop { font-size: 21px; padding: 12px 16px; }
+  .shape-name { font-size: 14px; }
+  .ss-thing { font-size: 34px; }
+  .thing-cards .choice { height: 112px; }
+  .thing-emoji { font-size: 44px; }
+  .thing-name { font-size: 15px; }
+  .fill-cups { font-size: 15px; }
 }
 
 /* ---------- 백 판 놀이 (hundred.html) ---------- */

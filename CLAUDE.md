@@ -110,9 +110,11 @@ index.html            과목 카드            home.js
  └ subject.html?name=영어   묶음 카드        subject.js  (SUBJECTS[].groups 가 있는 과목만 — 없으면 바로 아래 층)
    └ subject.html?name=영어&group=단어 공부   수업·놀이 카드   subject.js
       ├ play.html?lesson=en-fruits          game.js     (수업 데이터 기반, 놀이 5종)
-      ├ numbers.html?act=plus               numbers.js  (문제를 매번 생성, 놀이 8종)
+      ├ numbers.html?act=plus               numbers.js  (문제를 매번 생성, 놀이 9종)
       ├ hundred.html                        hundred.js  (1~100 백 판, 놀이 3종)
       ├ clock.html?act=read                 clock.js    (바늘 시계 — 카드 넉 장이 ?act= 로 나눠 씀: 읽기·바늘 맞추기·디지털 짝·하루 일과)
+      ├ shape.html?act=flat                 shape.js    (모양 — 카드 석 장이 ?act= 로 나눠 씀: 평면 모양·입체 모양·쌓기나무, 그림은 전부 svg)
+      ├ measure.html?act=long               measure.js  (재고 견주기 — 카드 넉 장이 ?act= 로 나눠 씀: 길이·무게·들이·자로 재기)
       ├ town.html                           town.js     (지도 그림 town.jpg 위, 놀이 3종)
       ├ world.html                          world.js    (지도 그림 world.jpg 위, 놀이 3종)
       ├ trip.html                           trip.js     (풍경 그림 trip.jpg 위, 놀이 2종 — 영어 문장·대화)
@@ -308,6 +310,22 @@ index.html            과목 카드            home.js
   **그 단계의 눈금에 맞는 것만** 씁니다 (정각 단계에 '3시 30분' 이 나오면 읽지 않고도 지웁니다). 하루 일과는 **같은 시계 모양이
   아침·저녁에 한 번씩 오는 짝**(7시 일어나기 ↔ 7시 목욕)을 보기에 넣어 '아침·밤' 을 보게 합니다 — 시각은 글로도 소리로도 미리 말하지 않습니다.
 
+  **모양(`shape.html`)과 재고 견주기(`measure.html`)가 열일곱·열여덟 번째**입니다 (2026-09-28) — 5~7세 수학 교육과정
+  (누리과정·초1~2 2022 개정)과 견줘 비어 있던 '도형과 측정' 영역을 채우려고 수학에 **새 묶음 둘**을 만들었습니다(사용자가 새 묶음으로 정함).
+  둘 다 시계와 같은 얼개(카드가 `?act=`, 시작 화면엔 단계만)이고 그림 파일 없이 svg·css 로 그립니다. 같은 날 `numbers.js` 에
+  **가르기·모으기(`bond`)** 도 더했습니다 — 초1 첫 단원이자 덧셈·뺄셈의 뿌리인데 없었고, 더하기가 늘 `a + b = ?` 라 그림을 다 세면 풀렸습니다.
+  가르기에서 모르는 쪽은 **그림도 ❓ 로 가립니다** (다 보여 주면 세기만 하면 됨). 1~10 단계는 10 가르기, 1~20 단계는 '10 과 몇' 이 자주 나옵니다.
+  - **평면 모양은 매번 돌리고 찌그러뜨려 그립니다**(`polygon()`) — 반듯한 정삼각형만 보면 '뒤집힌 세모는 세모가 아니다' 로 배웁니다.
+    2단계의 닮은 것(끊어진 선·굽은 선·길쭉한 원)은 **이름으로 찾기에만** 넣습니다 — 성질로 묻는 문제('꼭짓점이 없는 도형')에 넣으면 정답이 둘입니다.
+  - **입체 모양의 성질 물음(`PROPS`)은 셋 중 하나만 맞아야 합니다** — '굴러가는 모양' 은 둥근기둥도 눕히면 굴러가서 못 씁니다('어느 쪽으로 굴려도' 여야 공 하나).
+  - **쌓기나무 두 줄은 뒷줄이 앞줄보다 낮지 않게만** 쌓습니다 — 더 낮으면 통째로 가려 있는지 없는지 그림으로 알 수 없습니다.
+    숨은 것을 세는 근거가 '공중에 떠 있지 않다' 라 틀리면 그 말을 해 주고, 맞히면 앞줄(`g.front`)이 흐려집니다. 깊이(`DX`·`DY`)를 반 칸보다 얕게 하면
+    뒷줄이 앞줄 위에 얹힌 것처럼 읽혀서(실제로 겪음) 깊게 두고 뒷줄을 조금 어둡게 칠했습니다.
+  - **무게 2단계(시소 둘)는 답이 그림으로 정해질 때만 묻습니다** — 같이 오른 상자가 가장 무거우면 나머지 둘 중 누가 가벼운지 모릅니다.
+  - **들이 2단계의 그릇은 넓이가 들이(🥛 개수)에 비례하게** 그립니다 — 그림과 개수가 어긋나면 안 됩니다. 길이 2단계와 들이 2단계는
+    '가장 멀리 간 끈'·'키 큰 그릇' 이 답이 아니게 자주 만듭니다(눈대중 대신 세게 하려고).
+  - **자로 재기 2단계의 보기에는 '끝 눈금을 그대로 읽은 수' 를 꼭 넣습니다** — 초2 가 제일 많이 하는 실수라서요.
+
 ### 글자 쓰기는 획 하나씩 본다 (write.js)
 
 ⚠️ **낱말도 글꼴 글자를 통째로 맞추는 게 아니라, 자모 획으로 조립해서 획 하나씩 봅니다.**
@@ -378,6 +396,8 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.hundred.<act>` | 백 판 놀이별(뛰어 세기·여기는 몇·앞뒤 수) 최고 별 |
 | `daniland.best.hundred` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.clock.<act>` | 시계 놀이별(read·set·digital·routine) 최고 별 — 카드마다 이것을 읽습니다 |
+| `daniland.best.shape.<act>` | 모양 놀이별(flat·solid·stack) 최고 별 — 카드마다 이것을 읽습니다 |
+| `daniland.best.measure.<act>` | 재고 견주기 놀이별(long·heavy·fill·ruler) 최고 별 — 카드마다 이것을 읽습니다 |
 | `daniland.best.body.<act>` | 몸 이름 놀이별(듣고 찾기·무엇을 할까) 최고 별 (구경하기는 점수가 없습니다) |
 | `daniland.best.body` | 그중 제일 잘한 기록 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.trip.<act>` | 할머니 섬 여행 놀이별(탈것 여행·다니 돌보기) 최고 별 |
@@ -412,7 +432,7 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.maze` | 한 번에 찾은 것 중 제일 큰 판 — stars 가 칸 수(5~11)입니다 (카드의 ⭐ 는 이것을 `bestUnit: '칸 미로'` 로 읽습니다) |
 | `daniland.balloonMode` `daniland.smashMode` | 그 놀이를 마지막에 누르기로 했나 손으로 했나 (`tap` / `hand`) |
 | `daniland.smashStart` | 부수기에서 마지막에 고른 시작 단계 |
-| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.fishStart` `daniland.townAct` `daniland.worldAct` `daniland.bodyAct` `daniland.tripAct` `daniland.rideAct` `daniland.swedenAct` `daniland.greeceAct` `daniland.germanyAct` `daniland.franceAct` `daniland.norwayAct` `daniland.spainAct` `daniland.europeAct` `daniland.spaceAct` `daniland.spaceSpeed` `daniland.starAct` `daniland.starMass` `daniland.numShow`(더하기·빼기·곱하기의 그림/식/둘 다) `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.clock.<act>`(시계 단계 60·30·5) `daniland.mazeSize` | 마지막에 고른 설정 |
+| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.fishStart` `daniland.townAct` `daniland.worldAct` `daniland.bodyAct` `daniland.tripAct` `daniland.rideAct` `daniland.swedenAct` `daniland.greeceAct` `daniland.germanyAct` `daniland.franceAct` `daniland.norwayAct` `daniland.spainAct` `daniland.europeAct` `daniland.spaceAct` `daniland.spaceSpeed` `daniland.starAct` `daniland.starMass` `daniland.numShow`(가르기·모으기·더하기·빼기·곱하기의 그림/식/둘 다) `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.clock.<act>`(시계 단계 60·30·5) `daniland.shape.<act>` `daniland.measure.<act>`(모양·재고 견주기 단계 1·2) `daniland.mazeSize` | 마지막에 고른 설정 |
 | `daniland.numMax` | 수학 놀이가 넷뿐이던 시절의 숫자 범위 — 읽기만 합니다 (`numbers.js` 의 `loadMax()`) |
 | `daniland.rate` `daniland.voice.<lang>` | 목소리·속도 |
 | `daniland.drawer` | 그림 그리기 도장 서랍 접힘 상태 |

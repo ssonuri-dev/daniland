@@ -3,10 +3,12 @@
  *
  * 주소 예) numbers.html?act=plus
  *
- * 놀이 8가지 (문제는 매번 새로 만들어집니다)
+ * 놀이 9가지 (문제는 매번 새로 만들어집니다)
  *   count   : 세어 보기     - 그림이 몇 개인지 숫자를 고릅니다
  *   group   : 같은 개수 찾기 - 숫자를 보고 그만큼 있는 묶음을 고릅니다
  *   more    : 더 많은 것    - 두 묶음 중 많은 쪽을 고릅니다
+ *   bond    : 가르기·모으기  - 7 은 3 과 ❓ (가르기) / 3 과 4 를 모으면 ❓ (모으기). 수 하나가 위,
+ *                             두 부분이 아래에 매달린 '수 가지' 그림으로 봅니다 (bondEl)
  *   plus    : 더하기        - 🍎🍎 ➕ 🍎 = ?  (그림 아래 '2 + 1 = ❓' 식도 같이)
  *   minus   : 빼기          - 🍎🍎🍎 중에 두 개를 먹으면 몇 개?  ('3 − 2 = ❓')
  *   times   : 곱하기        - 🍎🍎 가 세 상자면 모두 몇 개?  ('2 × 3 = ❓', 2개씩 3묶음)
@@ -49,6 +51,9 @@
       levels: [5, 10, 20], def: 10 },
     { id: 'more',    name: '더 많은 것',    icon: '⚖️', desc: '어느 쪽이 더 많은지 골라요',
       levels: [5, 10, 20], def: 10 },
+    // 가르기·모으기 — 1~10 단계는 '10 가르기(10 만들기)' 가, 1~20 단계는 '10 과 몇' 이 자주 나옵니다 (makeBond)
+    { id: 'bond',    name: '가르기·모으기', icon: '🍬', desc: '수를 둘로 가르고, 두 수를 모아요',
+      levels: [5, 10, 20], def: 10 },
     { id: 'plus',    name: '더하기',        icon: '➕', desc: '두 묶음을 합치면 몇 개일까요',
       levels: [5, 10, 20], def: 10 },
     { id: 'minus',   name: '빼기',          icon: '➖', desc: '먹고 나면 몇 개가 남을까요',
@@ -74,7 +79,7 @@
     { id: 'both', name: '그림 + 식', icon: '🍎🔢' }
   ];
   var SHOW_KEY = 'daniland.numShow';
-  var SHOW_ACTS = ['plus', 'minus', 'times'];
+  var SHOW_ACTS = ['bond', 'plus', 'minus', 'times'];
 
   var el = {
     cards: document.getElementById('cards'),
@@ -112,6 +117,8 @@
     stars: 0,
     answer: 0,
     prompt: '',
+    say: '',                          // 맞혔을 때 읽을 말을 놀이가 따로 정할 때 (가르기·모으기)
+    onRight: null,                    // 맞혔을 때 ❓ 를 채우는 일을 놀이가 따로 할 때
     firstTry: true,
     locked: false
   };
@@ -304,6 +311,8 @@
     el.stage.innerHTML = '';
     el.cards.className = 'cards';
     state.locked = false;
+    state.say = '';
+    state.onRight = null;
   }
 
   function startGame() {
@@ -323,6 +332,7 @@
 
     if (state.act === 'count') makeCount();
     else if (state.act === 'group') makeGroup();
+    else if (state.act === 'bond') makeBond();
     else if (state.act === 'plus') makePlus();
     else if (state.act === 'minus') makeMinus();
     else if (state.act === 'times') makeTimes();
@@ -375,6 +385,117 @@
       card.addEventListener('click', function () { choose(card, c); });
       el.cards.appendChild(card);
     });
+  }
+
+  // 🍬 가르기·모으기 — 초1 첫 단원이자 덧셈·뺄셈의 뿌리입니다 (7 은 3 과 4).
+  // 셋에 둘은 가르기(전체와 한쪽을 보고 다른 쪽), 하나는 모으기(두 쪽을 보고 전체)입니다.
+  // 가르기에서 모르는 쪽은 그림도 ❓ 로 가립니다 — 그림을 다 보여 주면 세기만 하면 풀려서
+  // '7 에서 3 을 떼면' 을 생각할 일이 없어집니다.
+  //   1~10 단계 : 셋에 하나는 10 가르기 (10 만들기 — 받아올림의 준비)
+  //   1~20 단계 : 전체가 11~20 이고, 반 넘게 한쪽이 10 (14 는 10 과 4 — 십의 자리의 준비)
+  function makeBond() {
+    var emoji = pick(EMOJIS);
+    var max = state.max;
+    var n, a;
+
+    if (max >= 20) {
+      n = UI.randInt(11, max);
+      a = (Math.random() < 0.6 && n > 10) ? 10 : UI.randInt(1, n - 1);
+    } else {
+      n = (max === 10 && Math.random() < 0.35) ? 10 : UI.randInt(2, max);
+      a = UI.randInt(1, n - 1);
+    }
+    var b = n - a;
+    if (Math.random() < 0.5) { var t = a; a = b; b = t; }   // 10 이 늘 왼쪽이면 자리로 외웁니다
+
+    var join = Math.random() < 0.34;
+    var pic = state.show !== 'eq';
+
+    if (join) {
+      state.answer = n;
+      state.prompt = pic
+        ? koCount(a) + ' 개와 ' + koCount(b) + ' 개를 모으면 모두 몇 개일까요?'
+        : a + josa(a, '과', '와') + ' ' + b + josa(b, '을', '를') + ' 모으면 얼마일까요?';
+      state.say = pic
+        ? koCount(a) + ' 개와 ' + koCount(b) + ' 개를 모으면 ' + koCount(n) + ' 개!'
+        : a + josa(a, '과', '와') + ' ' + b + josa(b, '을', '를') + ' 모으면 ' + n + '!';
+      el.questLabel.textContent = (pic ? '모으면 모두 몇 개일까요?' : '모으면 얼마일까요?') + step();
+    } else {
+      state.answer = b;
+      state.prompt = pic
+        ? koCount(n) + ' 개를 둘로 갈랐어요. 한쪽이 ' + koCount(a) + ' 개면, 다른 쪽은 몇 개일까요?'
+        : n + josa(n, '은', '는') + ' ' + a + josa(a, '과', '와') + ' 몇일까요?';
+      state.say = pic
+        ? koCount(n) + ' 개는 ' + koCount(a) + ' 개와 ' + koCount(b) + ' 개!'
+        : n + josa(n, '은', '는') + ' ' + a + josa(a, '과', '와') + ' ' + b + '!';
+      el.questLabel.textContent = (pic ? '가르면 다른 쪽은 몇 개일까요?' : '가르면 다른 쪽은 얼마일까요?') + step();
+    }
+
+    var top = bondNode(n, emoji, join);
+    var left = bondNode(a, emoji, false);
+    var right = bondNode(b, emoji, !join);
+    el.stage.appendChild(bondEl(top, left, right));
+    el.stage.appendChild(listenBtn());
+
+    // 맞히면 ❓ 자리에 답 — 그림도 보고 있었으면 그림까지 채워 넣습니다.
+    var hole = join ? top : right;
+    state.onRight = function () {
+      var filled = bondNode(state.answer, emoji, false);
+      filled.classList.add('filled');
+      hole.parentNode.replaceChild(filled, hole);
+    };
+
+    renderNumberCards(state.answer, 1);
+  }
+
+  // 수 가지의 마디 하나. 보기 방식(그림 / 식 / 둘 다)에 따라 숫자·그림을 넣고, 모르는 칸은 ❓.
+  function bondNode(n, emoji, unknown) {
+    var node = document.createElement('div');
+    node.className = 'bond-node' + (unknown ? ' q' : '');
+    if (unknown) {
+      node.innerHTML = '<div class="bond-num">❓</div>';
+      return node;
+    }
+    if (state.show !== 'pic') {
+      var num = document.createElement('div');
+      num.className = 'bond-num';
+      num.textContent = n;
+      node.appendChild(num);
+    }
+    if (state.show !== 'eq') node.appendChild(groupEl(n, emoji, true));
+    return node;
+  }
+
+  // 위에 전체, 아래에 두 부분, 가운데 두 갈래 선 — 교과서의 '가르기·모으기' 그림 모양입니다.
+  function bondEl(top, left, right) {
+    var box = document.createElement('div');
+    box.className = 'bond' + (state.show === 'eq' ? ' eq-only' : '');
+
+    var up = document.createElement('div');
+    up.className = 'bond-top';
+    up.appendChild(top);
+
+    var lines = document.createElement('div');
+    lines.className = 'bond-lines';
+    lines.innerHTML = '<svg viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true">' +
+                      '<line x1="50" y1="0" x2="25" y2="30"/><line x1="50" y1="0" x2="75" y2="30"/></svg>';
+
+    var down = document.createElement('div');
+    down.className = 'bond-bottom';
+    down.appendChild(left);
+    down.appendChild(right);
+
+    box.appendChild(up);
+    box.appendChild(lines);
+    box.appendChild(down);
+    return box;
+  }
+
+  // 숫자를 한자어로 읽을 때(칠·삼·십)의 받침으로 조사를 고릅니다 — '7은 3과', '2는 4와'.
+  // 끝자리 1·3·6·7·8 과 0(십·이십·영)이 받침이 있습니다.
+  function josa(n, withB, without) {
+    var d = Math.abs(n) % 10;
+    return [0, 1, 3, 6, 7, 8].indexOf(d) >= 0 ? withB : without;
   }
 
   // ➕ 더하기 — 두 묶음을 합치면 몇 개일까요?
@@ -696,7 +817,8 @@
 
       if (state.firstTry) { state.stars += 1; updateScore(); }
 
-      // 숫자 식의 ❓ 에 답을 채웁니다
+      // 숫자 식의 ❓ 에 답을 채웁니다 (가르기·모으기는 수 가지의 칸을 스스로 채웁니다)
+      if (state.onRight) state.onRight();
       var q = el.stage.querySelector('.eq-formula .q');
       if (q) { q.textContent = state.answer; q.classList.add('filled'); }
 
@@ -725,6 +847,7 @@
   // 맞혔을 때 들려주는 말은 놀이마다 다릅니다.
   // (수 순서는 '스물세 개' 가 아니라 '23' 이라고 읽어야 맞습니다)
   function answerSay() {
+    if (state.say) return state.say;
     if (state.act === 'pattern') return '맞았어요!';
     if (state.act === 'order') return String(state.answer);
     if (usesShow() && state.show === 'eq') return String(state.answer) + '!';   // 식만 볼 땐 '오!' 처럼 숫자로

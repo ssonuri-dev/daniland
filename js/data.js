@@ -54,6 +54,8 @@ window.SUBJECTS = [
       { name: '세기·비교',          icon: '🔢', desc: '세어 보고 견줘요' },
       { name: '더하기·빼기·곱하기', icon: '➕', desc: '식을 세워요' },
       { name: '수 순서·백 판',      icon: '💯', desc: '수의 차례와 자리' },
+      { name: '모양',               icon: '🔺', desc: '세모·네모·상자·쌓기나무' },
+      { name: '재고 견주기',        icon: '📏', desc: '길이·무게·들이를 견줘요' },
       { name: '시계',               icon: '🕒', desc: '몇 시인지 읽어요' }
     ] },
   { name: '한글', icon: '🇰🇷', desc: '글자를 익혀요',
@@ -997,6 +999,15 @@ window.PAGES = [
   {
     subject: '수학',
     group: '더하기·빼기·곱하기',
+    title: '가르기·모으기',
+    icon: '🍬',
+    meta: '7은 3과 몇?',
+    href: 'numbers.html?act=bond',
+    bestKey: 'daniland.best.numbers.bond'
+  },
+  {
+    subject: '수학',
+    group: '더하기·빼기·곱하기',
     title: '더하기',
     icon: '➕',
     meta: '모두 몇 개?',
@@ -1085,6 +1096,73 @@ window.PAGES = [
     meta: '몇 시에 무엇을 할까',
     href: 'clock.html?act=routine',
     bestKey: 'daniland.best.clock.routine'
+  },
+
+  // 모양 — 석 장이 shape.html 한 화면을 ?act= 로 나눠 씁니다 (js/shape.js 맨 위 주석).
+  {
+    subject: '수학',
+    group: '모양',
+    title: '평면 모양',
+    icon: '🔺',
+    meta: '세모를 찾아요',
+    href: 'shape.html?act=flat',
+    bestKey: 'daniland.best.shape.flat'
+  },
+  {
+    subject: '수학',
+    group: '모양',
+    title: '입체 모양',
+    icon: '📦',
+    meta: '상자·둥근기둥·공',
+    href: 'shape.html?act=solid',
+    bestKey: 'daniland.best.shape.solid'
+  },
+  {
+    subject: '수학',
+    group: '모양',
+    title: '쌓기나무',
+    icon: '🧱',
+    meta: '모두 몇 개일까?',
+    href: 'shape.html?act=stack',
+    bestKey: 'daniland.best.shape.stack'
+  },
+
+  // 재고 견주기 — 넉 장이 measure.html 한 화면을 ?act= 로 나눠 씁니다 (js/measure.js 맨 위 주석).
+  {
+    subject: '수학',
+    group: '재고 견주기',
+    title: '길이 견주기',
+    icon: '🎀',
+    meta: '어느 끈이 길까?',
+    href: 'measure.html?act=long',
+    bestKey: 'daniland.best.measure.long'
+  },
+  {
+    subject: '수학',
+    group: '재고 견주기',
+    title: '무게 견주기',
+    icon: '🐘',
+    meta: '시소가 내려간 쪽은?',
+    href: 'measure.html?act=heavy',
+    bestKey: 'daniland.best.measure.heavy'
+  },
+  {
+    subject: '수학',
+    group: '재고 견주기',
+    title: '들이 견주기',
+    icon: '🥛',
+    meta: '물이 더 많이 들어갈까?',
+    href: 'measure.html?act=fill',
+    bestKey: 'daniland.best.measure.fill'
+  },
+  {
+    subject: '수학',
+    group: '재고 견주기',
+    title: '자로 재기',
+    icon: '📏',
+    meta: '몇 cm 일까?',
+    href: 'measure.html?act=ruler',
+    bestKey: 'daniland.best.measure.ruler'
   },
 
   {
