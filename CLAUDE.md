@@ -61,6 +61,7 @@ ES5 IIFE 로 감싸 `window` 에 전역을 붙이는 방식입니다. `import`/`
 | `TOWN_PLACES` | `js/town-places.js` | 마을 지도의 장소 열 곳 (이름·좌표·심부름 문장). `town.html` 과 `wordquiz.html`(장소 이름만)이 같이 읽습니다 |
 | `BODY_PARTS` | `js/body-parts.js` | 몸 이름의 부위 열세 곳 (이름·칸·hint). `body.html` 과 `wordquiz.html`(이름만)이 같이 읽습니다 |
 | `RIDDLES` | `js/riddles.js` | 수수께끼·넌센스 문제 — 문제 하나가 객체 하나 (계속 늘어납니다). `riddle.html` 만 읽습니다 |
+| `UPDATES` | `js/updates.js` | 업데이트 내역 (`updates.html` — 홈 맨 아래 아주 작은 글씨로만 이어짐). **새 놀이·수업·과목을 더하면 여기 맨 위에 한 줄** 적으세요 — 어른이 읽는 말로, 문제 개수만 늘린 것·버그 수정은 빼기로 사용자와 정했습니다 |
 | `Catalog` | `js/catalog.js` | LESSONS+PAGES 를 과목별로 묶고 최고 기록을 붙임 |
 | `UI` | `js/ui.js` | 섞기·이모지 개수 세기·URL 파라미터·폭죽·localStorage |
 | `TTS` | `js/tts.js` | 브라우저 speechSynthesis 래퍼 (목소리 순위 매기기 포함) |

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <meta name="theme-color" content="#ff8fab">
-  <title>다니랜드 🐾</title>
+  <title>업데이트 내역 · 다니랜드</title>
   <link rel="icon" href="dani.png">
   <!-- 구글 웹폰트: 제목은 Jua, 본문은 나눔고딕 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,25 +17,21 @@
   <script src="js/gate.js"></script>
 
   <div class="wrap">
-    <header class="hero">
-      <img src="dani.png" alt="다니">
+    <header class="hero subject-hero">
+      <a class="icon-btn" href="index.html" title="처음으로">🏠</a>
       <div>
-        <h1>다니랜드</h1>
-        <p>오늘 배운 걸 다니랑 같이 복습해요!</p>
+        <h1>업데이트 내역</h1>
+        <p>다니랜드에 새로 생긴 것들</p>
       </div>
     </header>
 
-    <main id="subjects"></main>
+    <!-- 내역은 js/updates.js 의 UPDATES 에 있습니다 -->
+    <main class="updates" id="updates"></main>
 
-    <p class="foot">🐶 다니랜드 · 소리를 켜고 해주세요 · 태블릿 사용을 권장합니다</p>
-    <!-- 어른용 업데이트 내역 — 아이 눈에 안 띄게 일부러 아주 작고 흐리게 둡니다 -->
-    <p class="foot-sub"><a href="updates.html">업데이트 내역</a></p>
+    <p class="foot">🐶 다니랜드</p>
   </div>
 
-  <script src="js/ui.js"></script>
   <script src="js/data.js"></script>
-  <script src="js/books.js"></script>
-  <script src="js/catalog.js"></script>
-  <script src="js/home.js"></script>
+  <script src="js/updates.js"></script>
 </body>
 </html>

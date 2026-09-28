@@ -205,6 +205,34 @@ button {
   color: var(--ink-soft);
 }
 
+/* 홈 맨 아래 '업데이트 내역' — 어른용이라 일부러 작고 흐리게 (아이가 눌러 들어가지 않게) */
+.foot-sub { margin: 4px 0 0; text-align: center; font-size: 10px; }
+.foot-sub a { color: var(--ink-soft); text-decoration: none; opacity: 0.35; }
+
+/* ---------- 업데이트 내역 (updates.html) ---------- */
+
+.updates { max-width: 640px; margin: 0 auto; }
+.update-day {
+  margin-bottom: 14px;
+  padding: 14px 18px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+.update-day h2 { margin: 0 0 8px; font-size: 18px; color: var(--pink); }
+.update-day ul { margin: 0; padding: 0; list-style: none; }
+.update-day li { padding: 5px 0; font-size: 15px; color: var(--ink); line-height: 1.5; }
+.update-tag {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 1px 9px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ink-soft);
+  background: #f5eff2;
+  border-radius: 999px;
+}
+
 /* ---------- 게임 화면 ---------- */
 
 .topbar {

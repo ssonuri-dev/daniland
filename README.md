@@ -178,6 +178,7 @@ daniland/
 ├─ numbers.html      수학 놀이
 ├─ hundred.html      백 판 놀이 — 1~100 판 (수학)
 ├─ clock.html        시계 공부 — 바늘 시계 (수학)
+├─ updates.html      업데이트 내역 — 어른용 (홈 맨 아래 작은 글씨로 들어감, 내용은 js/updates.js)
 ├─ town.html         마을 지도 (영어)
 ├─ trip.html         할머니 섬 여행 — 탈것 고르기·다니 돌보기 (영어)
 ├─ ride.html         탈것 타기 — get on · get in (영어)
