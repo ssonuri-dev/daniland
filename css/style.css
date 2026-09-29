@@ -3050,6 +3050,11 @@ button {
   transform: translate(-50%, -50%);
 }
 
+/* 소품 그림 (props 의 art) — 이모지와 같은 1em 크기 */
+.book-art.prop { position: relative; width: 1em; }
+.book-art.prop img { width: 100%; }
+.book-art.prop .emoji { line-height: 1; }
+
 .book-prop.bubble {
   padding: 0.3em 0.4em;
   background: #fff;

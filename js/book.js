@@ -414,16 +414,19 @@
     });
 
     (p.props || []).forEach(function (pr) {
+      // art 가 있으면 그림(없으면 book.art 의 이모지), 아니면 emoji 그대로
+      var name = pr.art ? sub(pr.art, 'img') : '';
       var emoji = sub(pr.emoji, 'emoji');
-      if (!emoji) return;
+      if (!name && !emoji) return;
       var node = document.createElement('div');
       node.className = 'book-prop' + (pr.bubble ? ' bubble' : '');
-      node.textContent = emoji;
+      if (name) node.appendChild(artEl(book, name, 'prop'));
+      else node.textContent = emoji;
       node.style.setProperty('--w', pr.size || 12);
       node.style.left = (pr.x || 50) + '%';
       node.style.top = (pr.y || 50) + '%';
       var keys = [];
-      String(pr.emoji).replace(/\{([a-zA-Z_]+)/g, function (m, k) { keys.push(k); return m; });
+      String(pr.art || pr.emoji).replace(/\{([a-zA-Z_]+)/g, function (m, k) { keys.push(k); return m; });
       node.dataset.keys = keys.join(' ');
       el.scene.appendChild(node);
     });
@@ -473,7 +476,7 @@
       box.appendChild(img);
     } else if (fb.emoji) {
       var e = document.createElement('div');
-      e.className = 'emoji' + (kind === 'actor' ? '' : ' bg-emoji');
+      e.className = 'emoji' + (kind === 'actor' || kind === 'prop' ? '' : ' bg-emoji');
       e.textContent = fb.emoji;
       box.appendChild(e);
     }

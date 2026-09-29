@@ -29,6 +29,7 @@
  *    actors : 배경 위에 얹는 인물들 [{ art, x, w, y }] — x 는 가운데 자리(%), w 는 너비(%),
  *             y 는 발 위치(%, 기본 96). art 에도 {빈칸이름} 을 쓸 수 있고 '{monster}-big' 처럼 이어 붙여도 됩니다
  *    props  : 말풍선·소품 [{ emoji, x, y, size, bubble }] — emoji 에 {빈칸이름.emoji} 를 쓰면 고른 선택지의 emoji
+ *             emoji 대신 art: '{빈칸이름}' 을 쓰면 그림 파일(선택지의 img)을 얹습니다 — 파일이 없으면 art 의 이모지
  *    blank  : 이 장에서 고르는 빈칸 { key, options: [{ word, ko, emoji, img }] }
  *             word 는 글에 들어갈 영어(관사까지: 'an apple'), img 는 bg/actors 에 들어갈 그림 이름 조각
  * ========================================================================= */
@@ -184,9 +185,9 @@ window.BOOKS = [
 
   // 2권 — 'I want ___.' 를 되풀이해 익히는 책 (마법 별이 "What do you want?" 하고 묻습니다).
   // 다니 공주와 배경은 1권 그림을 그대로 빌려 씁니다: books/wish/ 에 파일이 없으면 art 의 src 로 넘어가
-  // books/princess/ 의 것을 보여 줍니다. 강아지·고양이·토끼·유니콘은 books/wish/ 의 그림이고 (한 장에 그려 온 것을 잘라 넣음, 반려동물 셋은
-  // 같은 w 에서 키가 같도록 320×420 캔버스에 발을 맞춰 얹었습니다), 로켓만 아직 이모지입니다 —
-  // books/wish/rocket.png 를 넣으면 그 그림으로 바뀝니다.
+  // books/princess/ 의 것을 보여 줍니다. 동물·로켓·간식은 books/wish/ 의 그림입니다 (한 장에 그려 온 것을 잘라 넣음).
+  // 같은 w 에서 키가 맞도록 반려동물 셋은 320×420 캔버스에, 로켓은 유니콘과 같은 비율(0.79) 캔버스에
+  // 발을 맞춰 얹었고, 말풍선에 들어가는 간식은 정사각형 가운데에 얹었습니다.
   {
     id: 'wish',
     title: "Princess Dani's Wish",
@@ -214,6 +215,9 @@ window.BOOKS = [
       'bunny':        { emoji: '🐰' },
       'unicorn':      { emoji: '🦄' },
       'rocket':       { emoji: '🚀' },
+      'milk':         { emoji: '🥛' },
+      'carrot':       { emoji: '🥕' },
+      'cookie':       { emoji: '🍪' },
       'dragon':       { src: 'books/princess/dragon-nice.png' }   // 1권의 착한 용
     },
 
@@ -260,13 +264,13 @@ window.BOOKS = [
         ko: '{pet:은는} 배가 고파요. "{food}!" 펑! 냠냠!',
         bg: 'bg-castle',
         actors: [{ art: '{dress}', x: 30, w: 36 }, { art: '{pet}', x: 68, w: 22 }],
-        props: [{ emoji: '{food.emoji}', x: 68, y: 38, size: 13, bubble: true }],
+        props: [{ art: '{food}', x: 68, y: 38, size: 13, bubble: true }],
         blank: {
           key: 'food',
           options: [
-            { word: 'some milk', ko: '우유를 마시고 싶어요', emoji: '🥛' },
-            { word: 'a carrot', ko: '당근을 먹고 싶어요', emoji: '🥕' },
-            { word: 'a cookie', ko: '쿠키를 먹고 싶어요', emoji: '🍪' }
+            { word: 'some milk', ko: '우유를 마시고 싶어요', emoji: '🥛', img: 'milk' },
+            { word: 'a carrot', ko: '당근을 먹고 싶어요', emoji: '🥕', img: 'carrot' },
+            { word: 'a cookie', ko: '쿠키를 먹고 싶어요', emoji: '🍪', img: 'cookie' }
           ]
         }
       },
