@@ -32,9 +32,8 @@
 
   var BRANCH_Y = 0.055;     // 사과가 매달린 나뭇가지 (높이 배수)
   var GROUND_Y = 0.88;      // 풀밭이 시작하는 곳
-  var BOW_Y = 0.64;         // 화살이 날아가는 높이
   var TOP = 0.2;            // 사과 가운데가 오르내리는 범위
-  var BOTTOM = 0.8;
+  var BOTTOM = 0.84;
   var WALL_X = 0.93;        // 오른쪽 짚단 (화살이 꽂히는 곳)
   var APPLE_R = 0.075;      // 사과 반지름 — min(너비 × 이것, 높이 × APPLE_RH) px
   var APPLE_RH = 0.066;
@@ -44,8 +43,11 @@
   var RESPAWN = 0.7;        // 맞힌 사과 자리에 새 사과가 내려오기까지 (초)
 
   // 다니 그림 (코디 놀이의 평상복 다니) — 활을 쥔 손 자리와 발끝 (그림 크기 배수)
-  var DANI_H = 0.58;        // 그림 높이 (놀이판 높이 배수)
+  var DANI_H = 0.42;        // 그림 높이 (놀이판 높이 배수)
   var HAND_X = 0.76, HAND_Y = 0.64, FEET_Y = 0.975;
+
+  // 화살이 날아가는 높이 — 다니가 풀밭에 서 있을 때 손 높이 (다니 크기를 바꾸면 저절로 따라옵니다)
+  var BOW_Y = GROUND_Y + 0.005 - (FEET_Y - HAND_Y) * DANI_H;
 
   var BEST_KEY = 'daniland.best.archery.level';
   var START_KEY = 'daniland.archeryStart';
@@ -198,10 +200,12 @@
 
   function bowX() { return state.W ? daniBox().handX / state.W : 0.2; }
 
-  // 사과가 매달릴 수 있는 가로 범위 — 활에서 조금 떨어진 곳부터 짚단 앞까지
+  // 사과가 매달릴 수 있는 가로 범위 — 활에서 멀찍이 떨어진 곳부터 짚단 앞까지.
+  // 폰처럼 좁은 판에서도 사과 셋이 들어갈 폭(0.3)은 남깁니다.
   function appleRange() {
-    var lo = Math.min(0.6, bowX() + 0.2);
-    return { lo: lo, hi: WALL_X - 0.08 };
+    var hi = WALL_X - 0.06;
+    var lo = Math.min(hi - 0.3, bowX() + 0.45);
+    return { lo: lo, hi: hi };
   }
 
   function appleR(a) {
@@ -268,7 +272,7 @@
     // 4단계부터 오르내리는 폭이 사과마다 다릅니다 — 그래도 활 높이는 꼭 지나가게
     if (level >= 4 && !gold) {
       lo = rand(TOP, BOW_Y - 0.12);
-      hi = rand(BOW_Y + 0.06, BOTTOM);
+      hi = rand(BOW_Y + 0.05, BOTTOM);
     }
     var speed = levelSpeed(level) * rand(0.8, 1.2);
     if (gold) speed *= 1.6;
@@ -742,7 +746,7 @@
 
     // 활 — 손에서 오른쪽으로 휜 나무, 시위는 당겨질수록 뒤로
     var hx = box.handX, hy = BOW_Y * H;
-    var R = H * 0.12;
+    var R = H * 0.09;
     var cx = hx - R * 0.55;
     var ang = 1.0;
     var ex = cx + R * Math.cos(ang), ey = R * Math.sin(ang);
