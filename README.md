@@ -192,7 +192,6 @@ daniland/
 ├─ europe.html       유럽 — 지도에서 나라 열여덟 곳 찾기·나라 이야기·국기 (세계)
 ├─ europe/           유럽 나라별 사진 18장 + CREDITS.md(출처 — 사진을 바꾸면 같이 고칠 것)
 ├─ country.html      나라 알아보기 — 스웨덴·그리스… 한 화면이 모든 나라를 씁니다 (?country=sweden) (세계)
-├─ sweden.html       옛 주소 — country.html?country=sweden 으로 넘겨만 줍니다
 ├─ sweden/           스웨덴 사진 16장 + CREDITS.md(출처 — 사진을 바꾸면 같이 고칠 것)
 ├─ greece/           그리스 사진 14장 + CREDITS.md
 ├─ germany/          독일 사진 13장 + CREDITS.md

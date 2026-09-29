@@ -76,7 +76,7 @@ ES5 IIFE 로 감싸 `window` 에 전역을 붙이는 방식입니다. `import`/`
 `js/analytics.js` 도 표에 없습니다 — 구글 애널리틱스(GA4, 측정 ID 는 파일 맨 위 한 줄)이고 `<head>` 맨 끝에서
 혼자 돕니다. **새 HTML 페이지를 만들면 `<head>` 끝에 이것도 넣으세요.** 외부 스크립트는 **https 에서만** 받습니다 —
 `file://`·localhost 에서는 아무것도 안 해서 '인터넷 없이도 돈다' 는 원칙이 그대로 지켜집니다. 아이가 쓰는 곳이라
-Google signals·광고 개인화는 끕니다. `sweden.html`(옛 주소 넘김)에는 일부러 안 넣었습니다 — 넣으면 한 번 방문이 두 번 셉니다.
+Google signals·광고 개인화는 끕니다. 옛 주소를 넘기기만 하는 페이지를 새로 만들면 거기엔 넣지 마세요 — 한 번 방문이 두 번 셉니다.
 
 ### 글꼴
 
@@ -130,7 +130,7 @@ index.html            과목 카드            home.js
       ├ maze.html                           maze.js     (미로를 매번 생성, 캔버스에 그림)
       ├ dodge.html                          dodge.js    (장애물 피하기 — 흐르는 길을 캔버스에 그림, 단계·하트)
       ├ book.html                           book.js     (영어 그림책 — js/books.js 의 책을 book.jpg 위에, 읽기·만들기)
-      ├ country.html?country=sweden         country.js  (나라 한 곳 깊이 — 이야기 카드 18장·퀴즈. 데이터는 js/countries/<id>.js: 스웨덴·그리스·독일·프랑스·노르웨이·스페인. sweden.html 은 옛 주소 → 넘김)
+      ├ country.html?country=sweden         country.js  (나라 한 곳 깊이 — 이야기 카드 18장·퀴즈. 데이터는 js/countries/<id>.js: 스웨덴·그리스·독일·프랑스·노르웨이·스페인. 옛 주소 sweden.html 은 2026-09-29 지움)
       ├ europe.html                         europe.js   (유럽 — 나라 모양 svg 지도(europe-map.js) 위 국기 핀 18개, 놀이 4종)
       ├ space.html                          space.js    (태양계 — 까만 화면에 3D 로 공전. 행성을 누르면 아래로)
       │  └ planet.html?planet=jupiter       planet.js   (행성 한 곳 — 사진·숫자 칩·이야기 카드. 데이터는 js/planets.js)
@@ -200,7 +200,7 @@ index.html            과목 카드            home.js
   (on 은 지붕 위 `.aboard-on`, in 은 안에 들어가 머리만 `.aboard-in`) — 전치사 뜻이 그림으로 보이는 것이 핵심이니
   두 자세를 같게 만들지 마세요. boat 는 크기에 따라 on/in 이 갈려 일부러 뺐고, 한 판은 on·in 을 넉 대씩 뽑습니다
   (in 이 드물어 그냥 섞으면 on 만 눌러도 거의 맞습니다).
-  **스웨덴(`sweden.html` → 지금은 `country.html?country=sweden`)이 아홉 번째**입니다 (2026-09-18) — 세계 과목에서 **나라 한 곳을 깊이** 보는 첫 사례.
+  **스웨덴(처음엔 `sweden.html`, 지금은 `country.html?country=sweden`)이 아홉 번째**입니다 (2026-09-18) — 세계 과목에서 **나라 한 곳을 깊이** 보는 첫 사례.
   **2026-09-22 그리스가 더해지면서 화면(`js/country.js`)과 데이터(`js/countries/<id>.js`, `window.COUNTRY_PAGES[id]`)를 갈랐습니다** —
   화면 하나가 모든 나라를 쓰고 주소의 `?country=` 로 고릅니다. 나라를 더할 땐 데이터 파일 하나 + `country.html` 의 `<script>` 한 줄 +
   `PAGES` 카드 한 장. 기록 키는 `daniland.best.<id>`(스웨덴은 옛 키 그대로), 사진 폴더는 `<id>/`. 우리말 조사는 `josa()` 가 받침을 보고

@@ -1,6 +1,6 @@
 # 스웨덴 페이지 사진 출처
 
-`sweden.html` 의 사진은 모두 [위키미디어 공용](https://commons.wikimedia.org/) 에서 가져와
+스웨덴 페이지(`country.html?country=sweden`)의 사진은 모두 [위키미디어 공용](https://commons.wikimedia.org/) 에서 가져와
 가로 800px 로 줄이고 4:3 으로 가운데를 잘라 낸 것입니다. 라이선스가 요구하는 대로 작가와 라이선스를 적어 둡니다.
 사진을 바꾸거나 더할 때는 이 표에도 한 줄 더해 주세요 — CC BY / CC BY-SA 사진은 출처 표기가 조건입니다.
 
