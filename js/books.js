@@ -184,8 +184,9 @@ window.BOOKS = [
 
   // 2권 — 'I want ___.' 를 되풀이해 익히는 책 (마법 별이 "What do you want?" 하고 묻습니다).
   // 다니 공주와 배경은 1권 그림을 그대로 빌려 씁니다: books/wish/ 에 파일이 없으면 art 의 src 로 넘어가
-  // books/princess/ 의 것을 보여 줍니다. 강아지·유니콘처럼 새로 나오는 것은 이모지이고,
-  // books/wish/<이름>.png 를 넣으면 그 그림으로 바뀝니다.
+  // books/princess/ 의 것을 보여 줍니다. 강아지·고양이·토끼·유니콘은 books/wish/ 의 그림이고 (한 장에 그려 온 것을 잘라 넣음, 반려동물 셋은
+  // 같은 w 에서 키가 같도록 320×420 캔버스에 발을 맞춰 얹었습니다), 로켓만 아직 이모지입니다 —
+  // books/wish/rocket.png 를 넣으면 그 그림으로 바뀝니다.
   {
     id: 'wish',
     title: "Princess Dani's Wish",
@@ -243,7 +244,7 @@ window.BOOKS = [
         text: '"What do you want now?" "I want a {pet}!" Pop! Here is a {pet}.',
         ko: '"이제 무엇을 원해요?" "{pet:을를} 갖고 싶어요!" 펑! {pet:이가} 생겼어요.',
         bg: 'bg-castle',
-        actors: [{ art: '{dress}', x: 30, w: 36 }, { art: '{pet}', x: 68, w: 24 }],
+        actors: [{ art: '{dress}', x: 30, w: 36 }, { art: '{pet}', x: 68, w: 22 }],
         props: [{ emoji: '🌟', x: 80, y: 20, size: 10 }],
         blank: {
           key: 'pet',
@@ -258,7 +259,7 @@ window.BOOKS = [
         text: 'The {pet} is hungry. "I want {food}!" Pop! Yum, yum!',
         ko: '{pet:은는} 배가 고파요. "{food}!" 펑! 냠냠!',
         bg: 'bg-castle',
-        actors: [{ art: '{dress}', x: 30, w: 36 }, { art: '{pet}', x: 68, w: 24 }],
+        actors: [{ art: '{dress}', x: 30, w: 36 }, { art: '{pet}', x: 68, w: 22 }],
         props: [{ emoji: '{food.emoji}', x: 68, y: 38, size: 13, bubble: true }],
         blank: {
           key: 'food',
@@ -273,7 +274,7 @@ window.BOOKS = [
         text: '"I want to go to the {place}!" Pop! "Hello, {place}!"',
         ko: '"{place:으로} 가고 싶어요!" 펑! "안녕, {place}!"',
         bg: '{place}',
-        actors: [{ art: '{dress}', x: 30, w: 36 }, { art: '{pet}', x: 62, w: 22 }],
+        actors: [{ art: '{dress}', x: 30, w: 36 }, { art: '{pet}', x: 64, w: 20 }],
         blank: {
           key: 'place',
           options: [
@@ -287,7 +288,7 @@ window.BOOKS = [
         text: 'The {place} is so big! "I want a {ride}!" Pop! Here is a {ride}.',
         ko: '{place:은는} 정말 넓어요! "{ride:을를} 갖고 싶어요!" 펑! {ride:이가} 나타났어요.',
         bg: '{place}',
-        actors: [{ art: '{ride}', x: 68, w: 46 }, { art: '{dress}', x: 26, w: 34 }, { art: '{pet}', x: 46, w: 18 }],
+        actors: [{ art: '{ride}', x: 68, w: 46 }, { art: '{dress}', x: 26, w: 34 }, { art: '{pet}', x: 47, w: 17 }],
         blank: {
           key: 'ride',
           options: [
@@ -301,13 +302,13 @@ window.BOOKS = [
         text: 'The {ride} flies up, up, up! "Whee! I want to fly more!"',
         ko: '{ride:이가} 높이높이 날아요! "야호! 더 날고 싶어요!"',
         bg: 'bg-sky',
-        actors: [{ art: '{ride}', x: 62, w: 48, y: 80 }, { art: '{dress}-fly', x: 28, w: 42, y: 62 }, { art: '{pet}', x: 72, w: 14, y: 50 }]
+        actors: [{ art: '{ride}', x: 62, w: 48, y: 80 }, { art: '{dress}-fly', x: 28, w: 42, y: 62 }, { art: '{pet}', x: 70, w: 14, y: 55 }]
       },
       {
         text: 'Dani is home. "Thank you, magic star! I want to play again tomorrow!" The end.',
         ko: '다니가 집에 왔어요. "고마워요, 마법 별! 내일 또 놀고 싶어요!" 끝.',
         bg: 'bg-castle',
-        actors: [{ art: '{ride}', x: 74, w: 36 }, { art: '{dress}', x: 32, w: 36 }, { art: '{pet}', x: 52, w: 20 }],
+        actors: [{ art: '{ride}', x: 74, w: 36 }, { art: '{dress}', x: 32, w: 36 }, { art: '{pet}', x: 53, w: 17 }],
         props: [{ emoji: '🌟', x: 56, y: 22, size: 12 }, { emoji: '💕', x: 40, y: 28, size: 9 }]
       }
     ]
