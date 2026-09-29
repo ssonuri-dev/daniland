@@ -75,6 +75,12 @@
   var want = UI.getParam('book') || UI.loadValue(LAST_KEY);
   state.book = findBook(want) || books[0] || null;
 
+  // 책 카드(과목 페이지)에서 들어오면 책을 이미 고른 것이라 책장에 그 책 한 권만 보입니다 —
+  // 과목 페이지가 곧 책장이고, 여기서 또 고르게 하면 두 번 고르는 셈입니다.
+  // 주소에 ?book= 이 없을 때(옛 주소 book.html)만 책을 다 늘어놓습니다.
+  var picked = findBook(UI.getParam('book'));
+  if (picked) el.endShelf.textContent = '← 처음으로';
+
   buildShelf();
   applyKo();
   fit();
@@ -147,9 +153,10 @@
 
   function buildShelf() {
     el.shelf.innerHTML = '';
-    el.shelfHint.textContent = books.length > 1 ? '어떤 책을 볼까요?' : '';
+    var shown = picked ? [picked] : books;
+    el.shelfHint.textContent = shown.length > 1 ? '어떤 책을 볼까요?' : '';
 
-    books.forEach(function (book) {
+    shown.forEach(function (book) {
       var card = document.createElement('button');
       card.className = 'book-cover' + (book === state.book ? ' on' : '');
 
