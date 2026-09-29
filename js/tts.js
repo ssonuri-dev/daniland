@@ -28,10 +28,20 @@
   //   Online           : 인터넷으로 합성 — 대체로 품질이 좋음
   //   Google           : 크롬 기본 제공 — 윈도우 기본보다 훨씬 자연스러움
   // 반대로 이름에 아무 표시가 없는 로컬 목소리는 대개 딱딱한 편입니다.
+  //
+  // FAVORITE — 품질 점수와 상관없이 맨 앞에 둘 목소리 (이름 앞머리, 소문자). 사용자가 고른 것 (2026-09-29).
+  //   영어는 엣지의 'Microsoft Ana Online (Natural)' — 아이 목소리라 다니가 좋아합니다.
+  //   그 목소리가 없는 브라우저(크롬·사파리)에서는 아무 일도 안 하고 원래 순서대로 고릅니다.
+  //   🎤 목소리 패널에서 직접 고른 것이 있으면 그것이 더 앞입니다 (candidates()).
+  var FAVORITE = { en: 'microsoft ana' };
+
   function score(v, lang) {
     var name = (v.name || '').toLowerCase();
     var vl = (v.lang || '').toLowerCase().replace('_', '-');
     var s = 0;
+
+    var fav = FAVORITE[lang.toLowerCase().split('-')[0]];
+    if (fav && name.indexOf(fav) === 0) s += 1000;
 
     if (name.indexOf('natural') >= 0) s += 100;
     if (name.indexOf('neural') >= 0) s += 90;
