@@ -286,7 +286,7 @@ index.html            🔤 영어   🔢 수학   🇰🇷 한글   🌍 세계 
              └ write.html?lang=en&kind=word   단어 쓰기 (글자 쓰기와 같은 화면 — 세 글자·네 글자만 보임)
              └ body.html                      몸 이름 (놀이는 시작 화면에서 고름)
         └ write.html?lang=en             알파벳 쓰기 (글자 쓰기와 같은 화면 — 대문자·소문자만 보임)
-        └ subject.html?name=영어&group=책 읽기     Princess Dani · (책마다 카드 한 장)
+        └ subject.html?name=영어&group=책 읽기     Princess Dani · Princess Dani's Wish · (책마다 카드 한 장)
              └ book.html?book=princess        읽어 주는 책 · 내가 만드는 책 중에 고름
         └ subject.html?name=영어&group=문장·놀이   마을 지도 · 할머니 섬 여행 · 탈것 타기 · 단어 퀴즈
              └ town.html                      마을 지도 (놀이는 시작 화면에서 고름)
@@ -1178,6 +1178,9 @@ boat 는 일부러 뺐습니다 (작은 배는 get in, 큰 배는 get on 이라 
   **그림 파일이 없어도 책은 돌아갑니다** — `art` 에 적어 둔 이모지가 대신 나오고, 파일을 넣으면 자동으로 바뀝니다.
 - 그림 파일 이름은 `bg` / `actors` 에 적은 이름과 같아야 합니다. 빈칸으로 바뀌는 그림은
   선택지의 `img` 조각이 들어갑니다 (`'{monster}-big'` 에 `img: 'dragon'` 이면 `dragon-big.png`).
+- **다른 책의 그림을 빌려 쓸 수 있습니다.** `art` 에 `{ src: 'books/princess/dani.png' }` 처럼 적으면
+  그 책 폴더에 파일이 없을 때 빌려 온 그림이 나옵니다. 2권 「Princess Dani's Wish」(I want ___ 를 익히는 책)가
+  다니 공주와 배경을 1권에서 이렇게 빌려 씁니다.
 
 ---
 

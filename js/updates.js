@@ -16,6 +16,7 @@
 
 window.UPDATES = [
   { date: '2026-09-29', items: [
+    { tag: '영어', text: "그림책 2권 「Princess Dani's Wish」 — 마법 별에게 'I want ___!' 하고 소원을 말하는 책" },
     { tag: '놀이', text: '활쏘기 — 위아래로 오르락내리락하는 사과를 때맞춰 화살로 맞히기' }
   ] },
   { date: '2026-09-28', items: [
