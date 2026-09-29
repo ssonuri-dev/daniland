@@ -1246,5 +1246,15 @@ window.PAGES = [
     href: 'fish.html',
     bestKey: 'daniland.best.fish.level',
     bestUnit: '단계'
+  },
+
+  {
+    subject: '놀이',
+    title: '활쏘기',
+    icon: '🏹',
+    meta: '오르락내리락 사과를 화살로 맞혀요',
+    href: 'archery.html',
+    bestKey: 'daniland.best.archery.level',
+    bestUnit: '단계'
   }
 ];

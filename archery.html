@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#ff8fab">
+  <title>활쏘기 · 다니랜드 🏹</title>
+  <link rel="icon" href="dani.png">
+  <!-- 구글 웹폰트: 제목은 Jua, 본문은 나눔고딕 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Gothic:wght@400;700;800&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 들어올 때 비밀번호 (문패입니다 — js/gate.js 주석 참고) -->
+  <script src="js/gate.js"></script>
+
+  <div class="wrap archery-page">
+    <div class="topbar">
+      <button class="icon-btn" id="backBtn" title="뒤로">←</button>
+      <div class="progress"><div class="progress-bar" id="bar"></div></div>
+      <div class="score" id="score">⭐ 0</div>
+    </div>
+
+    <div class="archery-status">
+      <div class="level-chip" id="levelChip">1단계</div>
+      <div class="quiver" id="quiver"></div>
+    </div>
+
+    <!-- 하늘·나뭇가지·사과·다니·활을 모두 캔버스에 그립니다 (js/archery.js).
+         높이는 fit() 이 화면에 맞춰 정합니다. 판 아무 데나 누르면 화살이 오른쪽으로 날아갑니다. -->
+    <div class="archery-field" id="field">
+      <canvas id="canvas"></canvas>
+    </div>
+
+    <div class="archery-controls">
+      <button class="archery-btn" id="shootBtn">🏹 쏘기</button>
+    </div>
+  </div>
+
+  <!-- 단계가 올라갈 때 잠깐 뜨는 안내 -->
+  <div class="banner" id="banner" hidden></div>
+
+  <!-- 시작 화면 -->
+  <div class="overlay" id="startOverlay">
+    <img src="dani.png" alt="다니">
+    <h2>🏹 활쏘기</h2>
+
+    <p class="hint">사과 🍎 가 위아래로 오르락내리락해요<br>화살 높이에 왔을 때 딱 맞춰 쏘세요!</p>
+    <p class="hint">화면 아무 데나 누르거나 🏹 쏘기 단추를 눌러요<br>반짝이는 황금 사과를 맞히면 ⭐ 셋에 화살도 두 개 더!</p>
+
+    <p class="hint" id="startPick" hidden>어느 단계부터 할까요?</p>
+    <div class="level-row" id="levelRow" hidden></div>
+
+    <button class="big-btn" id="startBtn">시작하기 ▶</button>
+    <button class="big-btn ghost" id="startHome">← 뒤로</button>
+  </div>
+
+  <!-- 결과 화면 -->
+  <div class="overlay" id="endOverlay" hidden>
+    <img src="dani.png" alt="다니">
+    <h2 id="endTitle">참 잘했어요!</h2>
+    <div class="stars" id="endStars"></div>
+    <p id="endText"></p>
+    <button class="big-btn" id="againBtn">한 번 더 🔁</button>
+    <button class="big-btn ghost" id="endHome">← 뒤로</button>
+  </div>
+
+  <script src="js/ui.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/catalog.js"></script>
+  <script src="js/sfx.js"></script>
+  <script src="js/archery.js"></script>
+</body>
+</html>
