@@ -910,6 +910,15 @@ window.PAGES = [
     bestKey: 'daniland.best.japan'
   },
 
+  {
+    subject: '세계',
+    title: '미국',
+    icon: '🇺🇸',
+    meta: '알아보기 · 무엇이 있을까 · 퀴즈',
+    href: 'country.html?country=usa',
+    bestKey: 'daniland.best.usa'
+  },
+
   /* 우주 — 까만 화면에 태양계를 3D 로 그리고, 행성을 누르면 planet.html 로 넘어갑니다.
      행성 하나하나는 PAGES 에 안 적습니다 — 태양계 화면이 곧 목록이라서요. */
   {
