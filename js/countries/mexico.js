@@ -131,8 +131,7 @@ window.COUNTRY_PAGES.mexico = {
     { id: 'football', emoji: '⚽', label: '축구', title: '월드컵을 세 번 연 나라', find: '월드컵 축구',
       native: 'Fútbol', nativeKo: '풋볼',
       text: '멕시코 사람들은 축구를 아주 좋아해요. 멕시코는 세계에서 처음으로 월드컵을 세 번이나 연 나라예요. ' +
-            '올해 2026년 여름 월드컵도 멕시코시티의 큰 경기장 "아스테카" 에서 첫 경기를 했고, ' +
-            '우리나라 대표팀도 멕시코에 가서 경기를 했어요.' },
+            '올해 2026년 여름 월드컵도 멕시코시티의 큰 경기장 "아스테카" 에서 첫 경기를 했어요.' },
 
     { id: 'hello', emoji: '👋', label: '인사말', title: '스페인 말로 인사해요',
       native: '¡Hola! ¡Gracias! ¡Adiós!', nativeKo: '올라, 그라시아스, 아디오스',
