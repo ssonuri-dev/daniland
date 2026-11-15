@@ -140,6 +140,7 @@ index.html            과목 카드            home.js
       ├ smash.html                          smash.js    (부수기 — 젤리 괴물을 한 번에 터뜨림, 연속. 카메라로 손을 씀)
       ├ fish.html                           fish.js     (낚시 — 하늘·바다·배·물고기를 캔버스에 그림, 단계·하트. 장애물 피하기와 같은 얼개)
       ├ archery.html                        archery.js  (활쏘기 — 위아래로 오르내리는 사과를 가로로 쏘는 타이밍 놀이, 단계·화살통. 낚시와 같은 얼개)
+      ├ lotto.html                          lotto.js    (다니 로또 — 1~45 에서 여섯 개, 추첨기를 캔버스에 그리고 공을 직접 튕김. 진짜 규칙·상금 없음)
       └ draw.html                           draw.js     (독립 — 다른 js 를 전혀 안 씀)
 ```
 
@@ -432,6 +433,9 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.book.last` `daniland.book.ko` | 마지막에 본 책 · 우리말 뜻 보이기 |
 | `daniland.best.fish.level` | 낚시에서 도달한 최고 단계 (카드의 ⭐ 는 이것을 `bestUnit: '단계'` 로 읽습니다 — 풍선 터뜨리기와 같은 얼개) |
 | `daniland.best.archery.level` | 활쏘기에서 도달한 최고 단계 (카드의 ⭐ 는 이것을 `bestUnit: '단계'` 로 읽습니다 — 낚시와 같은 얼개) |
+| `daniland.lotto.mine` | 다니 로또에서 마지막에 고른 번호 여섯 개 |
+| `daniland.lotto.stats` | 다니 로또 `{ plays, ranks: [1등…5등 횟수] }` — 기록장 맨 위 숫자 |
+| `daniland.lotto.wins` | 다니 로또 당첨 기록 `[{ t, rank, mine, drawn, bonus }]` 새것이 앞, 100개까지 (꽝은 안 남김) |
 | `daniland.best.dodge.level` | 장애물 피하기에서 도달한 최고 단계 — 시작 단계 고르기에만 씁니다 (풍선 터뜨리기와 같은 얼개) |
 | `daniland.best.dodge.m` | 장애물 피하기에서 제일 멀리 간 거리 — stars 가 m 입니다 (카드의 ⭐ 는 이것을 `bestUnit: 'm'` 으로 읽습니다) |
 | `daniland.rank.dodge` | 장애물 피하기 순위표 — `[{ m, level, treats }, …]` 먼 순서로 다섯 개 (시작·결과 화면) |

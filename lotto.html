@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#ff8fab">
+  <title>다니 로또 · 다니랜드 🎱</title>
+  <link rel="icon" href="dani.png">
+  <!-- 구글 웹폰트: 제목은 Jua, 본문은 나눔고딕 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Gothic:wght@400;700;800&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/analytics.js"></script>
+</head>
+<body>
+  <!-- 들어올 때 비밀번호 (문패입니다 — js/gate.js 주석 참고) -->
+  <script src="js/gate.js"></script>
+
+  <div class="wrap lotto-page">
+    <div class="topbar">
+      <button class="icon-btn" id="backBtn" title="뒤로">←</button>
+      <div class="lotto-title">🎱 다니 로또</div>
+      <button class="icon-btn" id="bookBtn" title="당첨 기록장">📒</button>
+    </div>
+
+    <!-- 내가 고른 번호 여섯 칸 -->
+    <div class="lotto-ticket">
+      <div class="lotto-label">내 번호</div>
+      <div class="lotto-row" id="mineRow"></div>
+    </div>
+
+    <!-- 번호 고르기 — 1~45 판 -->
+    <section class="lotto-pick" id="pickView">
+      <div class="lotto-grid" id="grid"></div>
+      <div class="lotto-side">
+        <p class="lotto-hint" id="pickHint"></p>
+        <div class="lotto-tools">
+          <button class="lotto-tool" id="autoBtn">🎲 자동</button>
+          <button class="lotto-tool" id="clearBtn">🧹 지우기</button>
+        </div>
+        <button class="lotto-go" id="goBtn">추첨하기 ▶</button>
+      </div>
+    </section>
+
+    <!-- 추첨 — 당첨 번호 칸과 추첨기(캔버스, js/lotto.js 의 draw()) -->
+    <section id="drawView" hidden>
+      <div class="lotto-ticket">
+        <div class="lotto-label">당첨 번호</div>
+        <div class="lotto-row" id="drawnRow"></div>
+      </div>
+      <div class="lotto-field" id="field">
+        <canvas id="canvas"></canvas>
+      </div>
+    </section>
+  </div>
+
+  <!-- 보너스 공 등 잠깐 뜨는 안내 -->
+  <div class="banner" id="banner" hidden></div>
+
+  <!-- 시작 화면 -->
+  <div class="overlay" id="startOverlay">
+    <img src="dani.png" alt="다니">
+    <h2>🎱 다니 로또</h2>
+    <p class="hint">1부터 45까지 공 중에서 <b>여섯 개</b>를 골라요<br>추첨기에서 굴러 나온 공과 같으면 반짝!</p>
+    <p class="hint">3개 맞으면 5등 · 4개 4등 · 5개 3등<br>5개에 보너스 공까지 2등 · 여섯 개 다 맞으면 1등!</p>
+    <button class="big-btn" id="startBtn">시작하기 ▶</button>
+    <button class="big-btn ghost" id="startHome">← 뒤로</button>
+  </div>
+
+  <!-- 꽝 -->
+  <div class="overlay lotto-miss" id="missOverlay" hidden>
+    <img src="dani.png" alt="다니">
+    <h2 id="missTitle">아깝다!</h2>
+    <p id="missText"></p>
+    <div class="lotto-label">내 번호</div>
+    <div class="lotto-row" id="missMine"></div>
+    <div class="lotto-label">당첨 번호</div>
+    <div class="lotto-row" id="missDrawn"></div>
+    <p class="hint" id="missCount"></p>
+    <button class="big-btn" id="missAgain">또 하기 🔁</button>
+    <button class="big-btn ghost" id="missHome">← 뒤로</button>
+  </div>
+
+  <!-- 당첨 — 엄마 아빠한테 들고 가서 보여 주는 화면이라 단추를 누르기 전에는 안 닫힙니다 -->
+  <div class="overlay lotto-win" id="winOverlay" hidden>
+    <div class="win-rays"></div>
+    <div class="win-inner">
+      <div class="win-card">
+        <div class="win-icon" id="winIcon">👑</div>
+        <h2 id="winTitle">1등 당첨!</h2>
+        <p class="win-sub" id="winSub"></p>
+        <div class="lotto-label">내 번호</div>
+        <div class="lotto-row" id="winMine"></div>
+        <div class="lotto-label">당첨 번호</div>
+        <div class="lotto-row" id="winDrawn"></div>
+        <p class="win-when" id="winWhen"></p>
+        <p class="win-show">엄마 아빠한테 보여 주세요! 👀</p>
+      </div>
+      <button class="big-btn" id="winAgain">또 하기 🔁</button>
+      <button class="big-btn ghost" id="winBook">📒 기록장 보기</button>
+    </div>
+  </div>
+
+  <!-- 당첨 기록장 -->
+  <div class="overlay lotto-book" id="bookOverlay" hidden>
+    <h2>📒 당첨 기록장</h2>
+    <p id="bookPlays"></p>
+    <div class="book-counts" id="bookCounts"></div>
+    <ul class="book-list" id="bookList"></ul>
+    <button class="big-btn" id="bookClose">닫기</button>
+  </div>
+
+  <script src="js/ui.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/catalog.js"></script>
+  <script src="js/tts.js"></script>
+  <script src="js/sfx.js"></script>
+  <script src="js/lotto.js"></script>
+</body>
+</html>

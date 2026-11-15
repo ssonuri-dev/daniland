@@ -1292,5 +1292,13 @@ window.PAGES = [
     href: 'archery.html',
     bestKey: 'daniland.best.archery.level',
     bestUnit: '단계'
+  },
+
+  {
+    subject: '놀이',
+    title: '다니 로또',
+    icon: '🎱',
+    meta: '공 여섯 개를 골라 추첨기를 돌려요',
+    href: 'lotto.html'   // 별이 아니라 등수라 bestKey 없음 — 당첨 기록은 화면 안의 📒 기록장에 있습니다
   }
 ];

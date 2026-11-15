@@ -55,7 +55,8 @@ h1, h2, h3, h4,
 .planet-title,
 .story-title,
 .planet-name,
-.star-title {
+.star-title,
+.lotto-title {
   font-family: 'Jua', 'Nanum Gothic', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
   font-weight: 400;
 }
@@ -4933,3 +4934,345 @@ button {
 @keyframes thing-away {
   to { transform: translateY(20%) scale(0.4); opacity: 0; }
 }
+
+/* ---------- 다니 로또 (lotto.html) ----------
+ * 1~45 판에서 공 여섯 개를 고르고(.lotto-grid), 추첨기(캔버스, js/lotto.js 의 draw())에서 공이 굴러 나옵니다.
+ * 공 색은 진짜 로또와 같습니다 — 1~10 노랑 · 11~20 파랑 · 21~30 빨강 · 31~40 회색 · 41~45 초록 (.c1~.c5). */
+
+.lotto-page { padding-bottom: 14px; }
+
+.lotto-title {
+  flex: 1;
+  font-size: 26px;
+  text-align: center;
+  color: var(--pink);
+}
+
+.icon-btn.off { opacity: 0.4; }
+
+.c1 { --bc: #fbc400; }
+.c2 { --bc: #69c8f2; }
+.c3 { --bc: #ff7272; }
+.c4 { --bc: #aaaaaa; }
+.c5 { --bc: #b0d840; }
+
+.lotto-ticket {
+  max-width: 640px;
+  margin: 0 auto 12px;
+  padding: 8px 10px 12px;
+  text-align: center;
+  background: #fff;
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+}
+
+.lotto-label {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--ink-soft);
+}
+
+.lotto-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* 공 하나 — 크기는 한 줄에 여덟 개(여섯 + 더하기 + 보너스)가 들어가게 */
+.lball {
+  --b: min(54px, calc((100vw - 76px) / 8));
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--b);
+  height: var(--b);
+  font-size: calc(var(--b) * 0.42);
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0) 40%),
+    var(--bc);
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.12), 0 3px 6px rgba(64, 50, 58, 0.18);
+}
+
+.lball.empty {
+  background: #f4eef1;
+  box-shadow: inset 0 2px 4px rgba(64, 50, 58, 0.12);
+}
+
+.lball.bonus.empty { background: #fff6dc; }
+
+.lball.pop { animation: lball-pop 0.45s ease; }
+
+/* 맞은 공 — 노란 테두리로 반짝 (보너스 공은 보라) */
+.lball.hit {
+  box-shadow: 0 0 0 3px #fff, 0 0 0 6px #ffc400, 0 0 18px 6px rgba(255, 196, 0, 0.7);
+  animation: lball-hit 0.8s ease-in-out infinite alternate;
+}
+
+.lball.hit.bonus-hit,
+.lball.bonus.hit { box-shadow: 0 0 0 3px #fff, 0 0 0 6px #b79bff, 0 0 18px 6px rgba(183, 155, 255, 0.7); }
+
+@keyframes lball-pop {
+  0%   { transform: scale(0.3); }
+  70%  { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+
+@keyframes lball-hit {
+  from { transform: scale(1); }
+  to   { transform: scale(1.1); }
+}
+
+.lotto-plus {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--ink-soft);
+}
+
+.lotto-row.shake { animation: lives-shake 0.45s ease; }
+
+/* 번호 판 — 진짜 로또 용지처럼 일곱 칸씩. 폰은 다섯 칸(손가락 64px)으로 아래로 넘깁니다. */
+.lotto-pick { display: flex; flex-direction: column; align-items: center; }
+.lotto-pick[hidden] { display: none; }
+
+.lotto-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+  width: min(600px, 100%);
+}
+
+.lotto-num {
+  aspect-ratio: 1;
+  padding: 0;
+  font-size: clamp(20px, 4vw, 30px);
+  font-weight: 800;
+  color: var(--ink);
+  background: #fff;
+  border: 3px solid var(--bc);
+  border-radius: 50%;
+  box-shadow: var(--shadow);
+}
+
+.lotto-num:active { transform: scale(0.94); }
+
+.lotto-num.on {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  border-color: #fff;
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0) 40%),
+    var(--bc);
+}
+
+.lotto-side { width: min(600px, 100%); text-align: center; }
+
+.lotto-hint { margin: 12px 0 8px; font-size: 18px; font-weight: 800; }
+
+.lotto-tools { display: flex; justify-content: center; gap: 10px; }
+
+.lotto-tool {
+  flex: 1;
+  height: 58px;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--ink);
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+
+.lotto-go {
+  width: 100%;
+  height: 70px;
+  margin-top: 12px;
+  font-size: 26px;
+  font-weight: 800;
+  color: #fff;
+  background: var(--pink);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+
+.lotto-go.off { opacity: 0.45; }
+
+.lotto-tool:active,
+.lotto-go:active { transform: translateY(3px); }
+
+@media (max-width: 599px) {
+  .lotto-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}
+
+/* 태블릿 가로 — 판은 높이에 맞추고 단추는 옆에 세웁니다 */
+@media (min-width: 900px) and (orientation: landscape) {
+  .lotto-pick { flex-direction: row; align-items: flex-start; justify-content: center; gap: 22px; }
+  .lotto-grid { width: min(600px, calc(100vh - 230px)); }
+  .lotto-side { width: 240px; }
+  .lotto-tools { flex-direction: column; }
+}
+
+.lotto-field {
+  max-width: 640px;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 24px;
+  background: linear-gradient(180deg, #fff7fb, #eef6ff);
+  box-shadow: var(--shadow);
+}
+
+.lotto-field canvas { display: block; }
+
+/* 결과·기록장 덮개는 길어질 수 있어 위에서부터 놓고 넘깁니다 */
+.lotto-miss,
+.lotto-win,
+.lotto-book { justify-content: flex-start; overflow-y: auto; }
+
+.lotto-miss img { margin-top: auto; }
+.lotto-miss .big-btn.ghost { margin-bottom: auto; }
+.lotto-miss .lotto-row { margin-bottom: 10px; }
+
+/* 결과·기록장의 공은 작아서 반짝 테두리도 얇게, 커졌다 작아졌다는 빼고 (옆 공과 겹칩니다) */
+.lotto-miss .lball,
+.win-card .lball,
+.book-item .lball { --b: min(46px, calc((100vw - 120px) / 8)); }
+
+.lotto-miss .lball.hit,
+.win-card .lball.hit,
+.book-item .lball.hit {
+  animation: none;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #ffc400, 0 0 10px 3px rgba(255, 196, 0, 0.6);
+}
+
+.lotto-miss .lball.hit.bonus-hit,
+.lotto-miss .lball.bonus.hit,
+.win-card .lball.hit.bonus-hit,
+.win-card .lball.bonus.hit,
+.book-item .lball.hit.bonus-hit,
+.book-item .lball.bonus.hit { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #b79bff, 0 0 10px 3px rgba(183, 155, 255, 0.6); }
+
+.lotto-book { background: rgba(255, 250, 252, 0.98); }
+
+/* 당첨 — 등수마다 바탕이 다르고 1등은 금빛 */
+/* backdrop-filter 가 있으면 덮개가 fixed 자식의 기준이 되어 빛살(.win-rays)이 덮개 안에서 넘쳐 스크롤이 생깁니다 — 바탕이 불투명하니 끕니다 */
+.lotto-win { background: linear-gradient(160deg, #fff0f5, #ffd9e2); backdrop-filter: none; }
+.lotto-win.r4 { background: linear-gradient(160deg, #eef7ff, #cfe6ff); }
+.lotto-win.r3 { background: linear-gradient(160deg, #f6f0ff, #dccfff); }
+.lotto-win.r2 { background: linear-gradient(160deg, #ffffff, #d9dee8); }
+.lotto-win.r1 { background: radial-gradient(circle at 50% 30%, #fff6c4, #ffd34d 55%, #f2a900); }
+
+.win-rays {
+  position: fixed;
+  left: 50%;
+  top: 32%;
+  z-index: -1;
+  width: 220vmax;
+  height: 220vmax;
+  margin: -110vmax 0 0 -110vmax;
+  background: repeating-conic-gradient(rgba(255, 255, 255, 0.35) 0 10deg, rgba(255, 255, 255, 0) 10deg 20deg);
+  animation: win-rays 16s linear infinite;
+  pointer-events: none;
+}
+
+.lotto-win.r1 .win-rays {
+  animation-duration: 8s;
+  background: repeating-conic-gradient(rgba(255, 255, 255, 0.5) 0 8deg, rgba(255, 255, 255, 0) 8deg 16deg);
+}
+
+@keyframes win-rays { to { transform: rotate(360deg); } }
+
+.win-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin: auto 0;
+}
+
+.win-card {
+  width: min(560px, 100%);
+  padding: 16px 14px 18px;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+  animation: win-in 0.6s cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+
+.lotto-win.r1 .win-card { box-shadow: 0 0 0 6px #fff3b0, 0 0 40px rgba(255, 190, 0, 0.8); }
+
+@keyframes win-in {
+  from { transform: scale(0.4); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+.win-icon {
+  font-size: 84px;
+  line-height: 1.1;
+  animation: win-bob 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes win-bob {
+  from { transform: translateY(0) rotate(-6deg); }
+  to   { transform: translateY(-8px) rotate(6deg); }
+}
+
+.lotto-win h2 { margin: 2px 0; font-size: 46px; }
+.lotto-win.r1 h2 { color: #e09a00; text-shadow: 0 2px 0 #fff3b0; }
+
+.lotto-win p.win-sub { margin: 0 0 12px; font-size: 20px; font-weight: 800; color: var(--ink); }
+.win-card .lotto-row { margin-bottom: 12px; }
+.lotto-win p.win-when { margin: 4px 0 0; font-size: 16px; color: var(--ink-soft); }
+.lotto-win p.win-show { margin: 6px 0 0; font-size: 22px; font-weight: 800; color: var(--pink); }
+
+/* 당첨 기록장 */
+.lotto-book p { margin: 0 0 8px; }
+
+.book-counts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.book-count {
+  padding: 6px 12px;
+  font-weight: 800;
+  color: var(--ink-soft);
+  background: #fff;
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+}
+
+.book-count.got { color: var(--pink); }
+
+.book-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(560px, 100%);
+  margin: 12px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.book-item,
+.book-empty {
+  padding: 10px 12px 12px;
+  text-align: center;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+
+.book-item.r1 { background: #fff6cf; }
+
+.book-item .lotto-row + .lotto-row { margin-top: 8px; }
+
+.book-head { margin-bottom: 8px; font-size: 20px; font-weight: 800; }
+.book-head .when { margin-left: 8px; font-size: 14px; font-weight: 400; color: var(--ink-soft); }
