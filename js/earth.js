@@ -111,6 +111,8 @@
     spin: 0,                        // 1초에 몇 시간
     year: 0,                        // 1초에 며칠
     aus: false,
+    focus: 'all',
+    compare: 0,                     // 0 이 아니면 우리 동네 하늘에 그날 해의 길도 흐리게 (견주어 보기)                   // 이야기에서 크게 보일 그림 (EARTH_STEPS 의 show)
     step: 0,
     round: 0,
     stars: 0,
@@ -253,6 +255,24 @@
   function layout() {
     var g = 8;
     rects = {};
+    var wide = W >= H * 1.15;
+    // 이야기에서는 지금 말하는 그림만 크게 — 유치원생에게 그림 셋을 한꺼번에 보이면 어디를 볼지 모릅니다
+    if (state.act === 'story' && state.playing && state.focus !== 'all') {
+      if (state.focus === 'globe+sky') {
+        if (wide) {
+          var gw = Math.round((W - g) * 0.56);
+          rects.globe = { x: 0, y: 0, w: gw, h: H };
+          rects.sky = { x: gw + g, y: 0, w: W - gw - g, h: H };
+        } else {
+          var sh = Math.round((H - g) * 0.42);
+          rects.sky = { x: 0, y: 0, w: W, h: sh };
+          rects.globe = { x: 0, y: sh + g, w: W, h: H - sh - g };
+        }
+      } else {
+        rects[state.focus] = { x: 0, y: 0, w: W, h: H };
+      }
+      return;
+    }
     if (state.act === 'quiz' && state.playing) {
       var hw = (W - g) / 2;
       rects.orbit = { x: 0, y: 0, w: hw, h: H };
@@ -511,15 +531,24 @@
     panel(r, '🌍 가까이서 본 지구');
     var f = globeFrame(sun);
     var R = Math.min(r.w * 0.30, (r.h - 64) * 0.40);
-    var cx = r.x + r.w / 2 - R * 0.12, cy = r.y + r.h / 2 + 10;
+    var cx = r.x + r.w / 2 - R * 0.2, cy = r.y + r.h / 2 + 10;
     var P = function (p) { return { x: cx + p.s * R, y: cy - p.z * R }; };
 
-    // 햇빛 — 오른쪽에서 오는 줄
-    ctx.strokeStyle = 'rgba(255,214,110,0.28)';
+    // 해 — 판 오른쪽 끝에 반쯤 걸쳐 그립니다 (글자 '햇빛' 보다 해가 보이는 쪽이 아이에게 쉽습니다)
+    var sunR = Math.max(18, Math.min(R * 0.42, r.w * 0.11));
+    var sunX = r.x + r.w + sunR * 0.25;
+    ctx.save();
+    roundRect(r.x, r.y, r.w, r.h, 16);
+    ctx.clip();
+    drawSunBall(sunX, cy, sunR);
+    ctx.restore();
+
+    // 햇빛 — 해에서 지구로 오는 줄
+    ctx.strokeStyle = 'rgba(255,214,110,0.32)';
     ctx.lineWidth = 2;
     for (var k = -2; k <= 2; k++) {
       var ly = cy + k * R * 0.42;
-      var lx0 = r.x + r.w - 12, lx1 = cx + Math.sqrt(Math.max(0, R * R - (ly - cy) * (ly - cy))) + 6;
+      var lx0 = sunX - sunR * 1.25, lx1 = cx + Math.sqrt(Math.max(0, R * R - (ly - cy) * (ly - cy))) + 6;
       if (lx0 - lx1 < 20) continue;
       ctx.beginPath();
       ctx.moveTo(lx0, ly);
@@ -529,11 +558,6 @@
       ctx.lineTo(lx1 + 7, ly + 4);
       ctx.stroke();
     }
-    ctx.fillStyle = '#ffd56b';
-    ctx.font = '700 12px "Nanum Gothic", sans-serif';
-    ctx.textAlign = 'right';
-    ctx.textBaseline = 'bottom';
-    ctx.fillText('햇빛 ☀️', r.x + r.w - 12, cy - R * 0.84 - 6);
 
     // 자전축 — 뒤로 간 끝은 지구에 가려집니다
     drawAxis(f, P, R, cx, cy, false);
@@ -595,8 +619,8 @@
     }
 
     // 핀
-    drawPin(f, P, LAT, hourAngle(state.time, LON, sun), '우리나라');
-    if (state.aus) drawPin(f, P, AUS_LAT, hourAngle(state.time, AUS_LON, sun), '호주');
+    drawPin(f, P, LAT, hourAngle(state.time, LON, sun), '우리 집', '🏠');
+    if (state.aus) drawPin(f, P, AUS_LAT, hourAngle(state.time, AUS_LON, sun), '호주', '🦘');
 
     ctx.fillStyle = '#e8edff';
     ctx.font = '700 ' + (r.w < 320 ? 13 : 15) + 'px "Nanum Gothic", sans-serif';
@@ -676,25 +700,27 @@
     ctx.setLineDash([]);
   }
 
-  function drawPin(f, P, lat, h, name) {
+  // 지구 위의 우리 집 — 빨간 점보다 🏠 가 아이에게 바로 읽힙니다. 뒤로 돌아가면 흐려집니다.
+  function drawPin(f, P, lat, h, name, icon) {
     var p = surf(f, lat, h);
     var q = P(p);
     var front = p.v <= 0;
     var lit = p.s > 0;
-    ctx.globalAlpha = front ? 1 : 0.45;
-    ctx.fillStyle = '#ff5d7a';
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 2;
+    ctx.globalAlpha = front ? 1 : 0.4;
+    ctx.fillStyle = '#ffffff';
     ctx.beginPath();
-    ctx.arc(q.x, q.y, 7, 0, Math.PI * 2);
+    ctx.arc(q.x, q.y, 13, 0, Math.PI * 2);
     ctx.fill();
-    ctx.stroke();
-    var label = name + ' ' + (lit ? '☀️' : '🌙') + (front ? '' : ' (뒤쪽)');
+    ctx.font = '18px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(icon, q.x, q.y + 1);
+    var label = name + ' ' + (lit ? '☀️ 낮' : '🌙 밤');
     ctx.font = '800 13px "Nanum Gothic", sans-serif';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
     var tw = ctx.measureText(label).width;
-    var lx = q.x - 11 - tw, ly = q.y - 14;     // 해가 오른쪽이라 이름표는 왼쪽에 — 햇빛 줄을 안 가립니다
+    var lx = q.x - 18 - tw, ly = q.y - 16;     // 해가 오른쪽이라 이름표는 왼쪽에 — 햇빛 줄을 안 가립니다
     ctx.fillStyle = 'rgba(4,6,16,0.7)';
     roundRect(lx - 5, ly - 10, tw + 10, 20, 8);
     ctx.fill();
@@ -708,7 +734,7 @@
 
   function drawSky(r, sun) {
     var top = r.y + 26, pad = 12;
-    var hy = r.y + r.h * 0.66;              // 땅의 높이
+    var hy = r.y + r.h * 0.6;               // 땅의 높이
     var H0 = hourAngle(state.time, LON, sun);
     var pos = sunPos(H0, sun.dec, LAT);
     var alt = pos.alt;
@@ -740,6 +766,30 @@
 
     var X = function (az) { return r.x + pad + (az - 40) / 280 * (r.w - pad * 2); };
     var Y = function (a) { return hy - a / 90 * (hy - top - 8); };
+
+    // 견주어 볼 날의 해 길 — '겨울 해는 낮다' 는 여름 길이 옆에 있어야 보입니다
+    if (state.compare && state.act === 'story') {
+      var cd = solar(state.compare).dec;
+      var cm = Math.acos(clamp(-Math.tan(LAT * RAD) * Math.tan(cd), -1, 1));
+      ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([3, 6]);
+      ctx.beginPath();
+      for (var j = 0; j <= 60; j++) {
+        var cp = sunPos(-cm + 2 * cm * j / 60, cd, LAT);
+        var cx2 = X(cp.az), cy2 = Y(Math.max(0, cp.alt));
+        if (j === 0) ctx.moveTo(cx2, cy2); else ctx.lineTo(cx2, cy2);
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+      var top0 = sunPos(0, cd, LAT);
+      var cdm = dateOf(state.compare);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '800 14px "Nanum Gothic", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText(seasonOf(cdm.month).icon + ' ' + seasonOf(cdm.month).name + ' 해의 길', X(180), Y(top0.alt) - 6);
+    }
 
     // 해가 지나가는 길 (점선)
     var cosH = -Math.tan(LAT * RAD) * Math.tan(sun.dec);
@@ -779,47 +829,63 @@
     ctx.font = Math.round(Math.min(26, r.h * 0.13)) + 'px sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'bottom';
-    ctx.fillText('🏠', r.x + r.w * 0.5, hy + 4);
-    ctx.fillText('🌳', r.x + r.w * 0.66, hy + 3);
+    ctx.fillText('🏠', r.x + r.w * 0.4, hy + 4);
+    ctx.fillText('🌳', r.x + r.w * 0.6, hy + 3);
 
-    ctx.font = '700 11px "Nanum Gothic", sans-serif';
-    ctx.fillStyle = 'rgba(255,255,255,0.75)';
-    ctx.textBaseline = 'top';
-    ctx.fillText('동', X(90), hy + 3);
-    ctx.fillText('남', X(180), hy + 3);
-    ctx.fillText('서', X(270), hy + 3);
+    // 동·남·서 — 땅이 낮아 아래 칸과 부딪치면(폰) 안 적습니다
+    if (r.y + r.h - hy > 92) {
+      ctx.font = '700 11px "Nanum Gothic", sans-serif';
+      ctx.fillStyle = 'rgba(255,255,255,0.75)';
+      ctx.textBaseline = 'top';
+      ctx.fillText('동', X(90), hy + 3);
+      ctx.fillText('남', X(180), hy + 3);
+      ctx.fillText('서', X(270), hy + 3);
+    }
 
-    // 하루 24시간 띠 — 노란 곳이 낮
-    var times = sunTimes(state.day);
-    var bx = r.x + pad, bw = r.w - pad * 2, by = r.y + r.h - 22, bh = 9;
-    ctx.fillStyle = '#1b2350';
-    roundRect(bx, by, bw, bh, 4);
-    ctx.fill();
-    ctx.fillStyle = '#ffd23f';
-    ctx.fillRect(bx + bw * times.rise / 24, by, bw * (times.set - times.rise) / 24, bh);
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(bx + bw * (state.time / 24) - 1.5, by - 3, 3, bh + 6);
     ctx.restore();
-
     panel(r, '🏠 우리 동네 하늘');
 
-    // 해 뜨고 지는 시각
-    ctx.font = '800 ' + (r.w < 220 ? 11 : 13) + 'px "Nanum Gothic", sans-serif';
+    // 하루 24칸 — 칸 하나가 한 시간, 노란 만큼이 낮입니다. 아이가 노란 칸을 세어 '여름엔 열다섯 칸 가까이,
+    // 겨울엔 열 칸도 안 돼요' 를 직접 봅니다. 해가 시간 중간에 뜨면 그 칸은 일부만 노랗습니다 (반올림하지 않습니다).
+    var times = sunTimes(state.day);
+    var bx = r.x + pad, bw = r.w - pad * 2;
+    var cw = bw / 24, ch = Math.max(10, Math.min(22, cw * 1.3));
+    var by = r.y + r.h - ch - 10;
+    for (var c = 0; c < 24; c++) {
+      var x0 = bx + c * cw + 1, w0 = cw - 2;
+      ctx.fillStyle = '#1b2350';
+      roundRect(x0, by, w0, ch, Math.min(4, w0 / 3));
+      ctx.fill();
+      var lit0 = Math.max(c, times.rise), lit1 = Math.min(c + 1, times.set);
+      if (lit1 > lit0) {
+        ctx.save();
+        roundRect(x0, by, w0, ch, Math.min(4, w0 / 3));
+        ctx.clip();
+        ctx.fillStyle = '#ffd23f';
+        ctx.fillRect(x0 + (lit0 - c) * w0, by, (lit1 - lit0) * w0, ch);
+        ctx.restore();
+      }
+      if (c === Math.floor(state.time)) {
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        roundRect(x0 - 1, by - 1, w0 + 2, ch + 2, Math.min(5, w0 / 3));
+        ctx.stroke();
+      }
+    }
+
+    // 해 뜨고 지는 시각 (아이는 시계를 읽을 줄 압니다 — 시계 놀이)
+    ctx.font = '800 ' + (r.w < 260 ? 12 : 14) + 'px "Nanum Gothic", sans-serif';
     ctx.textBaseline = 'bottom';
     ctx.textAlign = 'left';
     ctx.fillStyle = '#ffffff';
-    ctx.fillText('🌅 ' + shortClock(times.rise), bx, by - 4);
+    ctx.fillText('🌅 ' + shortClock(times.rise), bx, by - 5);
     ctx.textAlign = 'right';
-    ctx.fillText(shortClock(times.set) + ' 🌇', bx + bw, by - 4);
-    // 좁으면 해 뜨고 지는 시각과 부딪쳐서, 낮의 길이를 제목 오른쪽으로 올립니다
-    ctx.fillStyle = '#ffe08a';
-    if (r.w < 300) {
-      ctx.textAlign = 'right';
-      ctx.textBaseline = 'top';
-      ctx.fillText('낮 ' + lengthText(times.set - times.rise), r.x + r.w - 10, r.y + 28);
-    } else {
+    ctx.fillText(shortClock(times.set) + ' 🌇', bx + bw, by - 5);
+    if (r.w >= 300) {
       ctx.textAlign = 'center';
-      ctx.fillText('낮 ' + lengthText(times.set - times.rise), bx + bw / 2, by - 4);
+      ctx.fillStyle = '#ffe08a';
+      ctx.font = '700 12px "Nanum Gothic", sans-serif';
+      ctx.fillText('노란 칸 하나 = 한 시간', bx + bw / 2, by - 6);
     }
   }
 
@@ -911,6 +977,9 @@
     state.spin = s.spin || 0;
     state.year = s.year || 0;
     state.aus = !!s.aus;
+    state.focus = s.show || 'all';
+    state.compare = s.compare || 0;
+    layout();
 
     Array.prototype.forEach.call(el.steps.children, function (c, k) {
       c.classList.toggle('on', k === i);
