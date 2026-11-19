@@ -5276,3 +5276,41 @@ button {
 
 .book-head { margin-bottom: 8px; font-size: 20px; font-weight: 800; }
 .book-head .when { margin-left: 8px; font-size: 14px; font-weight: 400; color: var(--ink-soft); }
+
+/* =========================================================================
+ * 낮과 밤·계절 (earth.html) — 별의 일생과 같은 뼈대입니다 (.star-steps · .star-story · .star-cards 를
+ * 그대로 씁니다). 캔버스 한 장에 그림 셋(해 둘레 · 가까이서 본 지구 · 우리 동네 하늘)을 js/earth.js 가
+ * 나눠 그리고, 전체 높이는 그 파일의 fit() 이 화면 높이로 못 박습니다.
+ * ========================================================================= */
+
+.earth-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding-bottom: 12px;
+}
+
+.earth-page .topbar { padding-bottom: 8px; }
+.earth-page .space-sky { min-height: 220px; }
+
+/* 퀴즈에서는 보기 넉 장이 커야 해서 그림을 줄입니다 (하늘 그림은 빠지고 둘만 남습니다) */
+.earth-page .space-sky.small-sky { flex: none; height: 250px; min-height: 0; }
+@media (max-height: 700px) { .earth-page .space-sky.small-sky { height: 180px; } }
+
+/* 돌려 보기의 단추 — 계절 넷 · 오늘 · 하루 흐르기 · 1년 돌기 */
+.earth-ctrl {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.earth-ctrl[hidden] { display: none; }
+.earth-ctrl .chip { min-height: 44px; font-size: 15px; }
+.space-body .earth-ctrl .chip.on { color: #10131f; background: var(--yellow); }
+
+@media (max-width: 599px) {
+  .earth-ctrl { gap: 6px; }
+  .earth-ctrl .chip { min-height: 40px; padding: 6px 10px; font-size: 13px; }
+}

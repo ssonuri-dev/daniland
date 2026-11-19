@@ -58,6 +58,7 @@ ES5 IIFE 로 감싸 `window` 에 전역을 붙이는 방식입니다. `import`/`
 | `BOOKS` | `js/books.js` | 영어 그림책 — 책 한 권이 객체 하나, 그림은 `books/<id>/` (전집처럼 계속 늘어납니다). 목록 페이지도 읽습니다(책마다 카드) |
 | `PLANETS` `SPACE_QUIZ` | `js/planets.js` | 태양계 — 태양·행성 여덟·달·명왕성·핼리 혜성이 객체 하나씩 (이야기 카드·숫자 칩·퀴즈). `space.html` 과 `planet.html` 이 같이 읽습니다 |
 | `STAR_STAGES` `STAR_PATHS` `STAR_QUIZ` | `js/stars.js` | 별의 일생 — 단계(성운~블랙홀) 하나가 객체 하나, 무게 네 가지가 그 단계를 차례로 엮습니다. `star.html` 만 읽습니다 |
+| `EARTH_STEPS` `EARTH_QUIZ` | `js/earth-story.js` | 낮과 밤·계절 — 이야기 걸음(그날·시각·자전/공전 빠르기)과 퀴즈. `earth.html` 만 읽습니다 |
 | `TOWN_PLACES` | `js/town-places.js` | 마을 지도의 장소 열 곳 (이름·좌표·심부름 문장). `town.html` 과 `wordquiz.html`(장소 이름만)이 같이 읽습니다 |
 | `BODY_PARTS` | `js/body-parts.js` | 몸 이름의 부위 열세 곳 (이름·칸·hint). `body.html` 과 `wordquiz.html`(이름만)이 같이 읽습니다 |
 | `RIDDLES` | `js/riddles.js` | 수수께끼·넌센스 문제 — 문제 하나가 객체 하나 (계속 늘어납니다). `riddle.html` 만 읽습니다 |
@@ -135,6 +136,7 @@ index.html            과목 카드            home.js
       ├ space.html                          space.js    (태양계 — 까만 화면에 3D 로 공전. 행성을 누르면 아래로)
       │  └ planet.html?planet=jupiter       planet.js   (행성 한 곳 — 사진·숫자 칩·이야기 카드. 데이터는 js/planets.js)
       ├ star.html                           star.js     (별의 일생 — 무게를 고르면 성운에서 블랙홀까지. 데이터는 js/stars.js)
+      ├ earth.html                          earth.js    (낮과 밤·계절 — 자전·공전·기울기, 서울의 해 뜨는 시각. 데이터는 js/earth-story.js)
       ├ riddle.html                         riddle.js   (수수께끼·넌센스 — js/riddles.js 의 문제를 열 개씩, 보기 넉 장)
       ├ wordquiz.html                       wordquiz.js (단어 퀴즈 — 영어 '단어 공부' 수업 + 몸 이름 + 마을 지도 장소 이름을 섞어 열 문제, 문제 모양 넷)
       ├ smash.html                          smash.js    (부수기 — 젤리 괴물을 한 번에 터뜨림, 연속. 카메라로 손을 씀)
@@ -333,6 +335,19 @@ index.html            과목 카드            home.js
     '가장 멀리 간 끈'·'키 큰 그릇' 이 답이 아니게 자주 만듭니다(눈대중 대신 세게 하려고).
   - **자로 재기 2단계의 보기에는 '끝 눈금을 그대로 읽은 수' 를 꼭 넣습니다** — 초2 가 제일 많이 하는 실수라서요.
 
+  **낮과 밤·계절(`earth.html`)이 열아홉 번째**입니다 (2026-11-20) — 우주 과목 셋째 화면. 아이가 '왜 계절이 바뀌나·왜 겨울엔
+  해가 늦게 뜨나' 를 물어서 만들었고, 과학 과목을 새로 만들지 않고 우주에 넣은 것은 사용자가 정한 것입니다. 별의 일생과 같은 뼈대
+  (`.star-steps`·`.star-story`·`.star-cards` 재사용, 이야기는 읽고 나면 저절로 다음)이고 캔버스 한 장에 **그림 셋**을 나눠 그립니다 —
+  해 둘레(궤도 위 지구의 막대가 늘 같은 쪽으로 기움) · 가까이서 본 지구 · 우리 동네 하늘. `layout()` 이 가로가 넉넉하면 왼쪽 둘·오른쪽
+  큰 지구, 세로면 위 둘·아래 큰 지구, 퀴즈면 하늘을 뺍니다. 캔버스 칸 높이가 이야기 판·단추 줄에 따라 바뀌므로 `ResizeObserver` 로
+  다시 맞춥니다 (없으면 지구가 잘립니다 — 실제로 겪음).
+  - **해 뜨는·지는 시각은 진짜 계산입니다** — 서울 위경도로 NOAA 근사식(적위·균시차) + 대기 굴절 0.833도, 천문연구원 값과 1분 안.
+    **그림의 지구 기울기도 같은 적위**를 쓰니 숫자와 그림이 어긋나지 않습니다. `js/earth-story.js` 의 글에 시각을 적으면 그 값과 맞추세요.
+  - **가까이서 본 지구는 해가 오른쪽입니다** — 반대쪽에서 보면 아침이 지구 뒷면이라 '해 뜨는 순간' 이 안 보입니다(실제로 겪음).
+    여름에 막대 윗끝이 오른쪽(해 쪽)으로 기우는 것이 궤도 그림(6월 지구가 해의 왼쪽)과 같은 모습이기도 합니다.
+  - **노란·파란 줄(서울의 위도선)이 핵심**입니다 — 밝은 쪽에 걸친 몫이 곧 낮의 길이라, '겨울엔 해가 늦게 뜬다' 가 그림으로 보입니다. 지우지 마세요.
+  - 이야기에서 지구는 공전 궤도를 **앞으로만** 돌아 그날 자리로 갑니다(`dayTarget`) — 거꾸로 돌면 공전 방향을 잘못 배웁니다.
+
 ### 글자 쓰기는 획 하나씩 본다 (write.js)
 
 ⚠️ **낱말도 글꼴 글자를 통째로 맞추는 게 아니라, 자모 획으로 조립해서 획 하나씩 봅니다.**
@@ -425,6 +440,8 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.star.grown` | 끝까지 키워 본 별의 무게 목록 — 별 키우기의 👀 n/4 가 이것을 읽습니다 |
 | `daniland.best.riddle` | 수수께끼 최고 별 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.wordquiz` | 단어 퀴즈 최고 별 (카드의 ⭐ 는 이것을 읽습니다) |
+| `daniland.best.earth.quiz` `daniland.best.earth` | 낮과 밤·계절 퀴즈 최고 별 (카드의 ⭐ 는 뒤의 것을 읽습니다 — 이야기·돌려 보기는 점수가 없습니다) |
+| `daniland.earth.read` | 낮과 밤·계절 이야기를 끝까지 본 적 있음 (시작 화면의 📖 다 봤어요) |
 | `daniland.riddle.done` | 수수께끼에서 맞혀 본 문제의 `q` 목록 — 안 풀어 본 문제부터 내는 데 씁니다 |
 | `daniland.best.balloon.level` | 풍선 터뜨리기에서 도달한 최고 단계 |
 | `daniland.best.smash.level` | 부수기에서 도달한 최고 단계 (카드의 ⭐ 는 이것을 `bestUnit: '단계'` 로 읽습니다) |
@@ -443,7 +460,7 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.maze` | 한 번에 찾은 것 중 제일 큰 판 — stars 가 칸 수(5~11)입니다 (카드의 ⭐ 는 이것을 `bestUnit: '칸 미로'` 로 읽습니다) |
 | `daniland.balloonMode` `daniland.smashMode` | 그 놀이를 마지막에 누르기로 했나 손으로 했나 (`tap` / `hand`) |
 | `daniland.smashStart` | 부수기에서 마지막에 고른 시작 단계 |
-| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.fishStart` `daniland.archeryStart` `daniland.townAct` `daniland.worldAct` `daniland.bodyAct` `daniland.tripAct` `daniland.rideAct` `daniland.swedenAct` `daniland.greeceAct` `daniland.germanyAct` `daniland.franceAct` `daniland.norwayAct` `daniland.spainAct` `daniland.denmarkAct` `daniland.japanAct` `daniland.usaAct` `daniland.mexicoAct` `daniland.europeAct` `daniland.spaceAct` `daniland.spaceSpeed` `daniland.starAct` `daniland.starMass` `daniland.numShow`(가르기·모으기·더하기·빼기·곱하기의 그림/식/둘 다) `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.clock.<act>`(시계 단계 60·30·5) `daniland.shape.<act>` `daniland.measure.<act>`(모양·재고 견주기 단계 1·2) `daniland.mazeSize` | 마지막에 고른 설정 |
+| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.fishStart` `daniland.archeryStart` `daniland.townAct` `daniland.worldAct` `daniland.bodyAct` `daniland.tripAct` `daniland.rideAct` `daniland.swedenAct` `daniland.greeceAct` `daniland.germanyAct` `daniland.franceAct` `daniland.norwayAct` `daniland.spainAct` `daniland.denmarkAct` `daniland.japanAct` `daniland.usaAct` `daniland.mexicoAct` `daniland.europeAct` `daniland.spaceAct` `daniland.spaceSpeed` `daniland.starAct` `daniland.starMass` `daniland.earthAct` `daniland.numShow`(가르기·모으기·더하기·빼기·곱하기의 그림/식/둘 다) `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.clock.<act>`(시계 단계 60·30·5) `daniland.shape.<act>` `daniland.measure.<act>`(모양·재고 견주기 단계 1·2) `daniland.mazeSize` | 마지막에 고른 설정 |
 | `daniland.numMax` | 수학 놀이가 넷뿐이던 시절의 숫자 범위 — 읽기만 합니다 (`numbers.js` 의 `loadMax()`) |
 | `daniland.rate` `daniland.voice.<lang>` | 목소리·속도 |
 | `daniland.drawer` | 그림 그리기 도장 서랍 접힘 상태 |
