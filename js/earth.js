@@ -23,6 +23,10 @@
  *   story   : 이야기   - EARTH_STEPS 를 한 걸음씩 (읽고 나면 저절로 다음, 점수 없음)
  *   explore : 돌려 보기 - 지구·하늘을 옆으로 밀면 시각이, 궤도의 지구를 끌면 날짜가 바뀝니다
  *   quiz    : 퀴즈     - 보기 넉 장 (EARTH_QUIZ 에서 10문제)
+ *   planets : 다른 행성 - 행성 여덟이 저마다의 기울기·빠르기로 나란히 돕니다. 누르면 크게(해 둘레 + 가까이서).
+ *             아이가 '설명은 싫고 그림으로' 라고 해서 글은 이름표뿐입니다. 진짜인 것: 기울기, 도는 빠르기의 비율
+ *             (지구 하루 = 4초 — 그래서 수성·금성은 거의 멈춰 보이고 금성은 거꾸로 돕니다). 진짜가 아닌 것: 공 크기는
+ *             모두 같고, 해 둘레 한 바퀴는 어느 행성이나 16초입니다 (진짜 1년은 이름표에).
  *
  * 기록 키는 daniland.best.earth(카드의 ⭐)·daniland.best.earth.quiz,
  * 마지막에 고른 놀이는 daniland.earthAct, 이야기를 끝까지 본 적 있음은 daniland.earth.read 입니다.
@@ -49,8 +53,14 @@
   var ACTS = [
     { id: 'story',   name: '이야기',    icon: '📖', desc: '자전·공전·계절을 한 걸음씩 보여 줘요' },
     { id: 'explore', name: '돌려 보기', icon: '🌍', desc: '지구를 밀어 시각을, 해 둘레의 지구를 끌어 날짜를 바꿔요' },
-    { id: 'quiz',    name: '퀴즈',      icon: '❓', desc: '낮과 밤, 계절에 대해 물어봐요' }
+    { id: 'quiz',    name: '퀴즈',      icon: '❓', desc: '낮과 밤, 계절에 대해 물어봐요' },
+    { id: 'planets', name: '다른 행성', icon: '🪐', desc: '행성마다 도는 모습이 달라요 — 눌러서 크게 봐요' }
   ];
+
+  var PLANETS = window.EARTH_PLANETS || [];
+  var PLANET_SPIN = 6;       // 1초에 몇 시간 — 지구 하루가 4초
+  var PLANET_YEAR = 16;      // 크게 볼 때 해 둘레 한 바퀴(초) — 행성마다 같습니다 (진짜 1년은 이름표에)
+  var FAST_DAY = 6;          // '⏩ 빠르게' 를 켜면 그 행성의 하루가 이만큼(초)
 
   var SEASONS = [
     { id: 'spring', name: '봄',   icon: '🌸', day: 80 },
@@ -121,7 +131,12 @@
     deck: [],
     prompt: '',
     read: UI.loadValue(READ_KEY) === '1',
-    touched: false
+    touched: false,
+    planet: -1,                     // 다른 행성: -1 이면 여덟을 나란히, 아니면 그 행성을 크게
+    phase: [],                      // 행성마다 하루 중 지금 몇 시간째
+    pAngle: Math.PI,                // 크게 볼 때 해 둘레의 자리
+    pFast: false,
+    pTouched: false
   };
 
   if (!findAct(state.act)) state.act = 'story';
@@ -256,6 +271,24 @@
     var g = 8;
     rects = {};
     var wide = W >= H * 1.15;
+    if (state.act === 'planets' && state.playing) {
+      if (state.planet < 0) {
+        var cols = wide ? 4 : 2, rows = PLANETS.length / cols;
+        var cw = (W - g * (cols - 1)) / cols, ch = (H - g * (rows - 1)) / rows;
+        rects.cells = PLANETS.map(function (p, i) {
+          return { x: (i % cols) * (cw + g), y: Math.floor(i / cols) * (ch + g), w: cw, h: ch };
+        });
+      } else if (wide) {
+        var ow = Math.round((W - g) * 0.42);
+        rects.orbit = { x: 0, y: 0, w: ow, h: H };
+        rects.globe = { x: ow + g, y: 0, w: W - ow - g, h: H };
+      } else {
+        var oh = Math.round((H - g) * 0.38);
+        rects.orbit = { x: 0, y: 0, w: W, h: oh };
+        rects.globe = { x: 0, y: oh + g, w: W, h: H - oh - g };
+      }
+      return;
+    }
     // 이야기에서는 지금 말하는 그림만 크게 — 유치원생에게 그림 셋을 한꺼번에 보이면 어디를 볼지 모릅니다
     if (state.act === 'story' && state.playing && state.focus !== 'all') {
       if (state.focus === 'globe+sky') {
@@ -314,6 +347,14 @@
   }
 
   function advance(dt) {
+    if (state.act === 'planets' && state.playing) {
+      PLANETS.forEach(function (p, i) {
+        var rate = (state.pFast && i === state.planet) ? p.day / FAST_DAY : PLANET_SPIN;
+        state.phase[i] = ((state.phase[i] || 0) + rate * dt) % p.day;
+      });
+      if (state.planet >= 0) state.pAngle = (state.pAngle + Math.PI * 2 / PLANET_YEAR * dt) % (Math.PI * 2);
+      return;
+    }
     if (state.dayTarget !== null) {
       // 앞으로만 돕니다 — 지구는 거꾸로 공전하지 않으니까요
       var left = state.dayTarget - state.day;
@@ -339,6 +380,7 @@
     }
     ctx.globalAlpha = 1;
 
+    if (state.act === 'planets' && state.playing) return drawPlanets();
     var sun = solar(state.day);
     if (rects.orbit) drawOrbit(rects.orbit);
     if (rects.globe) drawGlobe(rects.globe, sun);
@@ -455,9 +497,11 @@
   }
 
   // 작은 지구 — 해 쪽 반만 밝고, 오른쪽으로 기운 막대가 꽂혀 있습니다 (귤에 꽂은 이쑤시개처럼)
-  function drawSmallEarth(x, y, r, toSunX, toSunY) {
+  function drawSmallEarth(x, y, r, toSunX, toSunY, o) {
+    o = o || {};
+    var tilt = (o.tilt === undefined) ? TILT : o.tilt;
     var ang = Math.atan2(toSunY, toSunX);
-    ctx.fillStyle = '#16264f';
+    ctx.fillStyle = o.dark || '#16264f';
     ctx.beginPath();
     ctx.arc(x, y, r, 0, Math.PI * 2);
     ctx.fill();
@@ -465,7 +509,7 @@
     ctx.beginPath();
     ctx.arc(x, y, r, 0, Math.PI * 2);
     ctx.clip();
-    ctx.fillStyle = '#4b9cf0';
+    ctx.fillStyle = o.lit || '#4b9cf0';
     ctx.beginPath();
     ctx.arc(x, y, r, ang - Math.PI / 2, ang + Math.PI / 2);
     ctx.closePath();
@@ -473,7 +517,7 @@
     ctx.restore();
 
     // 막대 — 늘 같은 쪽으로
-    var ax = Math.sin(TILT), ay = -Math.cos(TILT);
+    var ax = Math.sin(tilt), ay = -Math.cos(tilt);
     var len = r * 1.9;
     ctx.strokeStyle = '#ffe9a8';
     ctx.lineWidth = 2;
@@ -481,6 +525,7 @@
     ctx.moveTo(x - ax * len, y - ay * len);
     ctx.lineTo(x + ax * len, y + ay * len);
     ctx.stroke();
+    if (o.star === false) return;
     ctx.fillStyle = '#ffe9a8';
     ctx.font = '700 ' + Math.max(9, Math.round(r * 0.9)) + 'px "Nanum Gothic", sans-serif';
     ctx.textAlign = 'center';
@@ -499,11 +544,14 @@
    * 여름에 막대 윗끝이 오른쪽(해 쪽)으로 기우는 것이 궤도 그림(6월 지구가 해의 왼쪽)과 같은 모습입니다. */
 
   function globeFrame(sun) {
-    var sd = Math.sin(sun.dec);
-    var th = orbitAngle(state.day);
-    var w = Math.sqrt(Math.max(0, 1 - sd * sd - Math.cos(TILT) * Math.cos(TILT)));
+    return frameFor(Math.sin(sun.dec), orbitAngle(state.day), TILT);
+  }
+
+  // sd: 해의 적위의 sin, th: 공전 자리, tilt: 자전축 기울기(라디안 — 90도가 넘으면 거꾸로 도는 행성)
+  function frameFor(sd, th, tilt) {
+    var w = Math.sqrt(Math.max(0, 1 - sd * sd - Math.cos(tilt) * Math.cos(tilt)));
     if (Math.sin(th) < 0) w = -w;
-    var a = { s: sd, v: w, z: Math.cos(TILT) };
+    var a = { s: sd, v: w, z: Math.cos(tilt) };
     // e1: 한낮 쪽 (해 방향에서 축 성분을 뺀 것), e2: 저녁 쪽 (a × e1)
     var e1 = { s: 1 - sd * a.s, v: -sd * a.v, z: -sd * a.z };
     var n = Math.sqrt(e1.s * e1.s + e1.v * e1.v + e1.z * e1.z) || 1;
@@ -630,7 +678,7 @@
     ctx.fillText('🕒 ' + clockText(state.time), r.x + r.w - 10, r.y + (r.w < 360 ? 26 : 8));
   }
 
-  function drawAxis(f, P, R, cx, cy, front) {
+  function drawAxis(f, P, R, cx, cy, front, label) {
     var n = 40;
     ctx.strokeStyle = '#ffe9a8';
     ctx.lineWidth = 3;
@@ -651,7 +699,7 @@
         ctx.lineTo(q1.x, q1.y);
         ctx.stroke();
       }
-      if (end === 1) {
+      if (end === 1 && label !== false) {
         var tip = P({ s: f.a.s * 1.4, v: f.a.v * 1.4, z: f.a.z * 1.4 });
         var tipHidden = f.a.v > 0 && Math.hypot(tip.x - cx, tip.y - cy) < R;
         if (front === (f.a.v <= 0) && !tipHidden) {
@@ -905,9 +953,17 @@
   function inRect(r, x, y) { return r && x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h; }
 
   el.canvas.addEventListener('pointerdown', function (e) {
-    if (state.act !== 'explore' || !state.playing) return;
+    if (!state.playing) return;
     var b = el.canvas.getBoundingClientRect();
     var x = e.clientX - b.left, y = e.clientY - b.top;
+    if (state.act === 'planets') {
+      if (state.planet >= 0 || !rects.cells) return;
+      for (var i = 0; i < rects.cells.length; i++) {
+        if (inRect(rects.cells[i], x, y)) { if (window.SFX) SFX.tap(); openPlanet(i); return; }
+      }
+      return;
+    }
+    if (state.act !== 'explore') return;
     var which = inRect(rects.orbit, x, y) ? 'orbit' : (inRect(rects.sky, x, y) ? 'sky' : (inRect(rects.globe, x, y) ? 'globe' : null));
     if (!which) return;
     drag = { which: which, x: x, time: state.time };
@@ -1036,6 +1092,7 @@
     el.steps.hidden = true;
     el.cards.hidden = true;
     el.ctrl.hidden = false;
+    el.hint.textContent = '👉 지구나 하늘을 옆으로 밀어 보세요';
     el.hint.hidden = state.touched;
     var today = new Date();
     state.day = dayOfYear(today);
@@ -1112,6 +1169,264 @@
     var s = seasonOf(d.month);
     var text = s.icon + ' ' + d.month + '월 ' + d.date + '일 · ' + clockText(state.time);
     if (text !== lastLabel) { lastLabel = text; setLabel(text); }
+  }
+
+  /* ---------- 🪐 다른 행성 ----------
+   * 공은 가까이서 본 지구와 같은 좌표(해가 오른쪽, frameFor)로 그립니다. 나란히 볼 때는 여덟 다 공전 자리를
+   * π(지구의 6월 자리) 근처에 두어 기울기가 옆으로 보이게 하고, 크게 볼 때만 해 둘레를 돕니다. */
+
+  // 나란히 볼 때의 공전 자리 — 딱 π 면 보는 눈이 고리 판과 나란해져 토성 고리가 선 하나로 납작해집니다.
+  // 조금 비켜 서면 기울기도 옆으로 보이고 고리도 열려 보입니다.
+  var GRID_ANGLE = Math.PI + 0.7;
+  var FLAG_LAT = LAT;     // 깃발은 행성마다 우리나라와 같은 위도에 꽂습니다 — 견주어 보려고
+  var RINGS = [            // 토성 고리 (행성 반지름 단위 — C·B·A 고리)
+    [1.24, 1.53, 'rgba(200,185,150,0.35)'],
+    [1.53, 1.95, 'rgba(236,218,172,0.85)'],
+    [2.03, 2.27, 'rgba(210,192,150,0.7)']
+  ];
+
+  function planetFrame(p, th) {
+    var tilt = p.tilt * RAD;
+    return frameFor(-Math.sin(tilt) * Math.cos(th), th, tilt);
+  }
+
+  function planetHour(i) {
+    var p = PLANETS[i];
+    return Math.PI * 2 * ((state.phase[i] || 0) / p.day) - Math.PI / 2;   // 0 시간째 = 해 뜨는 때
+  }
+
+  function drawPlanets() {
+    if (state.planet < 0) {
+      if (!rects.cells) return;
+      PLANETS.forEach(function (p, i) { drawPlanetCell(rects.cells[i], p, i); });
+      return;
+    }
+    var p = PLANETS[state.planet];
+    drawPlanetOrbit(rects.orbit, p);
+    drawPlanetGlobe(rects.globe, p, state.planet);
+  }
+
+  function sunlightEdge(r) {
+    ctx.save();
+    roundRect(r.x, r.y, r.w, r.h, 16);
+    ctx.clip();
+    var g = ctx.createLinearGradient(r.x + r.w, 0, r.x + r.w - Math.min(90, r.w * 0.35), 0);
+    g.addColorStop(0, 'rgba(255,200,80,0.22)');
+    g.addColorStop(1, 'rgba(255,200,80,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(r.x, r.y, r.w, r.h);
+    ctx.restore();
+  }
+
+  function drawPlanetCell(r, p, i) {
+    panel(r, '');
+    sunlightEdge(r);
+    var small = r.w < 220 || r.h < 150;
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '800 ' + (small ? 15 : 18) + 'px "Nanum Gothic", sans-serif';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillText(p.name, r.x + 10, r.y + 8);
+    ctx.fillStyle = '#c9d2f5';
+    ctx.font = '700 ' + (small ? 11 : 13) + 'px "Nanum Gothic", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText(p.badge, r.x + r.w / 2, r.y + r.h - 7);
+
+    var top = small ? 26 : 32, bottom = small ? 20 : 24;
+    var R = Math.min(r.w * 0.27, (r.h - top - bottom) * 0.36) * (p.ring ? 0.72 : 1);
+    var cx = r.x + r.w / 2, cy = r.y + top + (r.h - top - bottom) / 2;
+    var f = planetFrame(p, GRID_ANGLE);
+    drawBody(cx, cy, R, f, p, planetHour(i), false);
+  }
+
+  function drawPlanetOrbit(r, p) {
+    panel(r, '☀️ 해 둘레를 도는 ' + p.name);
+    var g = orbitGeom(r);
+    var th = state.pAngle;
+    var ex = g.cx + Math.cos(th) * g.s;
+    var ey = g.cy - Math.sin(th) * g.s * FLAT;
+    var er = Math.max(7, g.s * 0.11);
+    var sr = Math.max(10, g.s * 0.17);
+    ctx.strokeStyle = 'rgba(160,180,255,0.35)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 5]);
+    ctx.beginPath();
+    ctx.ellipse(g.cx, g.cy, g.s, g.s * FLAT, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    var o = { tilt: p.tilt * RAD, lit: p.look[1], dark: p.look[2], star: false };
+    var behind = Math.sin(th) > 0;
+    if (!behind) drawSunBall(g.cx, g.cy, sr);
+    drawSmallEarth(ex, ey, er, g.cx - ex, g.cy - ey, o);
+    if (behind) drawSunBall(g.cx, g.cy, sr);
+
+    ctx.fillStyle = '#e8edff';
+    ctx.font = '700 ' + (r.w < 300 ? 13 : 15) + 'px "Nanum Gothic", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText('🔄 한 바퀴 ' + p.yearText, r.x + r.w / 2, r.y + r.h - 8);
+  }
+
+  function drawPlanetGlobe(r, p, i) {
+    panel(r, '🔭 가까이서 본 ' + p.name);
+    var R = Math.min(r.w * 0.30, (r.h - 64) * 0.40) * (p.ring ? 0.62 : 1);
+    var cx = r.x + r.w / 2 - R * 0.2, cy = r.y + r.h / 2 + 4;
+
+    var sunR = Math.max(18, Math.min(R * 0.42, r.w * 0.11));
+    var sunX = r.x + r.w + sunR * 0.25;
+    ctx.save();
+    roundRect(r.x, r.y, r.w, r.h, 16);
+    ctx.clip();
+    drawSunBall(sunX, cy, sunR);
+    ctx.restore();
+
+    var f = planetFrame(p, state.pAngle);
+    var h = planetHour(i);
+    drawBody(cx, cy, R, f, p, h, true);
+    var P = function (q) { return { x: cx + q.s * R, y: cy - q.z * R }; };
+    drawPin(f, P, FLAG_LAT, h, p.home ? '우리 집' : '깃발', p.home ? '🏠' : '🚩');
+
+    ctx.fillStyle = '#e8edff';
+    ctx.font = '700 ' + (r.w < 320 ? 13 : 15) + 'px "Nanum Gothic", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText('🔁 하루 ' + p.dayText + (state.pFast ? '  ⏩' : ''), r.x + r.w / 2, r.y + r.h - 8);
+  }
+
+  // 행성 공 하나 — 고리 뒤쪽 · 막대 뒤쪽 · 공 · 줄무늬 · 밤 · 깃발 길 · 고리 앞쪽 · 막대 앞쪽 차례
+  function drawBody(cx, cy, R, f, p, h, big) {
+    var P = function (q) { return { x: cx + q.s * R, y: cy - q.z * R }; };
+    if (p.ring) drawRing(f, P, false);
+    drawAxis(f, P, R, cx, cy, false, false);
+
+    var L = p.look;
+    var g = ctx.createRadialGradient(cx + R * 0.35, cy - R * 0.3, R * 0.1, cx, cy, R);
+    g.addColorStop(0, L[0]);
+    g.addColorStop(0.6, L[1]);
+    g.addColorStop(1, L[2]);
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.clip();
+    (p.bands || []).forEach(function (b) {
+      ctx.strokeStyle = b.c;
+      ctx.lineWidth = Math.max(2, R * b.w);
+      strokeCurve(function (u) { return surf(f, b.lat, u * Math.PI * 2); }, P, true);
+    });
+    // 경도 줄 — 도는 것이 보이게
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(255,255,255,0.16)';
+    for (var lo = 0; lo < 360; lo += (big ? 30 : 45)) {
+      (function (lo) {
+        strokeCurve(function (u) { return surf(f, -90 + u * 180, h + lo * RAD); }, P, true);
+      })(lo);
+    }
+    var night = ctx.createLinearGradient(cx + R * 0.05, 0, cx - R * 0.1, 0);
+    night.addColorStop(0, 'rgba(3,6,22,0)');
+    night.addColorStop(1, 'rgba(3,6,22,0.74)');
+    ctx.fillStyle = night;
+    ctx.fillRect(cx - R * 1.05, cy - R, R * 1.1, R * 2);
+    ctx.restore();
+
+    drawDayPath(f, P, FLAG_LAT, big ? 3 : 2);
+    if (p.ring) drawRing(f, P, true);
+    drawAxis(f, P, R, cx, cy, true, false);
+
+    if (!big) {
+      // 작은 공에는 깃발만 (이름표 없이)
+      var q = surf(f, FLAG_LAT, h), s = P(q);
+      ctx.globalAlpha = q.v <= 0 ? 1 : 0.35;
+      ctx.font = Math.max(12, Math.round(R * 0.42)) + 'px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(p.home ? '🏠' : '🚩', s.x, s.y);
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  // 토성 고리 — 자전축에 수직인 판 위의 띠. 앞쪽 반(front)과 뒤쪽 반을 따로 그려 공을 감쌉니다.
+  function drawRing(f, P, front) {
+    var e1 = f.e1, e2 = f.e2;
+    var phi = Math.atan2(e2.v, e1.v);              // 이 각도에서 가장 뒤 (v 가 가장 큼)
+    var start = front ? phi + Math.PI / 2 : phi - Math.PI / 2;
+    var n = 48;
+    function pt(u, rr) {
+      var c = Math.cos(u), s = Math.sin(u);
+      return P({ s: rr * (c * e1.s + s * e2.s), v: 0, z: rr * (c * e1.z + s * e2.z) });
+    }
+    RINGS.forEach(function (rg) {
+      ctx.fillStyle = rg[2];
+      ctx.beginPath();
+      var i, q;
+      for (i = 0; i <= n; i++) {
+        q = pt(start + Math.PI * i / n, rg[1]);
+        if (i) ctx.lineTo(q.x, q.y); else ctx.moveTo(q.x, q.y);
+      }
+      for (i = n; i >= 0; i--) {
+        q = pt(start + Math.PI * i / n, rg[0]);
+        ctx.lineTo(q.x, q.y);
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = rg[2];        // 옆에서 보면 넓이가 0 이 되어도 선으로는 보이게
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+  }
+
+  function startPlanets() {
+    el.story.hidden = true;
+    el.steps.hidden = true;
+    el.cards.hidden = true;
+    state.spin = 0;
+    state.year = 0;
+    state.dayTarget = null;
+    state.phase = PLANETS.map(function () { return 0; });
+    el.bar.style.width = '0%';
+    el.score.textContent = '🪐';
+    showGrid();
+  }
+
+  function showGrid() {
+    state.planet = -1;
+    state.pFast = false;
+    el.ctrl.hidden = true;
+    el.ctrl.innerHTML = '';
+    el.hint.textContent = '👉 행성을 눌러 보세요';
+    el.hint.hidden = state.pTouched;
+    layout();
+    setLabel('🪐 행성마다 도는 모습이 달라요');
+    state.prompt = '행성마다 도는 모습이 달라요. 행성을 하나 눌러 보세요.';
+    el.speakBtn.hidden = !(window.TTS && TTS.supported);
+    setTimeout(function () { speak(state.prompt); }, 300);
+  }
+
+  function openPlanet(i) {
+    var p = PLANETS[i];
+    state.planet = i;
+    state.pFast = false;
+    state.pAngle = Math.PI;
+    state.pTouched = true;
+    el.hint.hidden = true;
+    el.ctrl.innerHTML = '';
+    addCtrl('🪐 모두 보기', function () { showGrid(); });
+    addCtrl('◀ 앞 행성', function () { openPlanet((state.planet + PLANETS.length - 1) % PLANETS.length); });
+    addCtrl('다음 행성 ▶', function () { openPlanet((state.planet + 1) % PLANETS.length); });
+    addCtrl('⏩ 빠르게', function (b) {
+      state.pFast = !state.pFast;
+      b.classList.toggle('on', state.pFast);
+    });
+    el.ctrl.hidden = false;
+    layout();
+    setLabel(p.name + ' · 🔁 하루 ' + p.dayText + ' · 🔄 1년 ' + p.yearText);
+    state.prompt = p.say;
+    speak(state.prompt);
   }
 
   /* ---------- ❓ 퀴즈 ---------- */
@@ -1206,6 +1521,7 @@
 
     if (state.act === 'story') return startStory();
     if (state.act === 'explore') return startExplore();
+    if (state.act === 'planets') return startPlanets();
 
     el.story.hidden = true;
     el.steps.hidden = true;

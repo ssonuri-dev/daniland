@@ -952,7 +952,7 @@ window.PAGES = [
     subject: '우주',
     title: '낮과 밤·계절',
     icon: '🌍',
-    meta: '자전·공전 이야기 · 돌려 보기 · 퀴즈',
+    meta: '자전·공전 이야기 · 돌려 보기 · 퀴즈 · 다른 행성',
     href: 'earth.html',
     bestKey: 'daniland.best.earth'
   },
