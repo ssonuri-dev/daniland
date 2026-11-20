@@ -958,6 +958,15 @@ window.PAGES = [
   },
 
   {
+    subject: '우주',
+    title: '우주 쓰레기',
+    icon: '🛰️',
+    meta: '지구 둘레 구경하기 · 그물로 청소하기',
+    href: 'debris.html',
+    bestKey: 'daniland.best.debris'
+  },
+
+  {
     subject: '한글',
     group: '글자 쓰기·만들기',
     title: '글자 쓰기',
