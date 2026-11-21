@@ -138,6 +138,7 @@ index.html            과목 카드            home.js
       ├ star.html                           star.js     (별의 일생 — 무게를 고르면 성운에서 블랙홀까지. 데이터는 js/stars.js)
       ├ earth.html                          earth.js    (낮과 밤·계절 — 자전·공전·기울기, 서울의 해 뜨는 시각. 데이터는 js/earth-story.js)
       ├ debris.html                         debris.js   (우주 쓰레기 — 진짜 높이 비율의 궤도 위 쓰레기·위성, 구경하기·그물로 청소하기)
+      ├ atmosphere.html                     atmosphere.js (대기권 — 땅에서 우주까지 세로 하늘, 올라가 보기·왜 불탈까·어디에 있을까)
       ├ riddle.html                         riddle.js   (수수께끼·넌센스 — js/riddles.js 의 문제를 열 개씩, 보기 넉 장)
       ├ wordquiz.html                       wordquiz.js (단어 퀴즈 — 영어 '단어 공부' 수업 + 몸 이름 + 마을 지도 장소 이름을 섞어 열 문제, 문제 모양 넷)
       ├ smash.html                          smash.js    (부수기 — 젤리 괴물을 한 번에 터뜨림, 연속. 카메라로 손을 씀)
@@ -367,6 +368,15 @@ index.html            과목 카드            home.js
   - 청소하기에서 일하는 위성을 누르면 **벌주지 않고 알려 주기만** 하고 그다음 잡은 것은 ⭐ 를 안 셉니다(퀴즈의 firstTry 와 같은 규칙).
     잡힌 쓰레기는 내려가다(`fall`) 공기에 닿으면 불탑니다(`burn`) — '끌어내려 태운다' 가 진짜 청소 방법이라 그대로 보입니다.
 
+  **대기권(`atmosphere.html`)이 스물한 번째**입니다 (2026-11-21) — 우주 과목 다섯째 화면. 사용자가 '대기권 카드, 왜 타는지까지' 를 청했고
+  우주 쓰레기 바로 뒤에 놓았습니다. 우주 쓰레기와 같은 뼈대(`.earth-page`·캔버스 한 장)이고 데이터도 화면 안(`THINGS`·`LAYERS`·`DROPS`)에 있습니다.
+  - **불타는 까닭은 '마찰' 이 아니라 '압축'** 으로 그립니다 — 🔍 돋보기 안에서 앞의 공기 알갱이가 쌓여 뜨거워집니다. 흔한 설명이라고 '문질러서' 로 바꾸지 마세요.
+    뜨거움은 `glowOf()` = log(공기의 짙기 × 빠르기³) 이고 공기의 짙기는 `exp(-h/7.2)` 입니다 — 이 식 덕에 별똥별이 90km 쯤에서 다 타고
+    쓰레기가 75km 쯤에서 쪼개지며(진짜도 78km 쯤), 우주선은 느려지면 식습니다. 높이를 손으로 맞추지 말고 이 식을 건드리세요.
+  - 올라가 보기·어디에 있을까의 세로 칸은 **√(높이)** 비율입니다(`yOf`) — 그대로면 구름·비행기가 바닥에 붙습니다. km 눈금은 맞게 적습니다.
+    공기 알갱이(흰 점)의 짙기는 화면 넓이당 진짜 짙기(`exp(-h/7.6)`)라 땅 가까이에만 몰립니다 — 이것이 '위로 갈수록 공기가 적다' 의 그림입니다.
+  - 어디에 있을까는 `lo`~`hi` 높이 범위 ± `TOL`(18px) 안을 누르면 맞습니다. 틀리면 '조금 더 위/아래' 만 알려 주고, 두 번 틀리면 범위를 밝힙니다.
+
 ### 글자 쓰기는 획 하나씩 본다 (write.js)
 
 ⚠️ **낱말도 글꼴 글자를 통째로 맞추는 게 아니라, 자모 획으로 조립해서 획 하나씩 봅니다.**
@@ -461,6 +471,7 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.wordquiz` | 단어 퀴즈 최고 별 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.earth.quiz` `daniland.best.earth` | 낮과 밤·계절 퀴즈 최고 별 (카드의 ⭐ 는 뒤의 것을 읽습니다 — 이야기·돌려 보기는 점수가 없습니다) |
 | `daniland.best.debris.clean` `daniland.best.debris` | 우주 쓰레기 청소하기 최고 별 (카드의 ⭐ 는 뒤의 것 — 구경하기는 점수가 없습니다) |
+| `daniland.best.air.where` `daniland.best.air` | 대기권 어디에 있을까 최고 별 (카드의 ⭐ 는 뒤의 것 — 올라가 보기·왜 불탈까는 점수가 없습니다) |
 | `daniland.earth.read` | 낮과 밤·계절 이야기를 끝까지 본 적 있음 (시작 화면의 📖 다 봤어요) |
 | `daniland.riddle.done` | 수수께끼에서 맞혀 본 문제의 `q` 목록 — 안 풀어 본 문제부터 내는 데 씁니다 |
 | `daniland.best.balloon.level` | 풍선 터뜨리기에서 도달한 최고 단계 |
@@ -480,7 +491,7 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.maze` | 한 번에 찾은 것 중 제일 큰 판 — stars 가 칸 수(5~11)입니다 (카드의 ⭐ 는 이것을 `bestUnit: '칸 미로'` 로 읽습니다) |
 | `daniland.balloonMode` `daniland.smashMode` | 그 놀이를 마지막에 누르기로 했나 손으로 했나 (`tap` / `hand`) |
 | `daniland.smashStart` | 부수기에서 마지막에 고른 시작 단계 |
-| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.fishStart` `daniland.archeryStart` `daniland.townAct` `daniland.worldAct` `daniland.bodyAct` `daniland.tripAct` `daniland.rideAct` `daniland.swedenAct` `daniland.greeceAct` `daniland.germanyAct` `daniland.franceAct` `daniland.norwayAct` `daniland.spainAct` `daniland.denmarkAct` `daniland.japanAct` `daniland.usaAct` `daniland.mexicoAct` `daniland.europeAct` `daniland.spaceAct` `daniland.spaceSpeed` `daniland.starAct` `daniland.starMass` `daniland.earthAct` `daniland.debrisAct` `daniland.numShow`(가르기·모으기·더하기·빼기·곱하기의 그림/식/둘 다) `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.clock.<act>`(시계 단계 60·30·5) `daniland.shape.<act>` `daniland.measure.<act>`(모양·재고 견주기 단계 1·2) `daniland.mazeSize` | 마지막에 고른 설정 |
+| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.fishStart` `daniland.archeryStart` `daniland.townAct` `daniland.worldAct` `daniland.bodyAct` `daniland.tripAct` `daniland.rideAct` `daniland.swedenAct` `daniland.greeceAct` `daniland.germanyAct` `daniland.franceAct` `daniland.norwayAct` `daniland.spainAct` `daniland.denmarkAct` `daniland.japanAct` `daniland.usaAct` `daniland.mexicoAct` `daniland.europeAct` `daniland.spaceAct` `daniland.spaceSpeed` `daniland.starAct` `daniland.starMass` `daniland.earthAct` `daniland.debrisAct` `daniland.airAct` `daniland.numShow`(가르기·모으기·더하기·빼기·곱하기의 그림/식/둘 다) `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.clock.<act>`(시계 단계 60·30·5) `daniland.shape.<act>` `daniland.measure.<act>`(모양·재고 견주기 단계 1·2) `daniland.mazeSize` | 마지막에 고른 설정 |
 | `daniland.numMax` | 수학 놀이가 넷뿐이던 시절의 숫자 범위 — 읽기만 합니다 (`numbers.js` 의 `loadMax()`) |
 | `daniland.rate` `daniland.voice.<lang>` | 목소리·속도 |
 | `daniland.drawer` | 그림 그리기 도장 서랍 접힘 상태 |

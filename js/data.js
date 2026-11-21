@@ -967,6 +967,15 @@ window.PAGES = [
   },
 
   {
+    subject: '우주',
+    title: '대기권',
+    icon: '🌤️',
+    meta: '땅에서 우주까지 올라가 보기 · 왜 불탈까 · 어디에 있을까',
+    href: 'atmosphere.html',
+    bestKey: 'daniland.best.air'
+  },
+
+  {
     subject: '한글',
     group: '글자 쓰기·만들기',
     title: '글자 쓰기',
