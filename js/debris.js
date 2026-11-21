@@ -15,11 +15,12 @@
  *   - 점의 개수 (진짜는 사과보다 큰 것만 수만 개 — 그대로 찍으면 지구가 안 보입니다), 점·그림의 크기.
  *   - 청소하기의 청소 위성은 화면 구석에 서 있습니다 (진짜는 같이 궤도를 돕니다).
  *
- * 놀이 2가지
+ * 놀이 3가지
  *   look  : 구경하기 - 점을 누르면 무엇인지, 얼마나 높이 있는지. 가까이/멀리, 쓰레기만 보기
  *   clean : 청소하기 - 회색 쓰레기 열 개를 눌러 그물로 잡아요. 초록 불이 깜빡이는 일하는 위성은 잡으면 안 돼요
+ *   quiz  : 퀴즈     - 보기 넉 장, QUIZ 에서 열 문제 (아이가 청해서 2026-11-21 더함). 위 그림은 문제마다 가까이/멀리
  *
- * 기록 키는 daniland.best.debris(카드의 ⭐)·daniland.best.debris.clean, 마지막에 고른 놀이는 daniland.debrisAct.
+ * 기록 키는 daniland.best.debris(카드의 ⭐)·daniland.best.debris.clean·.quiz, 마지막에 고른 놀이는 daniland.debrisAct.
  * ========================================================================= */
 
 (function () {
@@ -37,8 +38,50 @@
 
   var ACTS = [
     { id: 'look',  name: '구경하기', icon: '👀', desc: '지구 둘레를 도는 것들을 눌러 봐요' },
-    { id: 'clean', name: '청소하기', icon: '🧹', desc: '회색 쓰레기를 그물로 잡아요 — 일하는 위성은 빼고요' }
+    { id: 'clean', name: '청소하기', icon: '🧹', desc: '회색 쓰레기를 그물로 잡아요 — 일하는 위성은 빼고요' },
+    { id: 'quiz',  name: '퀴즈',     icon: '❓', desc: '우주 쓰레기 문제 열 개' }
   ];
+
+  // 퀴즈 — 첫 보기가 정답(섞어서 냅니다). view 는 위 그림을 가까이(near)/멀리(far) 볼지.
+  // 사실은 정확하게: 낮은 궤도는 1초에 7.5km 쯤(소총 총알의 여덟 배쯤), 10cm 넘는 것 수만 개·1cm 넘는 것 백만 개 넘게(ESA),
+  // 우주정거장은 실제로 쓰레기를 비켜 가고, 2009년 이리듐-코스모스 충돌처럼 부딪히면 조각이 늘어나며,
+  // 다 쓴 정지 위성은 더 높은 '무덤 궤도' 로 비켜 갑니다.
+  var QUIZ = [
+    { q: '우주 쓰레기는 무엇일까요?', view: 'near',
+      why: '고장 난 위성, 다 쓴 로켓, 부서진 조각이 우주 쓰레기예요.',
+      choices: ['🛰️ 고장 난 위성', '☄️ 별똥별', '🌙 달', '⭐ 별'] },
+    { q: '우주 쓰레기는 어디에 가장 많을까요?', view: 'far',
+      why: '지구 바로 위 낮은 곳에 가장 많아요. 위성을 그곳에 가장 많이 보내서요.',
+      choices: ['🌍 지구 바로 위', '🌙 달 옆', '☀️ 해 옆', '🪐 토성 옆'] },
+    { q: '청소할 때 잡으면 안 되는 것은 무엇일까요?', view: 'near',
+      why: '우주정거장이에요. 우주비행사가 살고 있어요. 일하는 위성도 잡으면 안 돼요.',
+      choices: ['👩‍🚀 우주정거장', '🔩 부서진 조각', '🚀 다 쓴 로켓', '🛰️ 고장 난 위성'] },
+    { q: '낮은 곳의 우주 쓰레기는 얼마나 빨리 돌까요?', view: 'near',
+      why: '1초에 7킬로미터가 넘어요. 총알보다 훨씬 빨라요.',
+      choices: ['🚀 총알보다 빨리', '🚗 자동차만큼', '🚶 걷는 만큼', '🛑 안 움직여요'] },
+    { q: '작은 조각이 위성에 부딪히면 어떻게 될까요?', view: 'near',
+      why: '너무 빨라서 작은 조각도 구멍을 내요. 그래서 우주정거장은 쓰레기가 오면 살짝 비켜 가요.',
+      choices: ['💥 구멍이 나요', '🎈 통 튕겨 나가요', '😴 아무 일도 없어요', '🍬 딱 달라붙어요'] },
+    { q: '쓰레기끼리 부딪히면 어떻게 될까요?', view: 'near',
+      why: '산산조각이 나서 쓰레기가 더 많아져요. 그래서 빨리 치워야 해요.',
+      choices: ['🧩 조각이 더 많아져요', '🤝 하나로 붙어요', '✨ 사라져요', '🛑 멈춰요'] },
+    { q: '우주 쓰레기를 어떻게 치울까요?', view: 'near',
+      why: '그물이나 로봇 팔로 잡아서 아래로 끌어내려요.',
+      choices: ['🕸️ 그물로 잡아요', '🧹 빗자루로 쓸어요', '💨 바람으로 날려요', '🧽 걸레로 닦아요'] },
+    { q: '끌어내린 쓰레기는 어떻게 될까요?', view: 'near',
+      why: '아주 빨라서 앞의 공기가 꽉 눌려 뜨거워지고, 불타 없어져요.',
+      choices: ['🔥 공기 속에서 불타요', '❄️ 꽁꽁 얼어요', '🎈 둥둥 떠다녀요', '🌱 땅에서 자라요'] },
+    { q: '아주 높은 곳의 쓰레기는 언제 떨어질까요?', view: 'far',
+      why: '높은 곳엔 공기가 거의 없어서 몇백 년, 몇천 년도 돌아요. 낮은 곳의 것만 조금씩 내려와 불타요.',
+      choices: ['⏳ 아주아주 오래 돌아요', '⚡ 내일 떨어져요', '☀️ 해로 날아가요', '🌙 달에 떨어져요'] },
+    { q: '사과보다 큰 우주 쓰레기는 몇 개쯤 될까요?', view: 'far',
+      why: '수만 개예요. 더 작은 조각은 백만 개가 넘어요.',
+      choices: ['🔢 수만 개', '✋ 다섯 개', '🔟 열 개', '💯 백 개'] },
+    { q: '쓰레기를 덜 만들려면 어떻게 할까요?', view: 'far',
+      why: '일이 끝난 위성은 스스로 내려와 불타거나, 아무도 안 쓰는 아주 높은 곳으로 비켜 가요.',
+      choices: ['👋 다 쓴 위성은 스스로 비켜요', '🎯 위성끼리 부딪혀요', '🚀 로켓을 더 버려요', '🙈 그냥 두어요'] }
+  ];
+  var QUIZ_ROUNDS = 10;
 
   // 무엇인지 — 이름표와 읽어 주는 말
   var KINDS = {
@@ -53,6 +96,7 @@
 
   var el = {
     page: document.querySelector('.earth-page'),
+    cards: document.getElementById('cards'),
     sky: document.getElementById('sky'),
     canvas: document.getElementById('canvas'),
     hint: document.getElementById('skyHint'),
@@ -95,7 +139,10 @@
     net: null,
     told: false,
     prompt: '',
-    touched: false
+    touched: false,
+    deck: [],
+    round: 0,
+    locked: false
   };
   if (!findAct(state.act)) state.act = 'look';
 
@@ -639,7 +686,7 @@
   }
 
   el.canvas.addEventListener('pointerdown', function (e) {
-    if (!state.playing) return;
+    if (!state.playing || state.act === 'quiz') return;   // 퀴즈의 위 그림은 보기만
     var b = el.canvas.getBoundingClientRect();
     var x = e.clientX - b.left, y = e.clientY - b.top;
     if (!state.touched) { state.touched = true; el.hint.hidden = true; }
@@ -700,6 +747,9 @@
 
   function startGame() {
     state.playing = true;
+    el.cards.hidden = true;
+    el.cards.innerHTML = '';
+    el.sky.classList.toggle('small-sky', state.act === 'quiz');
     state.selected = null;
     state.net = null;
     state.caught = 0;
@@ -710,7 +760,97 @@
     el.endOverlay.hidden = true;
     fit();
     if (state.act === 'look') return startLook();
+    if (state.act === 'quiz') return startQuiz();
     startClean();
+  }
+
+  /* ---------- ❓ 퀴즈 ---------- */
+
+  function startQuiz() {
+    state.objs = buildSky();
+    state.simRate = 12;
+    state.junkOnly = false;
+    state.zoom = state.zoomTarget = 0;
+    el.ctrl.hidden = true;
+    el.ctrl.innerHTML = '';
+    el.hint.hidden = true;
+    el.cards.hidden = false;
+    el.score.textContent = '⭐ 0';
+    state.round = 0;
+    state.deck = UI.shuffle(QUIZ.slice()).slice(0, QUIZ_ROUNDS);
+    nextRound();
+  }
+
+  function askQuiz(q) {
+    state.zoomTarget = q.view === 'far' ? 0 : 1;
+    el.cards.className = 'cards star-cards ans-cards';
+    el.cards.innerHTML = '';
+    var options = q.choices.map(function (c, i) { return { text: c, right: i === 0 }; });
+    UI.shuffle(options);
+    options.forEach(function (o) {
+      var b = document.createElement('button');
+      b.className = 'choice space-card';
+      b.innerHTML = '<div class="text">' + o.text + '</div>';
+      b.addEventListener('click', function () {
+        if (state.locked || b.classList.contains('dim')) return;
+        if (!o.right) return quizMissed(b);
+        quizCorrect(b, q);
+      });
+      el.cards.appendChild(b);
+    });
+    setLabel(q.q + ' (' + (state.round + 1) + '/' + state.deck.length + ')');
+    state.prompt = q.q;
+    el.speakBtn.hidden = !(window.TTS && TTS.supported);
+    setTimeout(function () { speak(state.prompt); }, 300);
+  }
+
+  function quizCorrect(card, q) {
+    state.locked = true;
+    if (window.SFX) SFX.correct();
+    card.classList.add('correct');
+    UI.addMark(card, '⭕');
+    UI.confettiAt(card);
+    if (state.firstTry) { state.stars += 1; el.score.textContent = '⭐ ' + state.stars; }
+    state.round += 1;
+    el.bar.style.width = Math.round(state.round / state.deck.length * 100) + '%';
+    setLabel(q.why);
+    state.prompt = q.why;
+    speak(q.why, function () { setTimeout(nextRound, 400); });
+  }
+
+  function quizMissed(card) {
+    state.firstTry = false;
+    if (window.SFX) SFX.wrong();
+    card.classList.add('wrong');
+    setTimeout(function () {
+      card.classList.remove('wrong');
+      card.classList.add('dim');
+      UI.addMark(card, '❌');
+    }, 400);
+    speak('아니에요. 다시 골라 봐요.', function () {
+      setTimeout(function () { speak(state.prompt); }, 150);
+    });
+  }
+
+  function nextRound() {
+    if (!state.playing || state.act !== 'quiz') return;
+    if (state.round >= state.deck.length) return finishQuiz();
+    state.firstTry = true;
+    state.locked = false;
+    askQuiz(state.deck[state.round]);
+  }
+
+  function finishQuiz() {
+    state.locked = true;
+    state.playing = false;
+    var total = state.deck.length;
+    UI.saveBest(BEST_KEY + '.quiz', state.stars, total);
+    UI.saveBest(BEST_KEY, state.stars, total);
+    el.endStars.textContent = UI.starLine(state.stars, total);
+    el.endTitle.textContent = state.stars === total ? '우주 쓰레기 박사!' : '잘했어요!';
+    el.endText.textContent = total + '개 중에 ' + state.stars + '개를 한 번에 맞혔어요!';
+    el.endOverlay.hidden = false;
+    if (window.SFX) SFX.finish();
   }
 
   function startLook() {
@@ -777,7 +917,7 @@
     ACTS.forEach(function (a) {
       var b = document.createElement('button');
       b.className = 'mode-btn' + (a.id === state.act ? ' on' : '');
-      var best = a.id === 'clean' ? UI.readBest(BEST_KEY + '.clean') : null;
+      var best = a.id === 'look' ? null : UI.readBest(BEST_KEY + '.' + a.id);
       b.innerHTML = '<span class="mi">' + a.icon + '</span><span class="mn">' + a.name + '</span>' +
                     '<span class="mb">' + (best ? '⭐ ' + best.stars + '/' + best.total : '') + '</span>';
       b.addEventListener('click', function () {
@@ -802,6 +942,8 @@
     if (window.TTS) TTS.cancel();
     el.endOverlay.hidden = true;
     state.playing = false;
+    el.cards.hidden = true;
+    el.sky.classList.remove('small-sky');
     buildModeRow();
     el.startOverlay.hidden = false;
   });

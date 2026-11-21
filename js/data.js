@@ -961,7 +961,7 @@ window.PAGES = [
     subject: '우주',
     title: '우주 쓰레기',
     icon: '🛰️',
-    meta: '지구 둘레 구경하기 · 그물로 청소하기',
+    meta: '지구 둘레 구경하기 · 그물로 청소하기 · 퀴즈',
     href: 'debris.html',
     bestKey: 'daniland.best.debris'
   },

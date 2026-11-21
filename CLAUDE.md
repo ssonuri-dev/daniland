@@ -367,6 +367,8 @@ index.html            과목 카드            home.js
   - 점의 **개수**와 그림 크기는 진짜가 아닙니다(화면에 적어 둠). 회색 = 쓰레기, 초록 = 일하는 위성(청소하기에선 초록 불이 깜빡임), 흰 = 우주정거장.
   - 청소하기에서 일하는 위성을 누르면 **벌주지 않고 알려 주기만** 하고 그다음 잡은 것은 ⭐ 를 안 셉니다(퀴즈의 firstTry 와 같은 규칙).
     잡힌 쓰레기는 내려가다(`fall`) 공기에 닿으면 불탑니다(`burn`) — '끌어내려 태운다' 가 진짜 청소 방법이라 그대로 보입니다.
+  - **❓ 퀴즈**는 아이가 청해서 2026-11-21 더한 셋째 놀이입니다 — 낮과 밤·계절 퀴즈와 같은 얼개(`.star-cards.ans-cards`, 첫 보기가 정답,
+    위 하늘은 `small-sky`). 문제는 `js/debris.js` 의 `QUIZ` 에 있고 `view` 가 위 그림을 가까이/멀리 정합니다. 보기는 이모지 + 짧은 말.
 
   **대기권(`atmosphere.html`)이 스물한 번째**입니다 (2026-11-21) — 우주 과목 다섯째 화면. 사용자가 '대기권 카드, 왜 타는지까지' 를 청했고
   우주 쓰레기 바로 뒤에 놓았습니다. 우주 쓰레기와 같은 뼈대(`.earth-page`·캔버스 한 장)이고 데이터도 화면 안(`THINGS`·`LAYERS`·`DROPS`)에 있습니다.
@@ -470,7 +472,7 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.riddle` | 수수께끼 최고 별 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.wordquiz` | 단어 퀴즈 최고 별 (카드의 ⭐ 는 이것을 읽습니다) |
 | `daniland.best.earth.quiz` `daniland.best.earth` | 낮과 밤·계절 퀴즈 최고 별 (카드의 ⭐ 는 뒤의 것을 읽습니다 — 이야기·돌려 보기는 점수가 없습니다) |
-| `daniland.best.debris.clean` `daniland.best.debris` | 우주 쓰레기 청소하기 최고 별 (카드의 ⭐ 는 뒤의 것 — 구경하기는 점수가 없습니다) |
+| `daniland.best.debris.clean` `daniland.best.debris.quiz` `daniland.best.debris` | 우주 쓰레기 청소하기·퀴즈 최고 별 (카드의 ⭐ 는 마지막 것 — 구경하기는 점수가 없습니다) |
 | `daniland.best.air.where` `daniland.best.air` | 대기권 어디에 있을까 최고 별 (카드의 ⭐ 는 뒤의 것 — 올라가 보기·왜 불탈까는 점수가 없습니다) |
 | `daniland.earth.read` | 낮과 밤·계절 이야기를 끝까지 본 적 있음 (시작 화면의 📖 다 봤어요) |
 | `daniland.riddle.done` | 수수께끼에서 맞혀 본 문제의 `q` 목록 — 안 풀어 본 문제부터 내는 데 씁니다 |
