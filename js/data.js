@@ -994,6 +994,15 @@ window.PAGES = [
   },
 
   {
+    subject: '우주',
+    title: '달',
+    icon: '🌙',
+    meta: '달의 모양 (오늘 달부터) · 일식·월식 · 퀴즈',
+    href: 'moon.html',
+    bestKey: 'daniland.best.moon'
+  },
+
+  {
     subject: '한글',
     group: '글자 쓰기·만들기',
     title: '글자 쓰기',
