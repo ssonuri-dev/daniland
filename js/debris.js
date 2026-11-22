@@ -19,8 +19,12 @@
  *   look  : 구경하기 - 점을 누르면 무엇인지, 얼마나 높이 있는지. 가까이/멀리, 쓰레기만 보기
  *   clean : 청소하기 - 회색 쓰레기 열 개를 눌러 그물로 잡아요. 초록 불이 깜빡이는 일하는 위성은 잡으면 안 돼요
  *   quiz  : 퀴즈     - 보기 넉 장, QUIZ 에서 열 문제 (아이가 청해서 2026-11-21 더함). 위 그림은 문제마다 가까이/멀리
+ *   dodge : 피하기   - 우주정거장 앞으로 쓰레기가 날아오면 위·아래 길로 옮겨 피해요 (2026-11-22). 열 번.
+ *                      중간에 쓰레기끼리 부딪혀 조각이 늘어나는 모습(케슬러 증후군)이 한 번 나옵니다.
+ *                      진짜 우주정거장도 엔진을 살짝 켜서 높이를 바꿔 쓰레기를 피합니다(1999년부터 30번 넘게).
+ *                      화면은 옆에서 본 그림이고 세 길의 간격·빠르기는 진짜가 아닙니다.
  *
- * 기록 키는 daniland.best.debris(카드의 ⭐)·daniland.best.debris.clean·.quiz, 마지막에 고른 놀이는 daniland.debrisAct.
+ * 기록 키는 daniland.best.debris(카드의 ⭐)·daniland.best.debris.clean·.quiz·.dodge, 마지막에 고른 놀이는 daniland.debrisAct.
  * ========================================================================= */
 
 (function () {
@@ -39,8 +43,10 @@
   var ACTS = [
     { id: 'look',  name: '구경하기', icon: '👀', desc: '지구 둘레를 도는 것들을 눌러 봐요' },
     { id: 'clean', name: '청소하기', icon: '🧹', desc: '회색 쓰레기를 그물로 잡아요 — 일하는 위성은 빼고요' },
-    { id: 'quiz',  name: '퀴즈',     icon: '❓', desc: '우주 쓰레기 문제 열 개' }
+    { id: 'quiz',  name: '퀴즈',     icon: '❓', desc: '우주 쓰레기 문제 열 개' },
+    { id: 'dodge', name: '피하기',   icon: '🛰️', desc: '쓰레기가 다가오면 우주정거장을 위아래로 옮겨요' }
   ];
+  var LANES = [0.3, 0.52, 0.74];   // 피하기 — 세 길의 높이 (화면 몫)
 
   // 퀴즈 — 첫 보기가 정답(섞어서 냅니다). view 는 위 그림을 가까이(near)/멀리(far) 볼지.
   // 사실은 정확하게: 낮은 궤도는 1초에 7.5km 쯤(소총 총알의 여덟 배쯤), 10cm 넘는 것 수만 개·1cm 넘는 것 백만 개 넘게(ESA),
@@ -268,6 +274,7 @@
   }
 
   function advance(dt) {
+    if (state.act === 'dodge' && state.dodge) advanceDodge(dt);
     state.yaw += dt * 0.04;
     state.zoom += (state.zoomTarget - state.zoom) * Math.min(1, dt * 4);
     var minutes = state.simRate * dt;
@@ -309,6 +316,7 @@
       ctx.fillRect(s.x * W, s.y * H, s.s, s.s);
     }
     ctx.globalAlpha = 1;
+    if (state.act === 'dodge' && state.dodge) return drawDodge();
     if (!state.objs.length) return;
 
     var k = scale(), c = center();
@@ -690,6 +698,10 @@
     var b = el.canvas.getBoundingClientRect();
     var x = e.clientX - b.left, y = e.clientY - b.top;
     if (!state.touched) { state.touched = true; el.hint.hidden = true; }
+    if (state.act === 'dodge') {
+      if (state.dodge) moveLane(y < state.dodge.y ? -1 : 1);
+      return;
+    }
     if (state.act === 'look') {
       var o = pick(x, y, 26);
       state.selected = o;
@@ -759,9 +771,11 @@
     state.told = false;
     el.bar.style.width = '0%';
     el.endOverlay.hidden = true;
+    state.dodge = null;
     fit();
     if (state.act === 'look') return startLook();
     if (state.act === 'quiz') return startQuiz();
+    if (state.act === 'dodge') return startDodge();
     startClean();
   }
 
@@ -896,6 +910,225 @@
     setTimeout(function () { speak(state.prompt); }, 300);
   }
 
+
+  /* ---------- 🛰️ 피하기 ---------- */
+
+  function laneY(i) { return H * LANES[i]; }
+  function dodgeSize() { return Math.max(56, Math.min(96, Math.min(W, H) * 0.17)); }
+
+  function startDodge() {
+    state.dodge = { lane: 1, y: laneY(1), items: [], frags: [], spawnT: 1.2, spawned: 0, resolved: 0,
+                    dodged: 0, shake: 0, warned: 0, saidKessler: false, burn: 0 };
+    el.score.textContent = '⭐ 0';
+    el.ctrl.innerHTML = '';
+    addCtrl('⬆️ 위로', function () { moveLane(-1); });
+    addCtrl('⬇️ 아래로', function () { moveLane(1); });
+    el.ctrl.hidden = false;
+    el.hint.textContent = '👉 위아래 단추나 화면을 눌러 옮겨요';
+    el.hint.hidden = false;
+    state.touched = false;
+    setLabel('🛰️ 0 / ' + GOAL);
+    state.prompt = '쓰레기가 다가오면 우주정거장은 엔진을 살짝 켜서 피해요. 위나 아래로 옮겨 봐요.';
+    el.speakBtn.hidden = !(window.TTS && TTS.supported);
+    setTimeout(function () { speak(state.prompt); }, 300);
+  }
+
+  function moveLane(dir) {
+    var d = state.dodge;
+    if (!d || !state.playing) return;
+    var n = Math.max(0, Math.min(LANES.length - 1, d.lane + dir));
+    if (n === d.lane) return;
+    d.lane = n;
+    d.burn = 0.5;
+    el.hint.hidden = true;
+    if (window.SFX) SFX.tap();
+  }
+
+  var JUNK_KINDS = ['deadsat', 'rocket', 'piece', 'piece'];
+
+  function spawnJunk(lane, threat) {
+    var d = state.dodge;
+    d.items.push({ kind: JUNK_KINDS[Math.floor(Math.random() * JUNK_KINDS.length)], lane: lane, x: W + 40, y: laneY(lane),
+                   vx: -W / 4.2, vy: 0, spin: Math.random() * TWO_PI, spinRate: rand(-2, 2), threat: threat, hit: false, done: false });
+  }
+
+  function advanceDodge(dt) {
+    var d = state.dodge, s = dodgeSize(), issX = W * 0.2;
+    d.y += (laneY(d.lane) - d.y) * Math.min(1, dt * 7);
+    if (d.shake > 0) d.shake -= dt;
+    if (d.burn > 0) d.burn -= dt;
+    if (state.playing && d.spawned < GOAL) {
+      d.spawnT -= dt;
+      if (d.spawnT <= 0) {
+        d.spawnT = 2.7;
+        spawnJunk(d.lane, true);
+        // 가끔 다른 길에도 하나 — 그래도 한 길은 늘 비어 있습니다
+        if (Math.random() < 0.45) {
+          var others = [0, 1, 2].filter(function (i) { return i !== d.lane; });
+          spawnJunk(others[Math.floor(Math.random() * 2)], false);
+        }
+        d.spawned += 1;
+        // 다섯째에 쓰레기끼리 부딪히는 모습 (케슬러 증후군)
+        if (d.spawned === 5) setTimeout(kessler, 1200);
+      }
+    }
+    d.items.forEach(function (it) {
+      if (it.done) return;
+      it.x += it.vx * dt;
+      it.y += it.vy * dt;
+      it.spin += it.spinRate * dt;
+      if (it.meet && it.x <= it.meet.x) { boom(it); return; }
+      if (it.kess) return;
+      // 다가오면 알려 줌 — 같은 길이면 (처음 세 번만 말로)
+      if (it.threat && !it.warned && it.x < W * 0.78 && Math.abs(it.y - d.y) < s * 0.4) {
+        it.warned = true;
+        if (d.warned < 3) { d.warned += 1; speak('쓰레기가 와요! 피해요!'); }
+      }
+      if (!it.hit && Math.abs(it.x - issX) < s * 0.55 && Math.abs(it.y - d.y) < s * 0.42) {
+        it.hit = true;
+        d.shake = 0.6;
+        burst(it.x, it.y, 10, '#d8d2c8');
+        if (window.SFX) SFX.wrong();
+        speak('쾅! 부딪히면 조각이 더 많아져요. 다음엔 피해 봐요.');
+      }
+      if (it.x < -60) {
+        it.done = true;
+        if (it.threat) {
+          d.resolved += 1;
+          if (!it.hit) { d.dodged += 1; state.stars += 1; el.score.textContent = '⭐ ' + state.stars; if (window.SFX) SFX.correct(); }
+          el.bar.style.width = Math.round(d.resolved / GOAL * 100) + '%';
+          setLabel('🛰️ ' + d.resolved + ' / ' + GOAL);
+          if (d.resolved >= GOAL) setTimeout(finishDodge, 900);
+        }
+      }
+    });
+    d.items = d.items.filter(function (it) { return !it.done; });
+    d.frags = d.frags.filter(function (f) {
+      f.t += dt; f.x += f.vx * dt; f.y += f.vy * dt; f.spin += f.vr * dt;
+      return f.t < f.life;
+    });
+  }
+
+  // 쓰레기 둘이 세 길보다 위에서 만나 부서집니다 — 조각은 정거장에 안 부딪힙니다(보여 주기만)
+  function kessler() {
+    var d = state.dodge;
+    if (!d || !state.playing || state.act !== 'dodge') return;
+    var mx = W * 0.62, my = H * 0.13;
+    var a = { kind: 'deadsat', x: W + 40, y: my, vx: -W / 3.2, vy: 0, spin: 0, spinRate: 1, kess: true, meet: { x: mx } };
+    var t = (a.x - mx) / -a.vx;
+    var b = { kind: 'rocket', x: mx + W * 0.15, y: my + H * 0.32, vx: 0, vy: 0, spin: 0, spinRate: -1.5, kess: true };
+    b.vx = (mx - b.x) / t; b.vy = (my - b.y) / t;
+    d.items.push(a, b);
+  }
+
+  function boom(it) {
+    var d = state.dodge;
+    d.items.forEach(function (o) { if (o.kess) o.done = true; });
+    burst(it.x, it.y, 22, '#e7e1d6');
+    if (window.SFX) SFX.wrong();
+    if (!d.saidKessler) {
+      d.saidKessler = true;
+      speak('쓰레기끼리 부딪혀서 조각이 아주 많아졌어요! 그래서 쓰레기를 치워야 해요.');
+    }
+  }
+
+  function burst(x, y, n, color) {
+    var d = state.dodge;
+    for (var i = 0; i < n; i++) {
+      var a = Math.random() * TWO_PI, v = rand(40, 170);
+      d.frags.push({ x: x, y: y, vx: Math.cos(a) * v - W * 0.08, vy: Math.sin(a) * v, spin: 0, vr: rand(-6, 6),
+                     t: 0, life: rand(1.2, 2.2), r: rand(2, 5), color: color });
+    }
+  }
+
+  function finishDodge() {
+    if (!state.playing || state.act !== 'dodge') return;
+    state.playing = false;
+    var d = state.dodge;
+    UI.saveBest(BEST_KEY + '.dodge', d.dodged, GOAL);
+    UI.saveBest(BEST_KEY, d.dodged, GOAL);
+    el.endStars.textContent = UI.starLine(d.dodged, GOAL);
+    el.endTitle.textContent = d.dodged === GOAL ? '피하기 박사!' : '잘했어요!';
+    el.endText.textContent = '쓰레기 ' + GOAL + '개 중에 ' + d.dodged + '개를 피했어요! 진짜 우주정거장도 30번 넘게 피했어요.';
+    el.endOverlay.hidden = false;
+    if (window.SFX) SFX.finish();
+  }
+
+  function drawDodge() {
+    var d = state.dodge, s = dodgeSize(), issX = W * 0.2;
+    // 아래 지구 — 둥근 땅끝과 공기 띠
+    var R = Math.max(W, H) * 1.6, cx = W * 0.5, cy = H + R * 0.94;
+    var glow = ctx.createRadialGradient(cx, cy, R * 0.99, cx, cy, R * 1.04);
+    glow.addColorStop(0, 'rgba(110,180,255,0.55)');
+    glow.addColorStop(1, 'rgba(110,180,255,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath(); ctx.arc(cx, cy, R * 1.04, 0, TWO_PI); ctx.fill();
+    var g = ctx.createLinearGradient(0, cy - R, 0, H);
+    g.addColorStop(0, '#3f8fe0');
+    g.addColorStop(1, '#123d7a');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(cx, cy, R, 0, TWO_PI); ctx.fill();
+    // 세 길
+    ctx.setLineDash([6, 10]);
+    ctx.lineWidth = 1;
+    LANES.forEach(function (f, i) {
+      ctx.strokeStyle = i === d.lane ? 'rgba(255,209,102,0.35)' : 'rgba(150,170,255,0.16)';
+      ctx.beginPath(); ctx.moveTo(0, H * f); ctx.lineTo(W, H * f); ctx.stroke();
+    });
+    ctx.setLineDash([]);
+    // 쓰레기
+    d.items.forEach(function (it) {
+      var near = it.threat && !it.hit && it.x < W * 0.78 && it.x > issX && Math.abs(it.y - d.y) < s * 0.4;
+      if (near) {
+        ctx.fillStyle = 'rgba(255,80,80,' + (0.25 + 0.2 * Math.sin(clock * 12)) + ')';
+        ctx.beginPath(); ctx.arc(it.x, it.y, s * 0.42, 0, TWO_PI); ctx.fill();
+        ctx.font = '22px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText('⚠️', it.x, it.y - s * 0.4);
+      }
+      ctx.save();
+      ctx.translate(it.x, it.y);
+      ctx.rotate(it.spin);
+      var js = s * 0.6;
+      if (it.kind === 'deadsat') drawSat(js, false);
+      else if (it.kind === 'rocket') drawRocket(js);
+      else drawPiece(js);
+      ctx.restore();
+    });
+    // 조각
+    d.frags.forEach(function (f) {
+      ctx.globalAlpha = Math.max(0, 1 - f.t / f.life);
+      ctx.fillStyle = f.color;
+      ctx.save();
+      ctx.translate(f.x, f.y);
+      ctx.rotate(f.spin);
+      ctx.fillRect(-f.r, -f.r * 0.6, f.r * 2, f.r * 1.2);
+      ctx.restore();
+    });
+    ctx.globalAlpha = 1;
+    // 우주정거장 — 옮길 때 엔진 불꽃
+    var sx = issX + (d.shake > 0 ? Math.sin(clock * 60) * 5 : 0);
+    ctx.save();
+    ctx.translate(sx, d.y);
+    if (d.burn > 0) {
+      var up = laneY(d.lane) < d.y;
+      ctx.fillStyle = 'rgba(255,190,90,' + Math.min(1, d.burn * 1.6) + ')';
+      ctx.beginPath();
+      ctx.moveTo(-s * 0.12, up ? s * 0.12 : -s * 0.12);
+      ctx.lineTo(0, (up ? 1 : -1) * s * (0.35 + Math.random() * 0.12));
+      ctx.lineTo(s * 0.12, up ? s * 0.12 : -s * 0.12);
+      ctx.fill();
+    }
+    drawISS(s);
+    ctx.restore();
+    ctx.font = '700 12px "Nanum Gothic", sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.75)';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText('우주정거장', issX, d.y + s * 0.42);
+  }
+
   function addCtrl(text, fn) {
     var b = document.createElement('button');
     b.className = 'chip';
@@ -943,6 +1176,8 @@
     if (window.TTS) TTS.cancel();
     el.endOverlay.hidden = true;
     state.playing = false;
+    state.dodge = null;
+    el.ctrl.hidden = true;
     el.cards.hidden = true;
     el.sky.classList.remove('small-sky', 'fill-sky');
     buildModeRow();
