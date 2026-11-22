@@ -5340,5 +5340,6 @@ button {
 .earth-page .cards.ans-cards .choice.space-card { aspect-ratio: auto; min-height: 76px; }
 .earth-page .space-sky.small-sky.fill-sky { flex: 1 1 auto; height: auto; min-height: 170px; }
 
-/* 별자리 — 다 이어 본 별자리 단추에 ✓ */
-.earth-ctrl .chip.con-chip.done::after { content: ' ✓'; color: var(--green); }
+/* 별자리·우주정거장 — 다 이어 본 별자리, 본 장면 단추에 ✓ */
+.earth-ctrl .chip.con-chip.done::after,
+.earth-ctrl .chip.scene-chip.done::after { content: ' ✓'; color: var(--green); }

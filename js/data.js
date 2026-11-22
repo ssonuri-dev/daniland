@@ -1012,6 +1012,15 @@ window.PAGES = [
   },
 
   {
+    subject: '우주',
+    title: '우주정거장의 하루',
+    icon: '👩‍🚀',
+    meta: '먹고 자고 씻기 구경 · 둥둥 놀이 · 퀴즈',
+    href: 'iss.html',
+    bestKey: 'daniland.best.iss'
+  },
+
+  {
     subject: '한글',
     group: '글자 쓰기·만들기',
     title: '글자 쓰기',
