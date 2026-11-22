@@ -976,6 +976,15 @@ window.PAGES = [
   },
 
   {
+    subject: '우주',
+    title: '로켓 쏘기',
+    icon: '🚀',
+    meta: '옆으로 쏘면 떨어질까 돌까 · 임무',
+    href: 'orbit.html',
+    bestKey: 'daniland.best.orbit'
+  },
+
+  {
     subject: '한글',
     group: '글자 쓰기·만들기',
     title: '글자 쓰기',

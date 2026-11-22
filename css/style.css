@@ -5314,3 +5314,22 @@ button {
   .earth-ctrl { gap: 6px; }
   .earth-ctrl .chip { min-height: 40px; padding: 6px 10px; font-size: 13px; }
 }
+
+/* =========================================================================
+ * 로켓 쏘기 (orbit.html) — 대기권과 같은 뼈대(.earth-page). 아래 단추 줄에 빠르기 막대가 섭니다.
+ * ========================================================================= */
+
+.orbit-speed {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 260px;
+  max-width: 460px;
+}
+.orbit-speed input[type=range] {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  accent-color: var(--yellow);
+}
+.space-body .earth-ctrl .chip.orbit-go { color: #10131f; background: var(--yellow); font-weight: 800; }
