@@ -65,6 +65,7 @@ window.SUBJECTS = [
     ] },
   { name: '세계', icon: '🌍', desc: '나라를 만나요' },
   { name: '우주', icon: '🪐', desc: '별과 행성을 봐요' },
+  { name: '과학', icon: '🔬', desc: '해 보고 알아봐요' },
   { name: '놀이', icon: '🎨', desc: '자유롭게 놀아요' }
 ];
 
@@ -1018,6 +1019,34 @@ window.PAGES = [
     meta: '먹고 자고 씻기 구경 · 둥둥 놀이 · 퀴즈',
     href: 'iss.html',
     bestKey: 'daniland.best.iss'
+  },
+
+  /* 과학 — 직접 해 보고 결과를 보는 밝은 화면들 (2026-11-23). 카드가 셋뿐이라 아직 묶음(groups)은 없습니다. */
+  {
+    subject: '과학',
+    title: '전기 회로',
+    icon: '💡',
+    meta: '전선을 이어 불 켜기 · 통할까 안 통할까 · 마음대로',
+    href: 'circuit.html',
+    bestKey: 'daniland.best.circuit'
+  },
+
+  {
+    subject: '과학',
+    title: '뜰까 가라앉을까',
+    icon: '🛟',
+    meta: '맞혀 보기 · 소금물 달걀 · 찰흙 배',
+    href: 'float.html',
+    bestKey: 'daniland.best.float'
+  },
+
+  {
+    subject: '과학',
+    title: '한살이',
+    icon: '🐛',
+    meta: '나비·개구리·닭·강낭콩·잠자리가 자라는 차례',
+    href: 'life.html',
+    bestKey: 'daniland.best.life'
   },
 
   {

@@ -56,6 +56,7 @@ h1, h2, h3, h4,
 .story-title,
 .planet-name,
 .star-title,
+.sci-title,
 .lotto-title {
   font-family: 'Jua', 'Nanum Gothic', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
   font-weight: 400;
@@ -5343,3 +5344,187 @@ button {
 /* 별자리·우주정거장 — 다 이어 본 별자리, 본 장면 단추에 ✓ */
 .earth-ctrl .chip.con-chip.done::after,
 .earth-ctrl .chip.scene-chip.done::after { content: ' ✓'; color: var(--green); }
+
+/* =========================================================================
+ * 과학 (circuit · float · life) — 우주와 달리 **밝은 화면**입니다.
+ * 뼈대는 대기권과 같아서 위에서부터 안내 줄(.space-quest) · 그림(.sci-stage, 캔버스 한 장) ·
+ * 단추 줄(.sci-ctrl) 이고, 전체 높이는 각 js 의 fit() 이 화면 높이로 못 박습니다.
+ * ========================================================================= */
+
+.sci-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding-bottom: 12px;
+}
+
+.sci-page .topbar { padding-bottom: 8px; }
+.sci-page .tools { margin-top: 10px; }
+
+.sci-stage {
+  position: relative;
+  flex: 1;
+  min-height: 200px;
+  overflow: hidden;
+  border-radius: 24px;
+  background: #eef7ff;
+  box-shadow: var(--shadow);
+  touch-action: none;      /* 전선을 끌어 잇는 화면이라 브라우저 기본 스크롤·확대를 끕니다 */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.sci-stage canvas { display: block; }
+
+/* 그림 위 말풍선 — 지금 일어난 일을 한 줄로 */
+.sci-say {
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  max-width: calc(100% - 24px);
+  transform: translateX(-50%);
+  padding: 7px 16px;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  word-break: keep-all;
+  color: var(--ink);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 2px 8px rgba(64, 50, 58, 0.12);
+  pointer-events: none;
+}
+
+.sci-say[hidden] { display: none; }
+.sci-say.warn { color: #fff; background: rgba(240, 84, 84, 0.92); }
+
+.sci-ctrl {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.sci-ctrl[hidden] { display: none; }
+.sci-ctrl .chip { min-height: 48px; font-size: 16px; }
+.sci-ctrl .chip.on { color: #fff; background: var(--blue); }
+.sci-ctrl .chip.go { color: #fff; background: var(--blue); font-weight: 800; }
+.sci-ctrl .chip:disabled { opacity: 0.4; }
+
+/* 맞혀 보기 단추 — 손가락 최소 64px 를 지킵니다 */
+.sci-ctrl .chip.big {
+  min-height: 68px;
+  min-width: 150px;
+  padding: 10px 22px;
+  font-size: 20px;
+  color: var(--ink);
+}
+
+.sci-ctrl .chip.big.picked { color: #fff; background: var(--purple); }
+
+@media (max-width: 599px) {
+  .sci-ctrl { gap: 6px; }
+  .sci-ctrl .chip { min-height: 44px; padding: 6px 12px; font-size: 14px; }
+  .sci-ctrl .chip.big { min-height: 64px; min-width: 130px; font-size: 18px; }
+  .sci-say { font-size: 13px; }
+}
+
+/* 단계 띠 (한살이) — 별의 일생 .star-steps 의 밝은 짝 */
+.sci-steps {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.sci-steps[hidden] { display: none; }
+
+.sci-steps .step-chip { color: var(--ink-soft); background: #fff; box-shadow: 0 2px 0 rgba(64, 50, 58, 0.08); }
+.sci-steps .step-chip.done { color: #3a9a4c; }
+.sci-steps .step-chip.on { color: #1f6fc0; border-color: var(--blue); background: var(--blue-soft); }
+
+/* 이야기 — 글 · 다음 단추 */
+.sci-story {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 10px;
+  padding: 12px 14px;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.sci-story[hidden] { display: none; }
+.sci-body { flex: 1; min-width: 0; }
+.sci-title { font-size: 20px; color: #1f6fc0; line-height: 1.2; }
+.sci-text { margin-top: 5px; font-size: 15px; line-height: 1.55; word-break: keep-all; }
+
+.sci-next {
+  flex: none;
+  align-self: stretch;
+  min-width: 96px;
+  padding: 0 18px;
+  font-size: 16px;
+  font-weight: 800;
+  color: #fff;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #7cc2ff, var(--blue));
+}
+
+.sci-next:active { transform: translateY(2px); }
+
+@media (max-width: 599px) {
+  .sci-story { flex-wrap: wrap; gap: 10px; padding: 10px; }
+  .sci-next { flex: 1 0 100%; align-self: auto; padding: 11px; font-size: 15px; }
+  .sci-title { font-size: 17px; }
+  .sci-text { font-size: 13px; line-height: 1.45; }
+}
+
+/* 보기 카드 — 순서 맞추기(그림 카드)와 퀴즈(글 카드) */
+.cards.sci-cards {
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  gap: 9px;
+  margin-top: 10px;
+}
+
+.cards.sci-cards[hidden] { display: none; }
+.cards.sci-cards.ans-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+
+.sci-cards .choice {
+  aspect-ratio: auto;
+  min-height: 76px;
+  gap: 4px;
+  padding: 8px 6px;
+  border-width: 4px;
+  border-radius: 20px;
+}
+
+.sci-cards .choice .text {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
+  word-break: keep-all;
+}
+
+.sci-cards .choice .lbl { font-size: 13px; font-weight: 700; text-align: center; word-break: keep-all; }
+.sci-cards .choice canvas { display: block; width: 76px; height: 76px; }
+.sci-cards .choice.done { border-color: var(--green); background: #effbf1; }
+.sci-cards .choice .mark { top: 4px; right: 8px; font-size: 18px; color: #3a9a4c; }
+
+@media (max-width: 599px) {
+  .cards.sci-cards { grid-template-columns: repeat(auto-fit, minmax(78px, 1fr)); gap: 7px; }
+  .sci-cards .choice { min-height: 70px; }
+  .sci-cards .choice canvas { width: 56px; height: 56px; }
+  .sci-cards .choice .text { font-size: 15px; }
+  .sci-cards .choice .lbl { font-size: 11px; }
+}
+
+/* 퀴즈에서는 보기 넉 장이 커야 해서 그림을 줄입니다 */
+.sci-page .sci-stage.small { flex: 1 1 auto; min-height: 160px; }
+
+/* 한살이 시작 화면의 생물 단추 — 이모지 대신 작은 캔버스 그림 */
+.mode-btn canvas.mi-art { display: block; width: 48px; height: 48px; }
