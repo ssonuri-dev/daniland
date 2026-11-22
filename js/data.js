@@ -1003,6 +1003,15 @@ window.PAGES = [
   },
 
   {
+    subject: '우주',
+    title: '별자리',
+    icon: '✨',
+    meta: '별 잇기 · 오늘 밤 서울 하늘 · 퀴즈',
+    href: 'constellation.html',
+    bestKey: 'daniland.best.sky'
+  },
+
+  {
     subject: '한글',
     group: '글자 쓰기·만들기',
     title: '글자 쓰기',

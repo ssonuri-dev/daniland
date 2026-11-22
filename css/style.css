@@ -5339,3 +5339,6 @@ button {
  * (5:2 로 두면 가로 화면에서 카드가 170px 넘게 커져 화면 밖으로 밀렸습니다) */
 .earth-page .cards.ans-cards .choice.space-card { aspect-ratio: auto; min-height: 76px; }
 .earth-page .space-sky.small-sky.fill-sky { flex: 1 1 auto; height: auto; min-height: 170px; }
+
+/* 별자리 — 다 이어 본 별자리 단추에 ✓ */
+.earth-ctrl .chip.con-chip.done::after { content: ' ✓'; color: var(--green); }
