@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#05060f">
+  <title>행성에서 점프 · 다니랜드 🦘</title>
+  <link rel="icon" href="dani.png">
+  <!-- 구글 웹폰트: 제목은 Jua, 본문은 나눔고딕 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Gothic:wght@400;700;800&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/analytics.js"></script>
+</head>
+<body class="space-body">
+  <!-- 들어올 때 비밀번호 (문패입니다 — js/gate.js 주석 참고) -->
+  <script src="js/gate.js"></script>
+
+  <div class="wrap earth-page">
+    <div class="topbar">
+      <button class="icon-btn" id="backBtn" title="뒤로">←</button>
+      <div class="progress"><div class="progress-bar" id="bar"></div></div>
+      <div class="score" id="score">🦘</div>
+    </div>
+
+    <div class="space-quest">
+      <div class="space-label" id="questLabel"></div>
+      <button class="speak-btn small" id="speakBtn" hidden>🔊 다시</button>
+    </div>
+
+    <!-- 여러 곳에서 뛰는 다니 (캔버스, js/jump.js) -->
+    <div class="space-sky" id="sky">
+      <canvas id="canvas"></canvas>
+      <div class="sky-hint" id="skyHint" hidden></div>
+    </div>
+
+    <div class="earth-ctrl" id="ctrl" hidden></div>
+    <div class="cards star-cards" id="cards" hidden></div>
+
+    <div class="tools">
+      <button class="chip" id="voiceBtn">🎤 목소리</button>
+    </div>
+  </div>
+
+  <!-- 시작 화면 -->
+  <div class="overlay space-overlay" id="startOverlay">
+    <img src="dani.png" alt="다니">
+    <h2>🦘 행성에서 점프</h2>
+    <p class="hint">똑같은 힘으로 폴짝!<br>달에서는? 목성에서는?</p>
+
+    <p class="hint">무엇을 하고 놀까요?</p>
+    <div class="mode-row" id="modeRow"></div>
+    <p class="hint" id="modeDesc"></p>
+
+    <button class="big-btn" id="startBtn">시작하기 ▶</button>
+    <button class="big-btn ghost" id="startHome">← 다른 공부 고르기</button>
+  </div>
+
+  <!-- 결과 화면 -->
+  <div class="overlay space-overlay" id="endOverlay" hidden>
+    <img src="dani.png" alt="다니">
+    <h2 id="endTitle">참 잘했어요!</h2>
+    <div class="stars" id="endStars"></div>
+    <p id="endText"></p>
+    <button class="big-btn" id="againBtn">한 번 더 🔁</button>
+    <button class="big-btn ghost" id="endModes">← 다른 놀이 고르기</button>
+    <button class="big-btn ghost" id="endHome">🏠 처음으로</button>
+  </div>
+
+  <script src="js/ui.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/catalog.js"></script>
+  <script src="js/tts.js"></script>
+  <script src="js/sfx.js"></script>
+  <script src="js/voicepicker.js"></script>
+  <script src="js/jump.js"></script>
+</body>
+</html>

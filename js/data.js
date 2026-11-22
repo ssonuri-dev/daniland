@@ -985,6 +985,15 @@ window.PAGES = [
   },
 
   {
+    subject: '우주',
+    title: '행성에서 점프',
+    icon: '🦘',
+    meta: '달·화성·목성에서 폴짝 · 저울 숫자 · 퀴즈',
+    href: 'jump.html',
+    bestKey: 'daniland.best.jump'
+  },
+
+  {
     subject: '한글',
     group: '글자 쓰기·만들기',
     title: '글자 쓰기',

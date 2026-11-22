@@ -5332,4 +5332,10 @@ button {
   height: 44px;
   accent-color: var(--yellow);
 }
-.space-body .earth-ctrl .chip.orbit-go { color: #10131f; background: var(--yellow); font-weight: 800; }
+.space-body .earth-ctrl .chip.orbit-go,
+.space-body .earth-ctrl .chip.jump-go { color: #10131f; background: var(--yellow); font-weight: 800; }
+
+/* 우주 쓰레기·행성에서 점프 퀴즈 — 보기 넉 장은 손가락 높이만큼만, 남는 높이는 위 그림이 가집니다
+ * (5:2 로 두면 가로 화면에서 카드가 170px 넘게 커져 화면 밖으로 밀렸습니다) */
+.earth-page .cards.ans-cards .choice.space-card { aspect-ratio: auto; min-height: 76px; }
+.earth-page .space-sky.small-sky.fill-sky { flex: 1 1 auto; height: auto; min-height: 170px; }

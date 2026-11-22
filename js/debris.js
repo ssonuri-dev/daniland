@@ -750,6 +750,7 @@
     el.cards.hidden = true;
     el.cards.innerHTML = '';
     el.sky.classList.toggle('small-sky', state.act === 'quiz');
+    el.sky.classList.toggle('fill-sky', state.act === 'quiz');
     state.selected = null;
     state.net = null;
     state.caught = 0;
@@ -943,7 +944,7 @@
     el.endOverlay.hidden = true;
     state.playing = false;
     el.cards.hidden = true;
-    el.sky.classList.remove('small-sky');
+    el.sky.classList.remove('small-sky', 'fill-sky');
     buildModeRow();
     el.startOverlay.hidden = false;
   });
