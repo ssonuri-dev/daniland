@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#ff8a9a">
+  <title>우리 몸 · 다니랜드 🫀</title>
+  <link rel="icon" href="dani.png">
+  <!-- 구글 웹폰트: 제목은 Jua, 본문은 나눔고딕 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Gothic:wght@400;700;800&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/analytics.js"></script>
+</head>
+<body>
+  <!-- 들어올 때 비밀번호 (문패입니다 — js/gate.js 주석 참고) -->
+  <script src="js/gate.js"></script>
+
+  <div class="wrap sci-page">
+    <div class="topbar">
+      <button class="icon-btn" id="backBtn" title="뒤로">←</button>
+      <div class="progress"><div class="progress-bar" id="bar"></div></div>
+      <div class="score" id="score">🫀</div>
+    </div>
+
+    <div class="space-quest">
+      <div class="space-label" id="questLabel"></div>
+      <button class="speak-btn small" id="speakBtn" hidden>🔊 다시</button>
+    </div>
+
+    <!-- 몸 속 그림 — 전부 캔버스에 그립니다 (js/insides.js) -->
+    <div class="sci-stage" id="stage">
+      <canvas id="canvas"></canvas>
+      <div class="sci-say" id="say" hidden></div>
+    </div>
+
+    <!-- 음식이 지나가는 곳 띠 (음식의 여행) — 누르면 그곳으로 -->
+    <div class="sci-steps" id="steps" hidden></div>
+
+    <!-- 심장과 피의 단추 줄 -->
+    <div class="sci-ctrl" id="ctrl" hidden></div>
+
+    <!-- 지금 이야기 + 해 보기 단추 -->
+    <div class="sci-story" id="story" hidden>
+      <div class="sci-body">
+        <div class="sci-title" id="storyTitle"></div>
+        <div class="sci-text" id="storyText"></div>
+      </div>
+      <button class="sci-next" id="nextBtn">다음 ▶</button>
+    </div>
+
+    <!-- 퀴즈 보기 -->
+    <div class="cards sci-cards ans-cards" id="cards" hidden></div>
+
+    <div class="tools">
+      <button class="chip" id="voiceBtn">🎤 목소리</button>
+    </div>
+  </div>
+
+  <!-- 시작 화면 -->
+  <div class="overlay" id="startOverlay">
+    <img src="dani.png" alt="다니">
+    <h2>🫀 우리 몸</h2>
+    <p class="hint">몸 속을 들여다봐요.<br>먹은 음식은 어디로 갈까? 심장은 왜 쿵쿵 뛸까?</p>
+
+    <p class="hint">무엇을 하고 놀까요?</p>
+    <div class="mode-row" id="modeRow"></div>
+    <p class="hint" id="modeDesc"></p>
+
+    <p class="hint" id="kindHint" hidden>무엇을 먹어 볼까요?</p>
+    <div class="mode-row" id="kindRow" hidden></div>
+
+    <button class="big-btn" id="startBtn">시작하기 ▶</button>
+    <button class="big-btn ghost" id="startHome">← 다른 공부 고르기</button>
+  </div>
+
+  <!-- 결과 화면 -->
+  <div class="overlay" id="endOverlay" hidden>
+    <img src="dani.png" alt="다니">
+    <h2 id="endTitle">참 잘했어요!</h2>
+    <div class="stars" id="endStars"></div>
+    <p id="endText"></p>
+    <button class="big-btn" id="againBtn">한 번 더 🔁</button>
+    <button class="big-btn ghost" id="endModes">← 다른 놀이 고르기</button>
+    <button class="big-btn ghost" id="endHome">🏠 처음으로</button>
+  </div>
+
+  <script src="js/ui.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/catalog.js"></script>
+  <script src="js/tts.js"></script>
+  <script src="js/sfx.js"></script>
+  <script src="js/voicepicker.js"></script>
+  <script src="js/insides.js"></script>
+</body>
+</html>

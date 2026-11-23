@@ -1021,7 +1021,7 @@ window.PAGES = [
     bestKey: 'daniland.best.iss'
   },
 
-  /* 과학 — 직접 해 보고 결과를 보는 밝은 화면들 (2026-11-23). 카드가 셋뿐이라 아직 묶음(groups)은 없습니다. */
+  /* 과학 — 직접 해 보고 결과를 보는 밝은 화면들 (2026-11-23). 카드가 넷뿐이라 아직 묶음(groups)은 없습니다. */
   {
     subject: '과학',
     title: '전기 회로',
@@ -1047,6 +1047,15 @@ window.PAGES = [
     meta: '나비·개구리·닭·강낭콩·잠자리가 자라는 차례',
     href: 'life.html',
     bestKey: 'daniland.best.life'
+  },
+
+  {
+    subject: '과학',
+    title: '우리 몸',
+    icon: '🫀',
+    meta: '먹은 음식의 여행 · 심장과 피 · 퀴즈',
+    href: 'insides.html',
+    bestKey: 'daniland.best.insides'
   },
 
   {

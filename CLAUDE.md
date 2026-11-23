@@ -148,6 +148,7 @@ index.html            과목 카드            home.js
       ├ circuit.html                        circuit.js  (과학: 전기 회로 — 단자를 끌어 전선 잇기, 마디 전압을 진짜로 풀어 불이 켜지는지 정함)
       ├ float.html                          float.js    (과학: 뜰까 가라앉을까 — 물통 하나, 밀도로 뜨고 잠기는 깊이가 정해짐)
       ├ life.html                           life.js     (과학: 한살이 — 별의 일생과 같은 뼈대, 그림은 전부 캔버스. 데이터는 js/life-cycles.js)
+      ├ insides.html                        insides.js  (과학: 우리 몸 — 몸 속 기관·핏줄을 캔버스에, 음식의 여행·심장과 피·퀴즈)
       ├ riddle.html                         riddle.js   (수수께끼·넌센스 — js/riddles.js 의 문제를 열 개씩, 보기 넉 장)
       ├ wordquiz.html                       wordquiz.js (단어 퀴즈 — 영어 '단어 공부' 수업 + 몸 이름 + 마을 지도 장소 이름을 섞어 열 문제, 문제 모양 넷)
       ├ smash.html                          smash.js    (부수기 — 젤리 괴물을 한 번에 터뜨림, 연속. 카메라로 손을 씀)
@@ -409,8 +410,8 @@ index.html            과목 카드            home.js
 
 다니가 과학을 좋아해서 사용자가 과목을 새로 만들었습니다. 제안한 후보 중 사용자가 고른 첫 세 장이
 **전기 회로 · 뜰까 가라앉을까 · 한살이** 이고, **우주 카드(낮과 밤·대기권 등)는 우주에 그대로 둡니다**(사용자가 정함 — 과학으로 옮기지 마세요).
-카드가 셋뿐이라 `groups` 는 아직 없습니다 — 늘어나면 '힘과 에너지 · 물질 · 생명' 같은 묶음을 사용자에게 물어보세요.
-남은 후보(사용자에게 보여 준 것): 자석 · 그림자와 빛 · 소리 · 물의 세 모습 · 색 섞기 · 먹은 음식의 여행 · 먹이사슬 · 물의 순환 · 화산과 지진.
+카드가 넷뿐이라(사용자가 '묶음은 나중에' 라고 함) `groups` 는 아직 없습니다 — 늘어나면 '힘과 에너지 · 물질 · 생명' 같은 묶음을 사용자에게 물어보세요.
+남은 후보(사용자에게 보여 준 것): 자석 · 그림자와 빛 · 소리 · 물의 세 모습 · 색 섞기 · 먹이사슬 · 물의 순환 · 화산과 지진 (먹은 음식의 여행은 '우리 몸' 으로 만듦).
 
 - **우주와 달리 밝은 화면**입니다 (`<body>` 에 `space-body` 를 붙이지 않음). 뼈대는 대기권과 같고 이름만 `sci-` 입니다 —
   `.sci-page` · `.sci-stage`(캔버스 칸) · `.sci-say`(그림 위 말풍선) · `.sci-ctrl`(단추 줄, 맞혀 보기 단추는 `.chip.big` 으로 64px 이상) ·
@@ -426,6 +427,12 @@ index.html            과목 카드            home.js
 - **한살이(`life.js`)의 그림은 전부 캔버스**이고(`drawScene` + `drawArt`), 같은 함수가 순서 맞추기 카드·시작 화면 단추의 작은 그림도 그립니다(`thumb()`).
   **잠자리 이모지는 없습니다** — 🪰(파리)를 대신 쓰지 마세요(그래서 `icon` 이 비어 있고 단추는 그림입니다). 강낭콩은 `g` 하나로 스르르 자랍니다(별의 반지름과 같은 생각).
   나비(완전 탈바꿈)와 잠자리(불완전 탈바꿈)는 견주라고 같이 넣은 것입니다.
+- **우리 몸(`insides.js`)** 은 넷째 카드입니다 (사용자가 남은 후보에서 '먹은 음식의 여행' + '심장과 피' 를 골라 **한 장**으로 — 숨쉬기·뼈·감각은 안 골랐음).
+  데이터가 적어 화면 js 위쪽에 다 있습니다(`FOODS`·`STEPS`·`MODES`·`QUIZ`). 좌표는 '몸 단위'(머리 꼭대기 0 ~ 발끝 1)이고 **앞에서 본 그림이라
+  몸의 왼쪽이 화면 오른쪽**(심장·위가 화면 오른쪽) — 좌우를 뒤집지 마세요. 음식의 여행은 곳마다 아이가 눌러야 다음으로 가고(씹기 4번·조물조물 3번,
+  나머지는 한 번 누르면 흘러감), 심장 빠르기는 다섯 살 보통 값(쉴 때 95·잘 때 75·달릴 때 160, 숨 24·20·45)으로 **진짜 시간에 맞춰** 뜁니다.
+  **피를 파랗게 그리지 마세요** — 산소를 나눠 준 피는 어두운 빨강(`DARK`)이고, 퀴즈에서도 '파란색' 은 틀린 보기입니다.
+  퀴즈는 맞힌 뒤에만 그 기관에 이름표를 붙입니다(미리 붙이면 답이 보임). 작은창자 길이는 숫자 대신 '어른은 몇 미터' 로만 — 살아 있을 때와 잰 값이 달라서요.
 
 ### 글자 쓰기는 획 하나씩 본다 (write.js)
 
@@ -532,6 +539,8 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.float.guess` `daniland.best.float` | 뜰까 가라앉을까 맞혀 보기 최고 별 (소금물·찰흙 배는 점수 없음) |
 | `daniland.best.life.order` `daniland.best.life.quiz` `daniland.best.life` | 한살이 순서 맞추기·퀴즈 최고 별 (지켜보기는 점수 없음) |
 | `daniland.life.seen` | 한살이 지켜보기를 끝까지 본 생물 id 목록 (👀 n/5) |
+| `daniland.best.insides.quiz` `daniland.best.insides` | 우리 몸 퀴즈 최고 별 (음식의 여행·심장과 피는 점수 없음) |
+| `daniland.insides.ate` | 우리 몸 음식의 여행을 끝까지 해 본 음식 id 목록 (🍽️ n/4) |
 | `daniland.earth.read` | 낮과 밤·계절 이야기를 끝까지 본 적 있음 (시작 화면의 📖 다 봤어요) |
 | `daniland.riddle.done` | 수수께끼에서 맞혀 본 문제의 `q` 목록 — 안 풀어 본 문제부터 내는 데 씁니다 |
 | `daniland.best.balloon.level` | 풍선 터뜨리기에서 도달한 최고 단계 |
@@ -551,7 +560,7 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.maze` | 한 번에 찾은 것 중 제일 큰 판 — stars 가 칸 수(5~11)입니다 (카드의 ⭐ 는 이것을 `bestUnit: '칸 미로'` 로 읽습니다) |
 | `daniland.balloonMode` `daniland.smashMode` | 그 놀이를 마지막에 누르기로 했나 손으로 했나 (`tap` / `hand`) |
 | `daniland.smashStart` | 부수기에서 마지막에 고른 시작 단계 |
-| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.fishStart` `daniland.archeryStart` `daniland.townAct` `daniland.worldAct` `daniland.bodyAct` `daniland.tripAct` `daniland.rideAct` `daniland.swedenAct` `daniland.greeceAct` `daniland.germanyAct` `daniland.franceAct` `daniland.norwayAct` `daniland.spainAct` `daniland.denmarkAct` `daniland.japanAct` `daniland.usaAct` `daniland.mexicoAct` `daniland.europeAct` `daniland.spaceAct` `daniland.spaceSpeed` `daniland.starAct` `daniland.starMass` `daniland.earthAct` `daniland.debrisAct` `daniland.airAct` `daniland.orbitAct` `daniland.orbitSpeed` `daniland.jumpAct` `daniland.jumpWorld` `daniland.moonAct` `daniland.skyAct` `daniland.issAct` `daniland.circuitAct` `daniland.floatAct` `daniland.lifeAct` `daniland.lifeKind` `daniland.numShow`(가르기·모으기·더하기·빼기·곱하기의 그림/식/둘 다) `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.clock.<act>`(시계 단계 60·30·5) `daniland.shape.<act>` `daniland.measure.<act>`(모양·재고 견주기 단계 1·2) `daniland.mazeSize` | 마지막에 고른 설정 |
+| `daniland.mode` `daniland.numMax.<act>` `daniland.showLabel` `daniland.balloonStart` `daniland.dodgeStart` `daniland.fishStart` `daniland.archeryStart` `daniland.townAct` `daniland.worldAct` `daniland.bodyAct` `daniland.tripAct` `daniland.rideAct` `daniland.swedenAct` `daniland.greeceAct` `daniland.germanyAct` `daniland.franceAct` `daniland.norwayAct` `daniland.spainAct` `daniland.denmarkAct` `daniland.japanAct` `daniland.usaAct` `daniland.mexicoAct` `daniland.europeAct` `daniland.spaceAct` `daniland.spaceSpeed` `daniland.starAct` `daniland.starMass` `daniland.earthAct` `daniland.debrisAct` `daniland.airAct` `daniland.orbitAct` `daniland.orbitSpeed` `daniland.jumpAct` `daniland.jumpWorld` `daniland.moonAct` `daniland.skyAct` `daniland.issAct` `daniland.circuitAct` `daniland.floatAct` `daniland.lifeAct` `daniland.lifeKind` `daniland.insidesAct` `daniland.insidesFood` `daniland.numShow`(가르기·모으기·더하기·빼기·곱하기의 그림/식/둘 다) `daniland.writeSet` `daniland.makeLevel` `daniland.hundredAct` `daniland.hundred.<act>` `daniland.clock.<act>`(시계 단계 60·30·5) `daniland.shape.<act>` `daniland.measure.<act>`(모양·재고 견주기 단계 1·2) `daniland.mazeSize` | 마지막에 고른 설정 |
 | `daniland.numMax` | 수학 놀이가 넷뿐이던 시절의 숫자 범위 — 읽기만 합니다 (`numbers.js` 의 `loadMax()`) |
 | `daniland.rate` `daniland.voice.<lang>` | 목소리·속도 |
 | `daniland.drawer` | 그림 그리기 도장 서랍 접힘 상태 |
