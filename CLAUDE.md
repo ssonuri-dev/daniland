@@ -145,7 +145,7 @@ index.html            과목 카드            home.js
       ├ moon.html                           moon.js     (달 — 달의 모양·일식·월식·퀴즈)
       ├ constellation.html                  constellation.js (별자리 — 별 잇기·오늘 밤 서울 하늘·퀴즈)
       ├ iss.html                            iss.js      (우주정거장의 하루 — 하루 구경·둥둥 놀이·퀴즈)
-      ├ circuit.html                        circuit.js  (과학: 전기 회로 — 단자를 끌어 전선 잇기, 마디 전압을 진짜로 풀어 불이 켜지는지 정함)
+      ├ circuit.html                        circuit.js  (과학: 전기 회로 — 단자를 끌어 전선 잇기, 마디 전압을 진짜로 풀어 불이 켜지는지 정함. 놀이 넷: 불 켜기·한 줄·갈래·통할까?·마음대로)
       ├ float.html                          float.js    (과학: 뜰까 가라앉을까 — 물통 하나, 밀도로 뜨고 잠기는 깊이가 정해짐)
       ├ life.html                           life.js     (과학: 한살이 — 별의 일생과 같은 뼈대, 그림은 전부 캔버스. 데이터는 js/life-cycles.js)
       ├ insides.html                        insides.js  (과학: 우리 몸 — 몸 속 기관·핏줄을 캔버스에, 음식의 여행·심장과 피·퀴즈)
@@ -421,6 +421,13 @@ index.html            과목 카드            home.js
   가우스 소거로 마디 전압을 풉니다(`solve()`). 직렬·병렬 밝기, 전지 방향, 합선(전지 전류 > 1A), 연필심의 흐린 불이 모두 여기서 나옵니다.
   임무 판정·안내 문장을 손으로 맞추지 말고 저항 값을 고치세요. **읽어 주는 글에는 `+`/`-` 대신 '플러스'·'마이너스'** — 목소리에 따라 기호를 건너뜁니다.
   '통할까?' 물건에 물기·소금이 있어 애매한 것(과일·물)은 넣지 마세요.
+  - **전구 밝기는 힘(P)에 그대로 비례**합니다(`P / P_ONE`). 처음엔 제곱근으로 줄여 그렸더니 직렬(힘 ¼)과 병렬이 거의 같아 보여
+    '직렬·병렬이 잘 안 보인다' 는 말을 들었습니다 (2026-11-27) — 다시 줄이지 마세요.
+  - **손으로 이은 전선은 고리처럼 보여야 합니다** (사용자: '원형으로 보이는 게 좋다', 2026-11-27). 곧은 곡선이 전지 몸통을 가로질러서,
+    지금은 단자에서 바깥쪽(`exitDir` — 전지는 옆, 전구는 아래)으로 나가는 3차 곡선이고 부품 몸통(`bodyBox`)에 닿으면 옆으로 부풀려 비켜 갑니다(`wireCurve`).
+  - **⚖️ 한 줄·갈래(`act: 'pair'`)** 는 손으로 이으면 어느 쪽이 직렬인지 눈에 안 들어와서 만든 놀이입니다. 전선을 미리 **반듯한 고리**로 그려 두고
+    (직렬은 고리 하나에 전구 둘, 병렬은 가로대마다 전구 하나 — `layoutPair`·`drawPair`), 계산은 같은 `solve()` 입니다. 뺀 전구는 `p.out` 으로 길이 끊깁니다.
+    판은 위아래·나란히 중 회로가 더 크게 그려지는 쪽으로 놓고, 보기 단추의 화살표(⬅️/⬆️)도 그쪽을 따릅니다. 말풍선은 판 이름을 가려서 이 놀이에서는 안 씁니다.
 - **뜰까 가라앉을까(`float.js`)의 물건은 진짜 밀도(`rho`)** 이고 뜨는 것은 `rho ÷ 물의 밀도` 만큼 잠깁니다. 뜨기도 가라앉기도 하는 것(토마토·블루베리·젖는 스펀지)은 빼었습니다.
   소금물은 한 숟가락에 0.02씩, 열 숟가락(1.2)에서 더 안 녹습니다. 찰흙 배는 같은 찰흙(1.6)에 배 부피(`room`)만 다릅니다(좁은 배 6개·넓은 배 21개).
   떠 있는 배는 물 덮개를 칠한 뒤 안쪽을 다시 칠합니다(`drawBoat(b, true)`) — 안 그러면 물이 찬 배처럼 보입니다.
@@ -535,7 +542,7 @@ CSS 에서 `.play-page .choice` 의 크기를 덮어쓰면 이 계산이 깨집�
 | `daniland.best.sky.quiz` `daniland.best.sky` | 별자리 퀴즈 최고 별 |
 | `daniland.sky.drawn` | 별 잇기에서 다 이어 본 별자리 id 목록 (✨ n/7) |
 | `daniland.best.iss.quiz` `daniland.best.iss` | 우주정거장의 하루 퀴즈 최고 별 |
-| `daniland.best.circuit.build` `daniland.best.circuit.test` `daniland.best.circuit` | 전기 회로 불 켜기(합선 없이 해낸 임무)·통할까?(맞힌 수) 최고 별 (카드의 ⭐ 는 마지막 것 — 마음대로는 점수 없음) |
+| `daniland.best.circuit.build` `daniland.best.circuit.pair` `daniland.best.circuit.test` `daniland.best.circuit` | 전기 회로 불 켜기(합선 없이 해낸 임무)·한 줄·갈래·통할까?(맞힌 수) 최고 별 (카드의 ⭐ 는 마지막 것 — 마음대로는 점수 없음) |
 | `daniland.best.float.guess` `daniland.best.float` | 뜰까 가라앉을까 맞혀 보기 최고 별 (소금물·찰흙 배는 점수 없음) |
 | `daniland.best.life.order` `daniland.best.life.quiz` `daniland.best.life` | 한살이 순서 맞추기·퀴즈 최고 별 (지켜보기는 점수 없음) |
 | `daniland.life.seen` | 한살이 지켜보기를 끝까지 본 생물 id 목록 (👀 n/5) |

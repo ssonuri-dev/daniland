@@ -17,6 +17,9 @@
  *
  * 놀이 3가지 (시작 화면에서 고릅니다)
  *   build : 불 켜기  - 임무 넷 (MISSIONS). 합선 없이 해내면 ⭐
+ *   pair  : 한 줄·갈래 - 미리 반듯하게 이어 둔 직렬·병렬 회로를 나란히 놓고 물음 넷 (PAIR_QS).
+ *           맞혀 본 뒤 그대로 되어 보고, 그다음엔 전구를 눌러 빼고 끼워 볼 수 있습니다.
+ *           손으로 이으면 전선이 어지러워 어느 쪽이 직렬인지 눈에 안 들어와서 만든 놀이입니다.
  *   test  : 통할까?  - 끊긴 자리에 끼울 물건이 켜질지 먼저 맞혀 보고 끼워 봅니다 (ITEMS, 열 문제)
  *   free  : 마음대로 - 전지 둘·전구 둘·스위치로 아무렇게나 (점수 없음)
  *
@@ -33,13 +36,16 @@
 
   var ACTS = [
     { id: 'build', name: '불 켜기', icon: '💡', desc: '전선을 이어서 임무 넷을 해결해요' },
+    { id: 'pair',  name: '한 줄·갈래', icon: '⚖️', desc: '한 줄 길(직렬)과 갈래 길(병렬)을 나란히 놓고 견줘요. 먼저 맞혀 보고 확인해요' },
     { id: 'test',  name: '통할까?', icon: '🔎', desc: '끊긴 자리에 물건을 끼우면 불이 켜질까요? 먼저 맞혀 봐요' },
     { id: 'free',  name: '마음대로', icon: '🔧', desc: '전지 둘·전구 둘·스위치를 마음대로 이어 봐요' }
   ];
 
   /* ---------- 전기 숫자 ----------
    * 전지 1.5V · 속저항 0.5Ω, 전구 10Ω, 전선·닫힌 스위치·쇠 0.01Ω, 연필심 10Ω.
-   * 전지 하나에 전구 하나면 전구 힘(P = I²R)이 0.2W 쯤이고, 이것을 '밝기 1' 로 잡습니다. */
+   * 전지 하나에 전구 하나면 전구 힘(P = I²R)이 0.2W 쯤이고, 이것을 '밝기 1' 로 잡습니다.
+   * 밝기는 힘에 그대로 비례합니다 — 진짜 꼬마전구는 힘이 줄면 빛이 그보다도 더 빨리 줄어서,
+   * 제곱근 따위로 차이를 줄여 그리면 직렬(힘 ¼)이 병렬과 거의 같아 보입니다(실제로 그랬음). */
   var V_BATT = 1.5, R_BATT = 0.5, R_BULB = 10, G_WIRE = 100, R_LEAD = 10;
   var P_ONE = 0.2;           // 밝기 1
   var LIT_P = 0.01;          // 이보다 작으면 꺼진 것으로 봅니다
@@ -108,7 +114,7 @@
         if (r.bright.L1 < 0.7 && r.bright.L2 < 0.7) {
           return '전구 둘을 한 줄로 이었네요(직렬). 전기가 두 전구를 차례로 지나느라 둘 다 조금 어두워요. 갈래 길로 따로따로 이으면 어떨까요?';
         }
-        return '전구 둘을 갈래 길로 따로따로 이었네요(병렬). 둘 다 밝아요! 그 대신 전지가 더 빨리 닳아요.';
+        return '전구 둘을 갈래 길로 따로따로 이었네요(병렬). 둘 다 밝아요! 그 대신 전지가 더 빨리 닳아요. 한 줄·갈래 놀이에서 둘을 나란히 견줘 봐요.';
       }
     }
   ];
@@ -229,7 +235,7 @@
 
   function setParts(list) {
     state.parts = list.map(function (p) {
-      return { id: p.id, type: p.type, x: p.x, y: p.y, p: p.p, on: (p.on !== false), item: null };
+      return { id: p.id, type: p.type, x: p.x, y: p.y, p: p.p, on: (p.on !== false), item: null, out: false, lift: 0 };
     });
     state.wires = [];
     state.sel = null;
@@ -276,7 +282,7 @@
     state.wires.forEach(function (w) { addG(w.a, w.b, G_WIRE); });
     state.parts.forEach(function (p) {
       var a = p.id + ':a', b = p.id + ':b';
-      if (p.type === 'bulb') addG(a, b, 1 / R_BULB);
+      if (p.type === 'bulb') addG(a, b, p.out ? 0 : 1 / R_BULB);   // 뺀 전구는 길이 끊김
       else if (p.type === 'switch') addG(a, b, p.on ? G_WIRE : 0);
       else if (p.type === 'gap') addG(a, b, gapG(p));
       else if (p.type === 'battery') {
@@ -290,14 +296,15 @@
     var V = gauss(A, z);
     function v(name) { return V[idx[name]] || 0; }
 
-    var r = { lit: {}, bright: {}, flow: {}, wireI: [], battI: {}, shorted: false, anyLit: 0 };
+    var r = { lit: {}, bright: {}, bulbI: {}, flow: {}, wireI: [], battI: {}, shorted: false, anyLit: 0 };
 
     state.parts.forEach(function (p) {
       var da = v(p.id + ':a'), db = v(p.id + ':b');
       if (p.type === 'bulb') {
-        var I = (da - db) / R_BULB;
+        var I = p.out ? 0 : (da - db) / R_BULB;   // 뺀 전구 — 빈 소켓 양끝에 전압은 걸려도 전기는 안 흐름
         var P = I * I * R_BULB;
-        r.bright[p.id] = Math.min(1.8, Math.sqrt(P / P_ONE));
+        r.bright[p.id] = Math.min(1.8, P / P_ONE);
+        r.bulbI[p.id] = -I;   // b → a 로 흐르면 +
         r.lit[p.id] = P > LIT_P;
         if (r.lit[p.id]) r.anyLit += 1;
       } else if (p.type === 'switch') {
@@ -380,11 +387,13 @@
     el.canvas.style.height = h + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     S = Math.max(46, Math.min(130, w / 5.4, h / 3.5));
+    if (state.act === 'pair' && state.playing) layoutPair();
   }
 
   function tall() { return H > W * 1.05; }
 
   function center(p) {
+    if (p.abs) return p.abs;   // 한 줄·갈래 — layoutPair() 가 픽셀 자리를 정해 둡니다
     var x = p.x, y = p.y;
     if (tall() && p.p) { x = p.p[0]; y = p.p[1]; }
     return { x: x * W, y: y * H };
@@ -423,6 +432,11 @@
         state.slide += Math.sign(d) * Math.min(Math.abs(d), dt * 1.8);
       }
     }
+    state.parts.forEach(function (p) {
+      if (p.type !== 'bulb') return;
+      var goal = p.out ? 1 : 0;
+      if (p.lift !== goal) p.lift = (Math.abs(goal - p.lift) < 0.03) ? goal : p.lift + (goal - p.lift) * Math.min(1, dt * 9);
+    });
     draw();
   }
 
@@ -443,7 +457,9 @@
       ctx.stroke();
     }
 
-    var r = state.result || { lit: {}, bright: {}, wireI: [], battI: {} };
+    var r = state.result || { lit: {}, bright: {}, bulbI: {}, wireI: [], battI: {} };
+
+    if (state.act === 'pair' && pairGeo) return drawPair(r);
 
     // 전구 빛은 맨 아래에 깔아 전선·부품이 그 위로 보이게 합니다
     state.parts.forEach(function (p) { if (p.type === 'bulb') drawGlow(p, r.bright[p.id] || 0); });
@@ -478,17 +494,68 @@
 
   var WIRE_COLORS = ['#e8524a', '#3b82d6', '#f29a2e', '#3fa65a', '#9a63d6', '#e0559a'];
 
+  /* 전선 모양 — 단자에서 '바깥쪽'(전지는 옆, 전구는 아래)으로 나가는 곡선이고, 부품 몸통을 가로지르면
+     비켜 갈 때까지 옆으로 부풀립니다. 곧은 선으로 그었더니 전선이 전지 위를 지나가고, 다 이어도
+     빙 도는 고리로 안 보였습니다(사용자 지적) — 이 두 가지 때문에 곡선을 이렇게 만듭니다. */
+  function exitDir(name) {
+    var bits = name.split(':');
+    var p = part(bits[0]);
+    var s = (bits[1] === 'a') ? -1 : 1;
+    if (p.type === 'bulb') return { x: s * 0.55, y: 0.83 };
+    if (p.type === 'switch') return { x: s * 0.95, y: 0.3 };
+    return { x: s, y: 0 };
+  }
+
+  function bodyBox(p) {
+    var c = center(p);
+    if (p.type === 'battery') return { x0: c.x - S * 0.8, x1: c.x + S * 0.8, y0: c.y - S * 0.32, y1: c.y + S * 0.32 };
+    if (p.type === 'bulb') return { x0: c.x - S * 0.66, x1: c.x + S * 0.66, y0: c.y - S * 0.66, y1: c.y + S * 0.68 };
+    if (p.type === 'switch') return { x0: c.x - S * 0.88, x1: c.x + S * 0.88, y0: c.y - S * 0.6, y1: c.y + S * 0.3 };
+    return { x0: c.x - S * 0.5, x1: c.x + S * 0.5, y0: c.y - S * 0.3, y1: c.y + S * 0.3 };
+  }
+
+  function clampPt(x, y) {
+    var m = S * 0.3;
+    return { x: Math.max(m, Math.min(W - m, x)), y: Math.max(m, Math.min(H - m, y)) };
+  }
+
   function wireCurve(w) {
     var a = termPos(w.a), b = termPos(w.b);
-    var len = Math.hypot(b.x - a.x, b.y - a.y);
-    // 늘어진 전선처럼 가운데가 조금 아래로 처집니다
-    return { a: a, b: b, c: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 + Math.min(60, len * 0.18) } };
+    var da = exitDir(w.a), db = exitDir(w.b);
+    var dist = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+    var k = Math.max(S * 0.6, Math.min(S * 2, dist * 0.4));
+    var px = -(b.y - a.y) / dist, py = (b.x - a.x) / dist;   // 이은 줄에 수직
+    var off = 0, side = 0, cv = null;
+    var near = S * 0.45, pad = S * 0.12;
+    for (var it = 0; it < 9; it++) {
+      cv = { a: a, b: b,
+             c1: clampPt(a.x + da.x * k + px * off, a.y + da.y * k + py * off),
+             c2: clampPt(b.x + db.x * k + px * off, b.y + db.y * k + py * off) };
+      var hit = null;
+      for (var i = 1; i < 28 && !hit; i++) {
+        var q = curveAt(cv, i / 28);
+        if (Math.hypot(q.x - a.x, q.y - a.y) < near || Math.hypot(q.x - b.x, q.y - b.y) < near) continue;
+        for (var j = 0; j < state.parts.length; j++) {
+          var bx = bodyBox(state.parts[j]);
+          if (q.x > bx.x0 - pad && q.x < bx.x1 + pad && q.y > bx.y0 - pad && q.y < bx.y1 + pad) {
+            hit = { q: q, cx: (bx.x0 + bx.x1) / 2, cy: (bx.y0 + bx.y1) / 2 };
+            break;
+          }
+        }
+      }
+      if (!hit) return cv;
+      // 처음 부딪힌 부품에서 멀어지는 쪽을 정하면 끝까지 그쪽으로만 부풀립니다 (왔다 갔다 하지 않게)
+      if (!side) side = (((hit.q.x - hit.cx) * px + (hit.q.y - hit.cy) * py) >= 0) ? 1 : -1;
+      off += side * S * 0.45;
+    }
+    return cv;
   }
 
   function curveAt(cv, t) {
     var u = 1 - t;
-    return { x: u * u * cv.a.x + 2 * u * t * cv.c.x + t * t * cv.b.x,
-             y: u * u * cv.a.y + 2 * u * t * cv.c.y + t * t * cv.b.y };
+    var A = u * u * u, B = 3 * u * u * t, C = 3 * u * t * t, D = t * t * t;
+    return { x: A * cv.a.x + B * cv.c1.x + C * cv.c2.x + D * cv.b.x,
+             y: A * cv.a.y + B * cv.c1.y + C * cv.c2.y + D * cv.b.y };
   }
 
   function drawWire(w, k, I) {
@@ -498,19 +565,20 @@
     ctx.lineWidth = Math.max(7, S * 0.1);
     ctx.beginPath();
     ctx.moveTo(cv.a.x, cv.a.y + 3);
-    ctx.quadraticCurveTo(cv.c.x, cv.c.y + 3, cv.b.x, cv.b.y + 3);
+    ctx.bezierCurveTo(cv.c1.x, cv.c1.y + 3, cv.c2.x, cv.c2.y + 3, cv.b.x, cv.b.y + 3);
     ctx.stroke();
     ctx.strokeStyle = w.fixed ? '#7d8796' : WIRE_COLORS[k % WIRE_COLORS.length];
     ctx.lineWidth = Math.max(6, S * 0.085);
     ctx.beginPath();
     ctx.moveTo(cv.a.x, cv.a.y);
-    ctx.quadraticCurveTo(cv.c.x, cv.c.y, cv.b.x, cv.b.y);
+    ctx.bezierCurveTo(cv.c1.x, cv.c1.y, cv.c2.x, cv.c2.y, cv.b.x, cv.b.y);
     ctx.stroke();
 
     // 흐르는 전기 — 알갱이가 + 쪽에서 - 쪽으로, 많이 흐를수록 빠르게
     var amp = Math.abs(I);
     if (amp < 0.02) return;
-    var len = Math.hypot(cv.b.x - cv.a.x, cv.b.y - cv.a.y) + 1;
+    var len = 1, pv = cv.a;
+    for (var s2 = 1; s2 <= 16; s2++) { var nq = curveAt(cv, s2 / 16); len += Math.hypot(nq.x - pv.x, nq.y - pv.y); pv = nq; }
     var speed = Math.min(260, 60 + amp * 500);
     var gap = 26;
     var off = (clock * speed) % gap;
@@ -620,9 +688,9 @@
     if (b < 0.05) return;
     var c = center(p);
     var gy = c.y - S * 0.2;
-    var R = S * (0.6 + b * 0.9);
+    var R = S * (0.45 + b * 1.0);
     var g = ctx.createRadialGradient(c.x, gy, S * 0.2, c.x, gy, R);
-    g.addColorStop(0, 'rgba(255,230,120,' + Math.min(0.85, 0.35 + b * 0.35).toFixed(2) + ')');
+    g.addColorStop(0, 'rgba(255,230,120,' + Math.min(0.85, 0.12 + b * 0.6).toFixed(2) + ')');
     g.addColorStop(1, 'rgba(255,230,120,0)');
     ctx.fillStyle = g;
     ctx.beginPath();
@@ -647,6 +715,14 @@
     ctx.moveTo(c.x + S * 0.2, c.y + S * 0.38); ctx.lineTo(c.x + S * 0.46, c.y + S * 0.62);
     ctx.stroke();
 
+    // 뺀 전구는 유리알·꼭지가 위로 쏙 빠져 흐려집니다 (받침은 그대로)
+    var lift = p.lift || 0;
+    ctx.save();
+    if (lift) {
+      ctx.globalAlpha = 1 - 0.45 * lift;
+      ctx.translate(0, -lift * S * 0.55);
+    }
+
     // 쇠 꼭지 (나사 홈)
     ctx.fillStyle = '#b8bec8';
     ctx.fillRect(c.x - gr * 0.5, gy + gr * 0.72, gr, S * 0.3);
@@ -661,7 +737,7 @@
     var on = b > 0.05;
     var glass = ctx.createRadialGradient(c.x - gr * 0.3, gy - gr * 0.3, gr * 0.1, c.x, gy, gr);
     if (on) {
-      var a = Math.min(1, 0.45 + b * 0.4);
+      var a = Math.min(1, 0.3 + b * 0.6);
       glass.addColorStop(0, 'rgba(255,255,240,' + a + ')');
       glass.addColorStop(1, 'rgba(255,214,90,' + a + ')');
     } else {
@@ -677,7 +753,7 @@
     ctx.stroke();
 
     // 필라멘트
-    ctx.strokeStyle = on ? '#ff8a00' : '#6b5a48';
+    ctx.strokeStyle = !on ? '#6b5a48' : (b < 0.5 ? '#c2621a' : '#ff8a00');
     ctx.lineWidth = on ? 2.5 : 1.6;
     ctx.beginPath();
     ctx.moveTo(c.x - gr * 0.3, gy + gr * 0.75);
@@ -687,6 +763,7 @@
     }
     ctx.lineTo(c.x + gr * 0.3, gy + gr * 0.75);
     ctx.stroke();
+    ctx.restore();
   }
 
   // 스위치 — 쇠 막대가 내려와 두 쇠를 이으면 켜진 것
@@ -823,6 +900,10 @@
   }
 
   el.canvas.addEventListener('pointerdown', function (ev) {
+    if (state.act === 'pair') {
+      if (state.playing && state.pairOpen) pairTap(pointAt(ev));
+      return;
+    }
     if (!canEdit()) return;
     var q = pointAt(ev);
     var t = termAt(q);
@@ -987,6 +1068,324 @@
     speak(text);
   }, 6000);
 
+  /* ---------- ⚖️ 한 줄·갈래 ----------
+   * 왼쪽(세로 화면은 위) 한 줄 길 = 직렬, 오른쪽(아래) 갈래 길 = 병렬. 둘 다 전지 하나·스위치 하나·전구 둘이고
+   * 전선은 미리 반듯한 고리로 이어 둡니다 — 직렬은 고리 하나에 전구 둘, 병렬은 가로대(갈래)마다 전구 하나.
+   * 계산은 다른 놀이와 같은 solve() 이고, PAIR_WIRES 는 계산용입니다(그림은 drawPair 가 고리로 그립니다). */
+  var PAIR_PARTS = [
+    { id: 'B1', type: 'battery' }, { id: 'S1', type: 'switch', on: false },
+    { id: 'L1', type: 'bulb' }, { id: 'L2', type: 'bulb' },
+    { id: 'B2', type: 'battery' }, { id: 'S2', type: 'switch', on: false },
+    { id: 'L3', type: 'bulb' }, { id: 'L4', type: 'bulb' }
+  ];
+  var PAIR_WIRES = [
+    ['B1:b', 'S1:a'], ['S1:b', 'L2:b'], ['L2:a', 'L1:b'], ['L1:a', 'B1:a'],
+    ['B2:b', 'S2:a'], ['S2:b', 'L3:b'], ['S2:b', 'L4:b'], ['L3:a', 'B2:a'], ['L4:a', 'B2:a']
+  ];
+
+  // 정답은 ans 로 견줍니다 — 보기 순서를 '한 줄 · 갈래' 로 늘 같게 두어야 덜 헷갈려서요
+  var PAIR_QS = [
+    { sw: false, ask: '스위치를 켜면 어느 쪽 전구가 더 밝을까요?',
+      opts: [{ v: 's' }, { v: 'p' }, { t: '🟰 똑같아요', v: 'same' }], ans: 'p',
+      run: function () { part('S1').on = true; part('S2').on = true; },
+      why: '갈래 길이 더 밝아요! 한 줄 길은 전기가 전구 두 개를 차례로 지나느라 둘 다 어두워요. 갈래 길은 전구마다 제 길이 따로 있어서 둘 다 밝아요.' },
+    { sw: true, ask: '한 줄 길에서 전구 하나를 빼면, 남은 전구는 어떻게 될까요?',
+      opts: [{ t: '💡 그대로 켜져요', v: 'on' }, { t: '🌑 꺼져요', v: 'off' }], ans: 'off',
+      run: function () { part('L1').out = true; },
+      why: '꺼져요! 한 줄 길은 길이 하나뿐이라 한 군데가 끊기면 전기가 빙 돌 수 없어요.' },
+    { sw: true, ask: '갈래 길에서 전구 하나를 빼면, 남은 전구는 어떻게 될까요?',
+      opts: [{ t: '💡 그대로 켜져요', v: 'on' }, { t: '🌑 꺼져요', v: 'off' }], ans: 'on',
+      run: function () { part('L3').out = true; },
+      why: '그대로 켜져요! 남은 전구에는 제 길이 따로 있어서 전기가 그 길로 빙 돌아요. 우리 집 전등도 갈래 길이라 하나를 꺼도 다른 건 켜져 있어요.' },
+    { sw: true, ask: '전지가 더 빨리 닳는 쪽은 어디일까요?',
+      opts: [{ v: 's' }, { v: 'p' }], ans: 'p',
+      run: function () {},
+      why: '갈래 길이에요! 전구 두 개가 저마다 전기를 받아 가니까 전지에서 전기가 훨씬 많이 나가요. 노란 알갱이를 봐요. 갈래 길 전지 옆이 더 빽빽하고 빨라요.' }
+  ];
+
+  var pairGeo = null;
+
+  // 단추의 화살표는 판이 실제로 놓인 쪽을 따릅니다 (위아래인지 나란히인지는 layoutPair 가 정함)
+  function sideName(v) {
+    var vert = pairGeo && pairGeo.vertical;
+    if (v === 's') return (vert ? '⬆️ ' : '⬅️ ') + '한 줄 길';
+    return vert ? '⬇️ 갈래 길' : '갈래 길 ➡️';
+  }
+
+  function layoutPair() {
+    if (!W || !part('L4')) return;
+    var m = 10, panels;
+    // 위아래·나란히 중 회로가 더 크게 그려지는 쪽으로 놓습니다
+    function scaleFor(pw, ph) {
+      var t = Math.max(26, Math.min(40, ph * 0.12));
+      return Math.min(pw * 0.88 / 4.7, (ph - t - 12) / 5.3);
+    }
+    var vertical = scaleFor(W - m * 2, (H - m * 3) / 2) > scaleFor((W - m * 3) / 2, H - m * 2);
+    if (vertical) {
+      var ph = (H - m * 3) / 2;
+      panels = [{ x: m, y: m, w: W - m * 2, h: ph }, { x: m, y: m * 2 + ph, w: W - m * 2, h: ph }];
+    } else {
+      var pw = (W - m * 3) / 2;
+      panels = [{ x: m, y: m, w: pw, h: H - m * 2 }, { x: m * 2 + pw, y: m, w: pw, h: H - m * 2 }];
+    }
+    var P0 = panels[0];
+    var th = Math.max(26, Math.min(40, P0.h * 0.12));
+    var cw = P0.w * 0.88, ch = P0.h - th - 12;
+    S = Math.max(30, Math.min(110, cw / 4.7, ch / 5.3));
+    var wid = Math.min(cw, S * 5.4);
+
+    function put(id, x, y) { part(id).abs = { x: x, y: y }; }
+
+    panels.forEach(function (P, k) {
+      P.th = th;
+      var cx = P.x + P.w / 2;
+      var L = cx - wid / 2, R = cx + wid / 2;
+      var y0 = P.y + th + (ch - S * 5.3) / 2;
+      var r1 = y0 + S * 1.75, r2 = r1 + S * 1.6, bot = r2 + S * 1.6;
+      P.L = L; P.R = R; P.bot = bot; P.r1 = r1; P.r2 = r2;
+      put(k ? 'B2' : 'B1', L + wid * 0.28, bot);
+      put(k ? 'S2' : 'S1', L + wid * 0.74, bot - S * 0.08);
+      if (k === 0) {
+        put('L1', L + wid * 0.3, r1 - S * 0.62);
+        put('L2', L + wid * 0.7, r1 - S * 0.62);
+      } else {
+        put('L3', cx, r1 - S * 0.62);
+        put('L4', cx, r2 - S * 0.62);
+      }
+    });
+
+    // 전기가 도는 고리 — + 에서 나와 - 로. w 가 false 인 칸은 부품 속이라 전선도 알갱이도 안 그립니다
+    function T(n) { return termPos(n); }
+    function loop(P, B, Sw, rungY, bulbs) {
+      var pts = [{ p: T(B + ':b') }, { p: T(Sw + ':a'), w: true }, { p: T(Sw + ':b'), w: false },
+                 { p: { x: P.R, y: P.bot }, w: true }, { p: { x: P.R, y: rungY }, w: true }];
+      bulbs.forEach(function (id) {
+        pts.push({ p: T(id + ':b'), w: true });
+        pts.push({ p: T(id + ':a'), w: false });
+      });
+      pts.push({ p: { x: P.L, y: rungY }, w: true }, { p: { x: P.L, y: P.bot }, w: true }, { p: T(B + ':a'), w: true });
+      return pts;
+    }
+    var A = panels[0], Bp = panels[1];
+    pairGeo = {
+      vertical: vertical,
+      panels: panels,
+      loops: [
+        { panel: 0, bulb: 'L1', pts: loop(A, 'B1', 'S1', A.r1, ['L2', 'L1']), phase: 0 },
+        { panel: 1, bulb: 'L3', pts: loop(Bp, 'B2', 'S2', Bp.r1, ['L3']), phase: 0 },
+        { panel: 1, bulb: 'L4', pts: loop(Bp, 'B2', 'S2', Bp.r2, ['L4']), phase: 0.5 }
+      ]
+    };
+    // 판이 놓인 쪽이 바뀌었으면 단추 화살표도 고칩니다
+    Array.prototype.forEach.call(el.ctrl.querySelectorAll('[data-side]'), function (b) {
+      b.textContent = sideName(b.getAttribute('data-side'));
+    });
+  }
+
+  // 모서리를 둥글린 전선 — w 가 이어진 칸끼리 한 줄로 긋습니다
+  function strokeRuns(pts, rad) {
+    var run = [];
+    function flush() {
+      if (run.length >= 2) {
+        ctx.beginPath();
+        ctx.moveTo(run[0].x, run[0].y);
+        for (var i = 1; i < run.length - 1; i++) ctx.arcTo(run[i].x, run[i].y, run[i + 1].x, run[i + 1].y, rad);
+        ctx.lineTo(run[run.length - 1].x, run[run.length - 1].y);
+        ctx.stroke();
+      }
+      run = [];
+    }
+    for (var i = 1; i < pts.length; i++) {
+      if (pts[i].w) {
+        if (!run.length) run.push(pts[i - 1].p);
+        run.push(pts[i].p);
+      } else flush();
+    }
+    flush();
+  }
+
+  function loopDots(lp, I) {
+    var amp = Math.abs(I);
+    if (amp < 0.01) return;
+    var pts = lp.pts, segs = [], total = 0;
+    for (var i = 1; i < pts.length; i++) {
+      var a = pts[i - 1].p, b = pts[i].p;
+      var l = Math.hypot(b.x - a.x, b.y - a.y);
+      segs.push({ a: a, b: b, l: l, s: total, w: pts[i].w });
+      total += l;
+    }
+    var gap = Math.max(22, S * 0.42);
+    var speed = 40 + amp * 600;
+    var off = (clock * speed + lp.phase * gap) % gap;
+    var dotR = Math.max(3, S * 0.05);
+    ctx.fillStyle = '#ffd23a';
+    ctx.strokeStyle = 'rgba(150,100,0,0.5)';
+    ctx.lineWidth = 1;
+    var k = 0;
+    for (var d = off; d < total; d += gap) {
+      while (k < segs.length - 1 && d > segs[k].s + segs[k].l) k++;
+      var g = segs[k];
+      if (!g.w) continue;
+      var t = (d - g.s) / (g.l || 1);
+      ctx.beginPath();
+      ctx.arc(g.a.x + (g.b.x - g.a.x) * t, g.a.y + (g.b.y - g.a.y) * t, dotR, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+    }
+  }
+
+  function drawPair(r) {
+    var G = pairGeo;
+    G.panels.forEach(function (P, k) {
+      var mark = state.pairShow === (k ? 'p' : 's');
+      roundRect(P.x, P.y, P.w, P.h, 18);
+      ctx.fillStyle = mark ? 'rgba(255,240,170,0.6)' : 'rgba(255,255,255,0.45)';
+      ctx.fill();
+      ctx.lineWidth = mark ? 4 : 2;
+      ctx.strokeStyle = mark ? '#f2a516' : 'rgba(160,120,70,0.25)';
+      ctx.stroke();
+      ctx.fillStyle = '#40323a';
+      ctx.font = Math.round(P.th * 0.62) + 'px Jua, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(k ? '갈래 길 (병렬)' : '한 줄 길 (직렬)', P.x + P.w / 2, P.y + P.th * 0.62);
+    });
+
+    ['L1', 'L2', 'L3', 'L4'].forEach(function (id) { drawGlow(part(id), r.bright[id] || 0); });
+
+    // 전선 — 그림자 한 번, 구리선 한 번 (한 줄 길은 빨강, 갈래 길은 파랑)
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    var rad = S * 0.2;
+    G.loops.forEach(function (lp) {
+      ctx.strokeStyle = 'rgba(0,0,0,0.13)';
+      ctx.lineWidth = Math.max(7, S * 0.11);
+      ctx.save();
+      ctx.translate(0, 3);
+      strokeRuns(lp.pts, rad);
+      ctx.restore();
+    });
+    G.loops.forEach(function (lp) {
+      ctx.strokeStyle = lp.panel ? '#3b82d6' : '#e8524a';
+      ctx.lineWidth = Math.max(6, S * 0.09);
+      strokeRuns(lp.pts, rad);
+    });
+
+    state.parts.forEach(function (p) {
+      if (p.type === 'battery') drawBattery(p, r);
+      else if (p.type === 'bulb') drawBulb(p, r.bright[p.id] || 0);
+      else if (p.type === 'switch') drawSwitch(p);
+    });
+
+    G.loops.forEach(function (lp) { loopDots(lp, r.bulbI[lp.bulb] || 0); });
+
+    // 눌러 볼 수 있을 때 — 처음 몇 초는 모든 전구 옆에, 그 뒤로는 뺀 전구 옆에만 손가락
+    if (state.pairOpen) {
+      var fresh = clock - state.openAt < 4;
+      ctx.font = Math.round(S * 0.34) + 'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ['L1', 'L2', 'L3', 'L4'].forEach(function (id) {
+        var p = part(id);
+        if (!p.out && !fresh) return;
+        var c = center(p);
+        ctx.fillText('👆', c.x + S * 0.6, c.y - S * 0.2 - Math.sin(clock * 4) * S * 0.06);
+      });
+    }
+  }
+
+  function bulbAt(q) {
+    for (var i = 0; i < state.parts.length; i++) {
+      var p = state.parts[i];
+      if (p.type !== 'bulb') continue;
+      var c = center(p);
+      if (Math.abs(q.x - c.x) < S * 0.62 && q.y > c.y - S * 1.4 && q.y < c.y + S * 0.6) return p;
+    }
+    return null;
+  }
+
+  function pairTap(q) {
+    var p = bulbAt(q);
+    if (p) {
+      p.out = !p.out;
+      if (window.SFX) SFX.tap();
+      recompute();
+      return;
+    }
+    var sw = switchAt(q);
+    if (sw) {
+      sw.on = !sw.on;
+      if (window.SFX) SFX.tap();
+      recompute();
+    }
+  }
+
+  function startPair() {
+    setParts(PAIR_PARTS);
+    state.wires = PAIR_WIRES.map(function (w) { return { a: w[0], b: w[1], fixed: true }; });
+    state.round = 0;
+    state.stars = 0;
+    layoutPair();
+    nextPair();
+  }
+
+  function nextPair() {
+    if (window.TTS) TTS.cancel();
+    if (state.round >= PAIR_QS.length) return finish(PAIR_QS.length);
+    var Q = PAIR_QS[state.round];
+    state.locked = false;
+    state.pairOpen = false;
+    state.pairShow = null;
+    state.parts.forEach(function (p) {
+      if (p.type === 'bulb') p.out = false;
+      if (p.type === 'switch') p.on = Q.sw;
+    });
+    wasLit = 99;   // 물음마다 되돌릴 때는 '뽁' 소리를 내지 않습니다
+    recompute();
+    wasLit = state.result.anyLit;
+    hideSay();
+    el.bar.style.width = Math.round((state.round / PAIR_QS.length) * 100) + '%';
+    buildCtrl(Q.opts.map(function (o) {
+      return { text: o.t || sideName(o.v), side: !o.t && o.v, big: true, fn: function (b) { pickPair(o.v, b); } };
+    }));
+    setLabel('⚖️ ' + Q.ask + ' (' + (state.round + 1) + '/' + PAIR_QS.length + ')');
+    state.prompt = Q.ask;
+    el.speakBtn.hidden = !(window.TTS && TTS.supported);
+    setTimeout(function () { speak(state.prompt); }, 300);
+  }
+
+  function pickPair(v, btn) {
+    if (state.locked) return;
+    state.locked = true;
+    var Q = PAIR_QS[state.round];
+    if (window.SFX) SFX.tap();
+    btn.classList.add('picked');
+    Array.prototype.forEach.call(el.ctrl.children, function (b) { b.disabled = (b !== btn); });
+    if (window.TTS) TTS.cancel();
+    Q.run();
+    recompute();
+    // 되어 가는 것을 잠깐 보여 준 뒤에 맞았는지 알려 줍니다
+    setTimeout(function () {
+      var right = (v === Q.ans);
+      if (right) {
+        state.stars += 1;
+        if (window.SFX) SFX.correct();
+        UI.confettiAt(el.stage);
+      }
+      if (Q.ans === 's' || Q.ans === 'p') state.pairShow = Q.ans;
+      state.round += 1;
+      updateScore();
+      el.bar.style.width = Math.round((state.round / PAIR_QS.length) * 100) + '%';
+      // 말풍선은 판 이름을 가려서 이 놀이에서는 안 씁니다 — 안내 줄에 적습니다
+      setLabel((right ? '⭕ ' : '👀 ') + Q.why);
+      state.prompt = Q.why;
+      state.pairOpen = true;
+      state.openAt = clock;
+      buildCtrl([{ text: (state.round >= PAIR_QS.length) ? '끝 🎉' : '다음 ▶', go: true, fn: nextPair }]);
+      speak(Q.why);
+    }, 1100);
+  }
+
   /* ---------- 🔎 통할까? ---------- */
 
   function startTest() {
@@ -1094,7 +1493,10 @@
     hideSay();
     fit();
     updateScore();
+    pairGeo = null;
+    state.parts.forEach(function (p) { p.abs = null; });
     if (state.act === 'build') return startBuild();
+    if (state.act === 'pair') return startPair();
     if (state.act === 'test') return startTest();
     startFree();
   }
@@ -1108,7 +1510,9 @@
     el.endTitle.textContent = (state.stars === total)
       ? PRAISE[Math.floor(Math.random() * PRAISE.length)]
       : '잘했어요!';
-    el.endText.textContent = (state.act === 'build')
+    el.endText.textContent = (state.act === 'pair')
+      ? '물음 ' + total + '개 중에 ' + state.stars + '개를 맞혔어요!'
+      : (state.act === 'build')
       ? '임무 ' + total + '개를 다 해냈어요! (합선 없이 해낸 임무마다 ⭐)'
       : total + '개 중에 ' + state.stars + '개를 맞혔어요!';
     el.endOverlay.hidden = false;
@@ -1121,6 +1525,7 @@
       var b = document.createElement('button');
       b.className = 'chip' + (o.big ? ' big' : '') + (o.go ? ' go' : '');
       b.textContent = o.text;
+      if (o.side) b.setAttribute('data-side', o.side);
       b.addEventListener('click', function () { o.fn(b); });
       el.ctrl.appendChild(b);
     });

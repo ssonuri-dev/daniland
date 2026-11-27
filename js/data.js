@@ -1026,7 +1026,7 @@ window.PAGES = [
     subject: '과학',
     title: '전기 회로',
     icon: '💡',
-    meta: '전선을 이어 불 켜기 · 통할까 안 통할까 · 마음대로',
+    meta: '전선을 이어 불 켜기 · 한 줄과 갈래 · 통할까 안 통할까 · 마음대로',
     href: 'circuit.html',
     bestKey: 'daniland.best.circuit'
   },
