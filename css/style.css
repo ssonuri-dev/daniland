@@ -458,6 +458,9 @@ button {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  justify-content: safe center;   /* 폰에서 내용이 화면보다 길면 위가 잘리지 않고 스크롤됩니다 */
+  overflow-y: auto;
+  overscroll-behavior: contain;
   gap: 8px;
   padding: 24px;
   text-align: center;
@@ -683,6 +686,7 @@ button {
   justify-content: center;
   gap: 10px;
 }
+.mode-row[hidden] { display: none; }
 
 .mode-btn {
   display: flex;
