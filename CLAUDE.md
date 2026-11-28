@@ -14,9 +14,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## 작업 방식 (사용자와의 약속)
 
 - **커밋은 물어보지 말고 하세요.** 작업이 한 덩어리 끝나면 바로 커밋해도 됩니다.
-- **`git push` 는 반드시 먼저 확인받으세요.** push 하는 순간 GitHub Pages 로 공개 배포되어
-  아이가 쓰는 사이트가 바뀝니다. `.claude/settings.local.json` 의 `permissions.ask` 에도
-  같은 규칙이 걸려 있으니 그 프롬프트를 우회하지 마세요.
+- **`git push` 도 물어보지 말고 하세요 (2026-11-28 사용자가 정함).** 다만 push 하는 순간 GitHub Pages 로
+  공개 배포되어 아이가 쓰는 사이트가 바뀌므로, 검증을 마치고 커밋한 것만 올리고 사용자 답을 기다리는 작업은 올리지 마세요.
+  `.claude/settings.local.json` 의 `permissions.ask` 에 걸린 승인창은 우회하지 마세요.
 - **애매하면 혼자 정하지 말고 물어보세요.** 해석이 갈리면 결과물이 달라지는 지점
   — 어느 과목에 넣을지, 난이도를 몇 단계로 할지, 기존 놀이를 고칠지 새로 만들지 —
   에서는 멈추고 확인합니다. 답과 상관없이 할 수 있는 일은 먼저 끝내놓고 묻습니다.
